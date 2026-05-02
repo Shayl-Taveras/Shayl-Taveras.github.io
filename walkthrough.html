@@ -114,6 +114,14 @@
   .callout-body{font-size:14px;color:var(--text);line-height:1.7;}
   .callout-body strong{color:var(--coral);}
 
+  /* LIGHTBOX */
+  .lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:100;cursor:zoom-out;align-items:center;justify-content:center;}
+  .lightbox-overlay.active{display:flex;}
+  .lightbox-overlay img{max-width:92vw;max-height:92vh;border:1px solid var(--border2);box-shadow:0 0 60px rgba(0,0,0,0.8);}
+  .lightbox-close{position:absolute;top:1.2rem;right:1.6rem;font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);cursor:pointer;letter-spacing:0.08em;}
+  .lightbox-close:hover{color:var(--coral);}
+  .screenshot-wrap img{cursor:zoom-in;}
+
   @media(max-width:700px){
     nav,.hero,main{padding-left:1.4rem;padding-right:1.4rem;}
     .decision-grid{grid-template-columns:1fr;}
@@ -286,7 +294,7 @@
     <p class="prose">The narrative module generates an <strong>AI-written executive summary</strong> via Bedrock — translating raw IAM findings into business-readable risk language. This is the bridge between technical output and GRC-consumable evidence: the kind of summary a CISO or auditor can read without parsing JSON.</p>
 
     <div class="screenshot-wrap">
-      <img src="report-preview.png" alt="IAM Access Review Report Output" style="width:100%;display:block;border:1px solid #361f18;">
+      <img src="report-preview.png" alt="IAM Access Review Report Output" style="width:100%;display:block;border:1px solid #361f18;" onclick="document.getElementById('lightbox').classList.add('active')">
     </div>
   </section>
 
@@ -370,6 +378,18 @@
   </section>
 
 </main>
+
+
+<div class="lightbox-overlay" id="lightbox" onclick="this.classList.remove('active')">
+  <div class="lightbox-close">[ close ]</div>
+  <img src="report-preview.png" alt="IAM Access Review Report">
+</div>
+
+<script>
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('active');
+  });
+</script>
 
 </body>
 </html>
