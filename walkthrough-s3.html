@@ -105,46 +105,6 @@
   .framework:hover{background:var(--coral-muted);}
   .fw-name{font-family:'DM Mono',monospace;font-size:13px;color:var(--coral);font-weight:500;margin-bottom:0.3rem;}
   .fw-desc{font-size:12px;color:var(--muted);line-height:1.55;}
-
-  /* ── CAROUSEL ── */
-  .carousel-section{margin-top:1.8rem;}
-  .carousel-main{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);position:relative;overflow:hidden;cursor:zoom-in;}
-  .carousel-main img{width:100%;display:block;border:0;transition:opacity 0.25s;}
-  .carousel-main .carousel-placeholder{width:100%;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;background:var(--bg2);}
-  .carousel-placeholder .ph-icon{font-family:'DM Mono',monospace;font-size:2rem;color:var(--border2);}
-  .carousel-placeholder .ph-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-align:center;line-height:1.8;}
-
-  .carousel-nav{position:absolute;top:50%;transform:translateY(-50%);background:var(--bg2);border:1px solid var(--border2);color:var(--coral);font-size:18px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;z-index:2;user-select:none;}
-  .carousel-nav:hover{background:var(--coral-muted);border-color:var(--coral-dim);}
-  .carousel-nav.prev{left:10px;}
-  .carousel-nav.next{right:10px;}
-  .carousel-nav.hidden{opacity:0;pointer-events:none;}
-
-  .carousel-counter{position:absolute;bottom:10px;right:12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);background:var(--bg2);border:1px solid var(--border2);padding:3px 10px;letter-spacing:0.08em;}
-
-  .carousel-strip{display:flex;gap:1px;background:var(--border2);margin-top:1px;overflow-x:auto;}
-  .carousel-thumb{flex:0 0 calc(20% - 1px);aspect-ratio:16/9;background:var(--bg);border:0;cursor:pointer;overflow:hidden;opacity:0.45;transition:opacity 0.2s;position:relative;}
-  .carousel-thumb.active{opacity:1;}
-  .carousel-thumb:hover{opacity:0.8;}
-  .carousel-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-  .carousel-thumb .thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.06em;flex-direction:column;gap:4px;}
-  .carousel-thumb .thumb-num{font-size:14px;color:var(--border2);}
-  .carousel-caption{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.06em;padding:0.7rem 0 0;line-height:1.6;}
-  .carousel-caption span{color:var(--coral-dim);}
-
-  /* ── LIGHTBOX ── */
-  .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:999;align-items:center;justify-content:center;padding:2rem;}
-  .lightbox.open{display:flex;}
-  .lightbox-inner{position:relative;max-width:95vw;max-height:90vh;}
-  .lightbox-inner img{max-width:95vw;max-height:88vh;display:block;border:1px solid var(--border2);}
-  .lightbox-close{position:absolute;top:-16px;right:-16px;width:32px;height:32px;background:var(--bg2);border:1px solid var(--border2);color:var(--coral);font-family:'DM Mono',monospace;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;z-index:1000;}
-  .lightbox-close:hover{background:var(--coral-muted);border-color:var(--coral);}
-  .lightbox-caption{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;margin-top:0.8rem;letter-spacing:0.06em;}
-  .lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);background:var(--bg2);border:1px solid var(--border2);color:var(--coral);font-size:18px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;}
-  .lightbox-nav:hover{background:var(--coral-muted);}
-  .lightbox-nav.lb-prev{left:-50px;}
-  .lightbox-nav.lb-next{right:-50px;}
-
   /* FOOTER */
   footer{border-top:1px solid var(--border2);padding:2rem 2.8rem;max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
   .footer-brand{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
@@ -158,9 +118,7 @@
     .control-row{grid-template-columns:1fr;}
     .framework-grid{grid-template-columns:1fr 1fr;}
     .stats-row{flex-wrap:wrap;}
-    .lightbox-nav.lb-prev{left:-10px;}
-    .lightbox-nav.lb-next{right:-10px;}
-    .carousel-thumb{flex:0 0 calc(33.33% - 1px);}
+
   }
 </style>
 </head>
@@ -340,32 +298,9 @@
     </div>
   </section>
 
-  <!-- 06 SCREENSHOTS -->
+  <!-- 06 FRAMEWORKS -->
   <section class="section">
-    <div class="sec-header"><span class="sec-num">06 //</span><h2>Lab Results</h2><div class="sec-line"></div></div>
-    <p class="prose">Verification output from the deployed module: AWS API responses confirming each control is in effect. Click any image to expand to full size.</p>
-
-    <div class="carousel-section">
-      <!-- Main view -->
-      <div class="carousel-main" id="carouselMain" onclick="openLightbox(currentSlide)">
-        <div class="carousel-nav prev" id="prevBtn" onclick="event.stopPropagation();changeSlide(-1)">&#8592;</div>
-        <div class="carousel-nav next" id="nextBtn" onclick="event.stopPropagation();changeSlide(1)">&#8594;</div>
-        <div class="carousel-counter" id="carouselCounter">1 / 5</div>
-        <!-- Slides injected by JS -->
-        <div id="slideDisplay"></div>
-      </div>
-
-      <!-- Thumbnail strip -->
-      <div class="carousel-strip" id="thumbStrip"></div>
-
-      <!-- Caption -->
-      <div class="carousel-caption" id="carouselCaption"></div>
-    </div>
-  </section>
-
-  <!-- 07 FRAMEWORKS -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">07 //</span><h2>Compliance Frameworks Addressed</h2><div class="sec-line"></div></div>
+    <div class="sec-header"><span class="sec-num">06 //</span><h2>Compliance Frameworks Addressed</h2><div class="sec-line"></div></div>
     <p class="prose">The state file maps directly to control references across two frameworks. An assessor can open the JSON and trace each control without additional translation.</p>
     <div class="framework-grid" style="grid-template-columns:1fr 1fr;">
       <div class="framework"><div class="fw-name">NIST 800-53</div><div class="fw-desc">SC-28 · AC-3 · CM-6 · AU-3 · AU-6: encryption, access enforcement, configuration management, and audit logging</div></div>
@@ -381,150 +316,6 @@
   <div class="footer-copy">© 2026</div>
 </footer>
 
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <div class="lightbox-inner" onclick="event.stopPropagation()">
-    <div class="lightbox-close" onclick="closeLightbox()">✕</div>
-    <div class="lightbox-nav lb-prev" onclick="lbNav(-1)">&#8592;</div>
-    <div class="lightbox-nav lb-next" onclick="lbNav(1)">&#8594;</div>
-    <img id="lightboxImg" src="" alt="">
-    <div class="lightbox-caption" id="lightboxCaption"></div>
-  </div>
-</div>
-
-<script>
-// ── SLIDE DATA ──
-// To add your screenshots:
-// 1. Drop your image files into the same folder as this HTML
-// 2. Replace the src values below with your actual filenames
-// 3. Update the caption for each slide
-// Leave src as "" for any slide you haven't filled in yet — it will show a placeholder
-
-const slides = [
-  {
-    src: "screenshot-s3-encryption.png",
-    caption: "01 · SC-28: AES-256 encryption confirmed via get-bucket-encryption"
-  },
-  {
-    src: "screenshot-s3-public-access.png",
-    caption: "02 · AC-3: all four public access flags true via get-public-access-block"
-  },
-  {
-    src: "screenshot-s3-versioning.png",
-    caption: "03 · CM-6: versioning status enabled via get-bucket-versioning"
-  }
-];
-
-let currentSlide = 0;
-
-function renderSlide(idx) {
-  const slide = slides[idx];
-  const display = document.getElementById('slideDisplay');
-  const counter = document.getElementById('carouselCounter');
-  const caption = document.getElementById('carouselCaption');
-
-  counter.textContent = `${idx + 1} / ${slides.length}`;
-
-  if (slide.src) {
-    display.innerHTML = `<img src="${slide.src}" alt="${slide.caption}" style="opacity:0;transition:opacity 0.25s;">`;
-    const img = display.querySelector('img');
-    img.onload = () => { img.style.opacity = 1; };
-  } else {
-    const num = String(idx + 1).padStart(2, '0');
-    display.innerHTML = `
-      <div class="carousel-placeholder">
-        <div class="ph-icon">[${num}]</div>
-        <div class="ph-label">Add screenshot filename to slides[${idx}].src<br>in the script block below</div>
-      </div>`;
-  }
-
-  // Update caption
-  const parts = slide.caption.split('·');
-  if (parts.length > 1) {
-    caption.innerHTML = `<span>${parts[0].trim()} ·</span> ${parts.slice(1).join('·').trim()}`;
-  } else {
-    caption.textContent = slide.caption;
-  }
-
-  // Update nav buttons
-  document.getElementById('prevBtn').classList.toggle('hidden', idx === 0);
-  document.getElementById('nextBtn').classList.toggle('hidden', idx === slides.length - 1);
-
-  // Update thumbnails
-  document.querySelectorAll('.carousel-thumb').forEach((t, i) => {
-    t.classList.toggle('active', i === idx);
-  });
-}
-
-function buildThumbs() {
-  const strip = document.getElementById('thumbStrip');
-  strip.innerHTML = '';
-  slides.forEach((slide, i) => {
-    const thumb = document.createElement('div');
-    thumb.className = 'carousel-thumb' + (i === 0 ? ' active' : '');
-    thumb.onclick = () => { currentSlide = i; renderSlide(i); };
-    if (slide.src) {
-      thumb.innerHTML = `<img src="${slide.src}" alt="">`;
-    } else {
-      thumb.innerHTML = `<div class="thumb-placeholder"><div class="thumb-num">${String(i+1).padStart(2,'0')}</div></div>`;
-    }
-    strip.appendChild(thumb);
-  });
-}
-
-function changeSlide(dir) {
-  const next = currentSlide + dir;
-  if (next >= 0 && next < slides.length) {
-    currentSlide = next;
-    renderSlide(currentSlide);
-  }
-}
-
-// ── LIGHTBOX ──
-function openLightbox(idx) {
-  const slide = slides[idx];
-  if (!slide.src) return; // no image to show yet
-  const lb = document.getElementById('lightbox');
-  document.getElementById('lightboxImg').src = slide.src;
-  document.getElementById('lightboxCaption').textContent = slide.caption;
-  lb.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function lbNav(dir) {
-  let next = currentSlide + dir;
-  while (next >= 0 && next < slides.length && !slides[next].src) {
-    next += dir;
-  }
-  if (next >= 0 && next < slides.length && slides[next].src) {
-    currentSlide = next;
-    renderSlide(currentSlide);
-    document.getElementById('lightboxImg').src = slides[next].src;
-    document.getElementById('lightboxCaption').textContent = slides[next].caption;
-  }
-}
-
-// Keyboard nav
-document.addEventListener('keydown', e => {
-  if (document.getElementById('lightbox').classList.contains('open')) {
-    if (e.key === 'ArrowLeft') lbNav(-1);
-    if (e.key === 'ArrowRight') lbNav(1);
-    if (e.key === 'Escape') closeLightbox();
-  } else {
-    if (e.key === 'ArrowLeft') changeSlide(-1);
-    if (e.key === 'ArrowRight') changeSlide(1);
-  }
-});
-
-// Init
-buildThumbs();
-renderSlide(0);
-</script>
 
 </body>
 </html>
