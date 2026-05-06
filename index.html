@@ -12,8 +12,8 @@
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700&display=swap');
   :root {
     --bg:#0f0f0f;--bg2:#161614;--bg3:#1e1e1a;
-    --coral:#f5d87a;--coral-dim:#8b7020;--coral-muted:#1a1600;
-    --peach:#fce9a0;--text:#ccc8b0;--text-bright:#f5f0dc;--muted:#605848;
+    --coral:#2dd4c8;--coral-dim:#0e8a80;--coral-muted:#001a18;
+    --peach:#9eeae5;--text:#ccc8b0;--text-bright:#f5f0dc;--muted:#605848;
     --border:#222018;--border2:#2e2c1e;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -223,20 +223,22 @@
         </div>
       </div>
 
-      <div class="project" style="opacity:0.45;pointer-events:none;">
+      <div class="project">
         <div class="proj-n">project_02</div>
-        <div class="proj-title">CloudTrail Compliance Validation</div>
-        <div class="proj-desc">Automates CloudTrail configuration validation across all AWS regions — verifying multi-region trail coverage, encryption, log file integrity, and S3 delivery. Classifies trail risks (High/Medium/Low) based on compliance gaps, generates JSON and CSV audit evidence, and provides specific remediation commands for immediate implementation.</div>
+        <div class="proj-title">Compliant S3 Primitive — NIST 800-53 as Terraform</div>
+        <div class="proj-desc">Terraform module enforcing five NIST 800-53 controls — SC-28, AC-3, CM-6, AU-3, AU-6 — directly in infrastructure. After deploy, <code style="font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);">terraform show -json</code> produces machine-readable compliance evidence an auditor can traverse without a console login or a screenshot.</div>
         <div class="tags">
-          <span class="tag">python</span>
-          <span class="tag">aws cloudtrail</span>
-          <span class="tag">boto3</span>
-          <span class="tag">soc 2 cc7.2</span>
-          <span class="tag">nist au</span>
-          <span class="tag">multi-region</span>
+          <span class="tag">terraform</span>
+          <span class="tag">aws s3</span>
+          <span class="tag">kms</span>
+          <span class="tag">nist 800-53</span>
+          <span class="tag">sc-28</span>
+          <span class="tag">iac-as-evidence</span>
+          <span class="tag">hipaa</span>
         </div>
-        <div class="proj-links" style="margin-top:0.5rem;">
-          <span style="font-family:'DM Mono',monospace;font-size:11px;color:#605848;letter-spacing:0.06em;">// in development</span>
+        <div class="proj-links">
+          <a href="walkthrough-s3.html">▶ walkthrough</a>
+          <a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/terraform/primitives/compliant-s3" target="_blank" rel="noopener">github →</a>
         </div>
       </div>
 

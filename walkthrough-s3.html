@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkthrough: Compliant S3 Primitive</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700&display=swap');
+  :root {
+    --bg:#0f0f0f;--bg2:#161614;--bg3:#1e1e1a;
+    --coral:#2dd4c8;--coral-dim:#0e8a80;--coral-muted:#001a18;
+    --peach:#9eeae5;--text:#ccc8b0;--text-bright:#f5f0dc;--muted:#605848;
+    --border:#222018;--border2:#2e2c1e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:15px;line-height:1.75;min-height:100vh;}
+
+  /* NAV */
+  nav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2.8rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .nav-brand{font-family:'DM Mono',monospace;font-size:13px;color:var(--coral);letter-spacing:0.05em;}
+  .nav-brand span{color:var(--muted);}
+  .nav-back{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:0.4rem 0.9rem;border:1px solid transparent;transition:all 0.2s;letter-spacing:0.04em;}
+  .nav-back:hover{color:var(--coral);border-color:var(--border2);}
+
+  /* HERO */
+  .hero{padding:4.5rem 2.8rem 3.5rem;border-bottom:1px solid var(--border2);max-width:900px;margin:0 auto;}
+  .hero-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.8rem;}
+  .hero-label::before{content:'';width:30px;height:1px;background:var(--coral);}
+  .hero-title{font-size:2rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.8rem;}
+  .hero-sub{font-size:15.5px;color:var(--muted);line-height:1.75;max-width:680px;margin-bottom:2rem;}
+  .hero-badges{display:flex;gap:0.5rem;flex-wrap:wrap;}
+  .badge{font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--border2);color:var(--text);letter-spacing:0.04em;transition:all 0.2s;}
+  .badge.hot{border-color:var(--coral-dim);color:var(--coral);}
+  .badge:hover{border-color:var(--coral-dim);color:var(--coral);}
+
+  /* MAIN */
+  main{max-width:900px;margin:0 auto;padding:0 2.8rem 6rem;}
+  .section{padding:3.5rem 0;border-bottom:1px solid var(--border2);}
+  .section:last-child{border-bottom:none;}
+  .sec-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
+  .sec-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.1em;}
+  h2{font-size:17px;font-weight:600;color:var(--text-bright);}
+  .sec-line{flex:1;height:1px;background:var(--border2);}
+
+  /* PROSE */
+  .prose{font-size:15.5px;line-height:1.85;color:var(--text);margin-bottom:1rem;max-width:760px;}
+  .prose strong{color:var(--coral);font-weight:500;}
+  .prose em{color:var(--text-bright);font-style:normal;}
+
+  /* STATS */
+  .stats-row{display:flex;gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .stat{background:var(--bg2);padding:1.4rem 2rem;flex:1;text-align:center;transition:background 0.2s;}
+  .stat:hover{background:var(--bg3);}
+  .stat-num{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;color:var(--coral);line-height:1;margin-bottom:0.4rem;}
+  .stat-label{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.04em;}
+
+  /* DECISION CARDS */
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .decision-card{background:var(--bg2);padding:1.5rem;transition:background 0.2s;position:relative;overflow:hidden;}
+  .decision-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--coral);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .decision-card:hover{background:var(--bg3);}
+  .decision-card:hover::after{transform:scaleX(1);}
+  .dc-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.6rem;}
+  .dc-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.5rem;}
+  .dc-body{font-size:13px;color:var(--text);line-height:1.65;}
+
+  /* CONTROL ROWS */
+  .controls-list{display:grid;gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .control-row{background:var(--bg);padding:1.4rem 1.6rem;display:grid;grid-template-columns:160px 1fr;gap:2rem;align-items:start;transition:background 0.2s;position:relative;overflow:hidden;}
+  .control-row::before{content:'';position:absolute;top:0;left:0;bottom:0;width:0;background:linear-gradient(to right,var(--coral-muted),transparent);transition:width 0.3s;}
+  .control-row:hover{background:var(--bg3);}
+  .control-row:hover::before{width:60px;}
+  .ctrl-id{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);font-weight:500;padding-top:2px;}
+  .ctrl-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .ctrl-desc{font-size:13px;color:var(--text);line-height:1.65;margin-bottom:0.5rem;}
+  .ctrl-impl{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+  .ctrl-impl span{color:var(--coral-dim);}
+
+  /* DECISION TABLE */
+  .decision-table{width:100%;border-collapse:collapse;margin-top:1.8rem;}
+  .decision-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;text-align:left;padding:0.8rem 1.2rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .decision-table td{font-size:13.5px;color:var(--text);padding:1rem 1.2rem;border-bottom:1px solid var(--border2);line-height:1.65;vertical-align:top;}
+  .decision-table tr:hover td{background:var(--bg3);}
+  .decision-table td:first-child{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral-dim);white-space:nowrap;}
+
+  /* CODE BLOCK */
+  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:1.4rem 1.6rem;margin-top:1.6rem;font-family:'DM Mono',monospace;font-size:12.5px;line-height:1.8;overflow-x:auto;}
+  .code-label{font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.8rem;}
+  .c-comment{color:var(--muted);}
+  .c-key{color:var(--coral);}
+  .c-val{color:var(--text-bright);}
+  .c-str{color:var(--peach);}
+  .c-attr{color:var(--coral-dim);}
+
+  /* CALLOUT */
+  .callout{background:var(--coral-muted);border:1px solid var(--coral-dim);border-left:3px solid var(--coral);padding:1.2rem 1.4rem;margin-top:1.8rem;display:flex;gap:1rem;align-items:flex-start;}
+  .callout-icon{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);flex-shrink:0;padding-top:2px;}
+  .callout-body{font-size:14px;color:var(--text);line-height:1.7;}
+  .callout-body strong{color:var(--coral);}
+
+  /* FRAMEWORK GRID */
+  .framework-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .framework{background:var(--bg);padding:1.2rem 1.4rem;transition:background 0.2s;}
+  .framework:hover{background:var(--coral-muted);}
+  .fw-name{font-family:'DM Mono',monospace;font-size:13px;color:var(--coral);font-weight:500;margin-bottom:0.3rem;}
+  .fw-desc{font-size:12px;color:var(--muted);line-height:1.55;}
+
+  /* ── CAROUSEL ── */
+  .carousel-section{margin-top:1.8rem;}
+  .carousel-main{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);position:relative;overflow:hidden;cursor:zoom-in;}
+  .carousel-main img{width:100%;display:block;border:0;transition:opacity 0.25s;}
+  .carousel-main .carousel-placeholder{width:100%;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;background:var(--bg2);}
+  .carousel-placeholder .ph-icon{font-family:'DM Mono',monospace;font-size:2rem;color:var(--border2);}
+  .carousel-placeholder .ph-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-align:center;line-height:1.8;}
+
+  .carousel-nav{position:absolute;top:50%;transform:translateY(-50%);background:var(--bg2);border:1px solid var(--border2);color:var(--coral);font-size:18px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;z-index:2;user-select:none;}
+  .carousel-nav:hover{background:var(--coral-muted);border-color:var(--coral-dim);}
+  .carousel-nav.prev{left:10px;}
+  .carousel-nav.next{right:10px;}
+  .carousel-nav.hidden{opacity:0;pointer-events:none;}
+
+  .carousel-counter{position:absolute;bottom:10px;right:12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);background:var(--bg2);border:1px solid var(--border2);padding:3px 10px;letter-spacing:0.08em;}
+
+  .carousel-strip{display:flex;gap:1px;background:var(--border2);margin-top:1px;overflow-x:auto;}
+  .carousel-thumb{flex:0 0 calc(20% - 1px);aspect-ratio:16/9;background:var(--bg);border:0;cursor:pointer;overflow:hidden;opacity:0.45;transition:opacity 0.2s;position:relative;}
+  .carousel-thumb.active{opacity:1;}
+  .carousel-thumb:hover{opacity:0.8;}
+  .carousel-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .carousel-thumb .thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.06em;flex-direction:column;gap:4px;}
+  .carousel-thumb .thumb-num{font-size:14px;color:var(--border2);}
+  .carousel-caption{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.06em;padding:0.7rem 0 0;line-height:1.6;}
+  .carousel-caption span{color:var(--coral-dim);}
+
+  /* ── LIGHTBOX ── */
+  .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:999;align-items:center;justify-content:center;padding:2rem;}
+  .lightbox.open{display:flex;}
+  .lightbox-inner{position:relative;max-width:95vw;max-height:90vh;}
+  .lightbox-inner img{max-width:95vw;max-height:88vh;display:block;border:1px solid var(--border2);}
+  .lightbox-close{position:absolute;top:-16px;right:-16px;width:32px;height:32px;background:var(--bg2);border:1px solid var(--border2);color:var(--coral);font-family:'DM Mono',monospace;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;z-index:1000;}
+  .lightbox-close:hover{background:var(--coral-muted);border-color:var(--coral);}
+  .lightbox-caption{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;margin-top:0.8rem;letter-spacing:0.06em;}
+  .lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);background:var(--bg2);border:1px solid var(--border2);color:var(--coral);font-size:18px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;}
+  .lightbox-nav:hover{background:var(--coral-muted);}
+  .lightbox-nav.lb-prev{left:-50px;}
+  .lightbox-nav.lb-next{right:-50px;}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border2);padding:2rem 2.8rem;max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+  .footer-brand{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+  .footer-brand span{color:var(--coral);}
+  .footer-copy{font-family:'DM Mono',monospace;font-size:11px;color:var(--border2);}
+
+  @media(max-width:720px){
+    .hero,main,footer{padding-left:1.4rem;padding-right:1.4rem;}
+    nav{padding:0 1.4rem;}
+    .decision-grid{grid-template-columns:1fr;}
+    .control-row{grid-template-columns:1fr;}
+    .framework-grid{grid-template-columns:1fr 1fr;}
+    .stats-row{flex-wrap:wrap;}
+    .lightbox-nav.lb-prev{left:-10px;}
+    .lightbox-nav.lb-next{right:-10px;}
+    .carousel-thumb{flex:0 0 calc(33.33% - 1px);}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Shayl<span>.Taveras</span></div>
+  <a class="nav-back" href="index.html">← back</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">project_02 · walkthrough</div>
+  <div class="hero-title">Compliant S3 Primitive</div>
+  <p class="hero-sub">Five NIST 800-53 controls expressed as Terraform. One JSON file replaces every screenshot an auditor would otherwise request.</p>
+  <div class="hero-badges">
+    <span class="badge hot">terraform</span>
+    <span class="badge hot">nist 800-53</span>
+    <span class="badge">aws s3</span>
+    <span class="badge">kms</span>
+    <span class="badge">opa</span>
+    <span class="badge">iac-as-evidence</span>
+    <span class="badge">hipaa</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- 01 PROBLEM -->
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">01 //</span><h2>The Problem</h2><div class="sec-line"></div></div>
+    <p class="prose">Most compliance evidence is still screenshots and spreadsheets: point-in-time captures that are manual, easy to fake, and impossible to diff. When an auditor asks "prove S3 encryption is on," the default response is a console screenshot with a timestamp. It tells you the state at that moment. It says nothing about tomorrow.</p>
+    <p class="prose">The goal: encode the control requirement directly into the infrastructure so the enforcement and the evidence are the same artifact. <strong>The Terraform is the policy. The state file is the proof.</strong></p>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">controls enforced</div></div>
+      <div class="stat"><div class="stat-num">11</div><div class="stat-label">resources provisioned</div></div>
+      <div class="stat"><div class="stat-num">0</div><div class="stat-label">screenshots needed</div></div>
+      <div class="stat"><div class="stat-num">1</div><div class="stat-label">JSON file = all evidence</div></div>
+    </div>
+  </section>
+
+  <!-- 02 DESIGN DECISION -->
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">02 //</span><h2>The Architecture Decision</h2><div class="sec-line"></div></div>
+    <p class="prose">The choice to use Terraform over a Python script or console configuration is a GRC-informed infrastructure decision. Terraform state is machine-readable, versionable, and diffable. A console config is a fact; Terraform state is a <strong>verifiable, repeatable record</strong> of that fact.</p>
+    <div class="decision-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="decision-card">
+        <div class="dc-label">enforcement</div>
+        <div class="dc-title">IaC as Policy</div>
+        <div class="dc-body">Controls aren't documented alongside the code. They are the code. SC-28 isn't a note in a README; it's an <code>aws_s3_bucket_server_side_encryption_configuration</code> block that fails to apply if removed.</div>
+      </div>
+      <div class="decision-card">
+        <div class="dc-label">evidence</div>
+        <div class="dc-title">State as Artifact</div>
+        <div class="dc-body"><code>terraform show -json</code> produces a structured state file where an auditor can trace SC-28 to the SSE config, AC-3 to four explicit denies, and AU-3 to the logging target, all in a single JSON traversal.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 FIVE CONTROLS -->
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">03 //</span><h2>The Five Controls</h2><div class="sec-line"></div></div>
+    <p class="prose">Each control maps to a specific Terraform resource. The comment in the code cites the control ID so any engineer reading a failed PR knows exactly what compliance requirement they broke.</p>
+    <div class="controls-list">
+      <div class="control-row">
+        <div class="ctrl-id">SC-28</div>
+        <div>
+          <div class="ctrl-title">Protection of Information at Rest</div>
+          <div class="ctrl-desc">AES-256 server-side encryption enforced via <code>aws_s3_bucket_server_side_encryption_configuration</code>. All four flags on the public access block must be <code>true</code>. Three is not enough. AWS treats them as independent doors.</div>
+          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_server_side_encryption_configuration.primary</span></div>
+        </div>
+      </div>
+      <div class="control-row">
+        <div class="ctrl-id">AC-3</div>
+        <div>
+          <div class="ctrl-title">Access Enforcement</div>
+          <div class="ctrl-desc">Explicit deny on every public access vector via <code>aws_s3_bucket_public_access_block</code>. All four flags set to <code>true</code>: <code>block_public_acls</code>, <code>block_public_policy</code>, <code>ignore_public_acls</code>, <code>restrict_public_buckets</code>.</div>
+          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_public_access_block.primary</span></div>
+        </div>
+      </div>
+      <div class="control-row">
+        <div class="ctrl-id">CM-6</div>
+        <div>
+          <div class="ctrl-title">Configuration Settings</div>
+          <div class="ctrl-desc">Two mechanisms. Versioning preserves prior object states for recovery and audit. Compliance tags (<code>Project</code>, <code>Environment</code>, <code>ManagedBy</code>, <code>ComplianceScope</code>) are set on the provider with <code>default_tags</code>, making them non-optional on every taggable resource.</div>
+          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_versioning.primary · provider default_tags</span></div>
+        </div>
+      </div>
+      <div class="control-row">
+        <div class="ctrl-id">AU-3</div>
+        <div>
+          <div class="ctrl-title">Content of Audit Records</div>
+          <div class="ctrl-desc">S3 server access logging routes to a dedicated log bucket. Logs in the same bucket could be deleted or overwritten alongside the data they record. Separation makes the audit trail harder to tamper with.</div>
+          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_logging.primary · aws_s3_bucket.log</span></div>
+        </div>
+      </div>
+      <div class="control-row">
+        <div class="ctrl-id">AU-6</div>
+        <div>
+          <div class="ctrl-title">Audit Record Review, Analysis, and Reporting</div>
+          <div class="ctrl-desc">The log bucket is independently hardened. Its own encryption configuration and public access block ensure the audit trail itself meets the same baseline as the data bucket. An unsecured log bucket is an audit finding waiting to happen.</div>
+          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_server_side_encryption_configuration.log · aws_s3_bucket_public_access_block.log</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 TECHNICAL DECISIONS -->
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">04 //</span><h2>Key Technical Decisions</h2><div class="sec-line"></div></div>
+    <p class="prose">Every non-obvious choice in the module has a specific reason rooted in either compliance defensibility or operational reliability, not preference.</p>
+    <table class="decision-table">
+      <thead>
+        <tr><th>Decision</th><th>Reasoning</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>default_tags on provider</td>
+          <td>Compliance tags are non-optional. Setting them once on the provider eliminates the risk of any resource being deployed untagged, a single source of truth rather than a per-resource tax.</td>
+        </tr>
+        <tr>
+          <td>Separate log bucket</td>
+          <td>Logs in the same bucket as the data they record can be deleted or overwritten in the same operation. Separation makes the audit trail harder to tamper with and is what most framework auditors expect.</td>
+        </tr>
+        <tr>
+          <td>random_id suffix</td>
+          <td>S3 bucket names are globally unique across all AWS accounts. A random suffix prevents name collisions on first deploy without manual coordination across environments.</td>
+        </tr>
+        <tr>
+          <td>one() expression</td>
+          <td>Terraform stores SSE rules as a set, not an indexable list. <code>one()</code> safely extracts the single element and fails loudly if configuration drift ever adds a second rule, catching misconfiguration at output time, not at audit time.</td>
+        </tr>
+        <tr>
+          <td>terraform show -json</td>
+          <td>Machine-readable state is more auditable than screenshots. It can be parsed, diffed, and verified programmatically by OPA in later labs. The JSON is the evidence artifact, not a byproduct of deployment.</td>
+        </tr>
+        <tr>
+          <td>Variable validation blocks</td>
+          <td>Catches bad inputs (wrong environment name, invalid project name) at plan time with clear error messages rather than cryptic AWS API failures at apply time. Fail early, fail clearly.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 05 THE EVIDENCE -->
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">05 //</span><h2>The Evidence Output</h2><div class="sec-line"></div></div>
+    <p class="prose">After a successful apply, two commands capture machine-readable compliance evidence. No console login. No screenshots. The state file is a structured JSON record an auditor or OPA policy to traverse programmatically.</p>
+    <div class="code-block">
+      <div class="code-label">// capture evidence — runs after every apply</div>
+      <div><span class="c-comment"># Capture the plan artifact</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">show -json</span> <span class="c-attr">tfplan</span> &gt; <span class="c-str">evidence/plan.json</span></div>
+      <br>
+      <div><span class="c-comment"># Capture live state — this IS the compliance attestation</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">show -json</span> &gt; <span class="c-str">evidence/state.json</span></div>
+    </div>
+    <div class="code-block" style="margin-top:1px;">
+      <div class="code-label">// what an auditor finds in state.json</div>
+      <div><span class="c-comment"># SC-28 — encryption at rest</span></div>
+      <div><span class="c-attr">"sse_algorithm"</span>: <span class="c-str">"AES256"</span></div>
+      <br>
+      <div><span class="c-comment"># AC-3 — all four public access denies</span></div>
+      <div><span class="c-attr">"block_public_acls"</span>: <span class="c-val">true</span>,</div>
+      <div><span class="c-attr">"block_public_policy"</span>: <span class="c-val">true</span>,</div>
+      <div><span class="c-attr">"ignore_public_acls"</span>: <span class="c-val">true</span>,</div>
+      <div><span class="c-attr">"restrict_public_buckets"</span>: <span class="c-val">true</span></div>
+      <br>
+      <div><span class="c-comment"># CM-6 — versioning and tags</span></div>
+      <div><span class="c-attr">"versioning_configuration"</span>: [{ <span class="c-attr">"status"</span>: <span class="c-str">"Enabled"</span> }]</div>
+      <div><span class="c-attr">"tags"</span>: { <span class="c-attr">"ComplianceScope"</span>: <span class="c-str">"cge-p-lab"</span>, <span class="c-attr">"ManagedBy"</span>: <span class="c-str">"terraform"</span> }</div>
+      <br>
+      <div><span class="c-comment"># AU-3 — logging target confirmed</span></div>
+      <div><span class="c-attr">"logging"</span>: [{ <span class="c-attr">"target_bucket"</span>: <span class="c-str">"cgep-lab-dev-logs-XXXXXXXX"</span> }]</div>
+    </div>
+    <div class="callout" style="margin-top:1.8rem;">
+      <div class="callout-icon">// key insight</div>
+      <div class="callout-body"><strong>terraform show -json output IS the audit artifact.</strong> The same tool that deploys the infrastructure produces a structured record of its compliance state. The enforcement step and the evidence step are a single command, not two separate workflows that can drift apart.</div>
+    </div>
+  </section>
+
+  <!-- 06 SCREENSHOTS -->
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">06 //</span><h2>Lab Results</h2><div class="sec-line"></div></div>
+    <p class="prose">Verification output from the deployed module: AWS API responses confirming each control is in effect. Click any image to expand to full size.</p>
+
+    <div class="carousel-section">
+      <!-- Main view -->
+      <div class="carousel-main" id="carouselMain" onclick="openLightbox(currentSlide)">
+        <div class="carousel-nav prev" id="prevBtn" onclick="event.stopPropagation();changeSlide(-1)">&#8592;</div>
+        <div class="carousel-nav next" id="nextBtn" onclick="event.stopPropagation();changeSlide(1)">&#8594;</div>
+        <div class="carousel-counter" id="carouselCounter">1 / 5</div>
+        <!-- Slides injected by JS -->
+        <div id="slideDisplay"></div>
+      </div>
+
+      <!-- Thumbnail strip -->
+      <div class="carousel-strip" id="thumbStrip"></div>
+
+      <!-- Caption -->
+      <div class="carousel-caption" id="carouselCaption"></div>
+    </div>
+  </section>
+
+  <!-- 07 FRAMEWORKS -->
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">07 //</span><h2>Compliance Frameworks Addressed</h2><div class="sec-line"></div></div>
+    <p class="prose">The state file maps directly to control references across two frameworks. An assessor can open the JSON and trace each control without additional translation.</p>
+    <div class="framework-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="framework"><div class="fw-name">NIST 800-53</div><div class="fw-desc">SC-28 · AC-3 · CM-6 · AU-3 · AU-6: encryption, access enforcement, configuration management, and audit logging</div></div>
+      <div class="framework"><div class="fw-name">HIPAA</div><div class="fw-desc">§164.312(a)(2)(iv) Encryption and Decryption · §164.312(b) Audit Controls: technical safeguards for PHI at rest and audit trail integrity</div></div>
+    </div>
+  </section>
+
+
+</main>
+
+<footer>
+  <div class="footer-brand">Shayl<span>.Taveras</span></div>
+  <div class="footer-copy">© 2026</div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-inner" onclick="event.stopPropagation()">
+    <div class="lightbox-close" onclick="closeLightbox()">✕</div>
+    <div class="lightbox-nav lb-prev" onclick="lbNav(-1)">&#8592;</div>
+    <div class="lightbox-nav lb-next" onclick="lbNav(1)">&#8594;</div>
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
+
+<script>
+// ── SLIDE DATA ──
+// To add your screenshots:
+// 1. Drop your image files into the same folder as this HTML
+// 2. Replace the src values below with your actual filenames
+// 3. Update the caption for each slide
+// Leave src as "" for any slide you haven't filled in yet — it will show a placeholder
+
+const slides = [
+  {
+    src: "",   // e.g. "screenshot-s3-01.png"
+    caption: "01 · terraform apply: 11 resources provisioned"
+  },
+  {
+    src: "",
+    caption: "02 · aws s3api get-bucket-encryption: SC-28 confirmed"
+  },
+  {
+    src: "",
+    caption: "03 · aws s3api get-bucket-versioning: CM-6 confirmed"
+  },
+  {
+    src: "",
+    caption: "04 · aws s3api get-public-access-block: AC-3 confirmed (all 4 flags true)"
+  },
+  {
+    src: "",
+    caption: "05 · evidence/state.json: machine-readable compliance record"
+  }
+];
+
+let currentSlide = 0;
+
+function renderSlide(idx) {
+  const slide = slides[idx];
+  const display = document.getElementById('slideDisplay');
+  const counter = document.getElementById('carouselCounter');
+  const caption = document.getElementById('carouselCaption');
+
+  counter.textContent = `${idx + 1} / ${slides.length}`;
+
+  if (slide.src) {
+    display.innerHTML = `<img src="${slide.src}" alt="${slide.caption}" style="opacity:0;transition:opacity 0.25s;">`;
+    const img = display.querySelector('img');
+    img.onload = () => { img.style.opacity = 1; };
+  } else {
+    const num = String(idx + 1).padStart(2, '0');
+    display.innerHTML = `
+      <div class="carousel-placeholder">
+        <div class="ph-icon">[${num}]</div>
+        <div class="ph-label">Add screenshot filename to slides[${idx}].src<br>in the script block below</div>
+      </div>`;
+  }
+
+  // Update caption
+  const parts = slide.caption.split('·');
+  if (parts.length > 1) {
+    caption.innerHTML = `<span>${parts[0].trim()} ·</span> ${parts.slice(1).join('·').trim()}`;
+  } else {
+    caption.textContent = slide.caption;
+  }
+
+  // Update nav buttons
+  document.getElementById('prevBtn').classList.toggle('hidden', idx === 0);
+  document.getElementById('nextBtn').classList.toggle('hidden', idx === slides.length - 1);
+
+  // Update thumbnails
+  document.querySelectorAll('.carousel-thumb').forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+  });
+}
+
+function buildThumbs() {
+  const strip = document.getElementById('thumbStrip');
+  strip.innerHTML = '';
+  slides.forEach((slide, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'carousel-thumb' + (i === 0 ? ' active' : '');
+    thumb.onclick = () => { currentSlide = i; renderSlide(i); };
+    if (slide.src) {
+      thumb.innerHTML = `<img src="${slide.src}" alt="">`;
+    } else {
+      thumb.innerHTML = `<div class="thumb-placeholder"><div class="thumb-num">${String(i+1).padStart(2,'0')}</div></div>`;
+    }
+    strip.appendChild(thumb);
+  });
+}
+
+function changeSlide(dir) {
+  const next = currentSlide + dir;
+  if (next >= 0 && next < slides.length) {
+    currentSlide = next;
+    renderSlide(currentSlide);
+  }
+}
+
+// ── LIGHTBOX ──
+function openLightbox(idx) {
+  const slide = slides[idx];
+  if (!slide.src) return; // no image to show yet
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = slide.src;
+  document.getElementById('lightboxCaption').textContent = slide.caption;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function lbNav(dir) {
+  let next = currentSlide + dir;
+  while (next >= 0 && next < slides.length && !slides[next].src) {
+    next += dir;
+  }
+  if (next >= 0 && next < slides.length && slides[next].src) {
+    currentSlide = next;
+    renderSlide(currentSlide);
+    document.getElementById('lightboxImg').src = slides[next].src;
+    document.getElementById('lightboxCaption').textContent = slides[next].caption;
+  }
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lightbox').classList.contains('open')) {
+    if (e.key === 'ArrowLeft') lbNav(-1);
+    if (e.key === 'ArrowRight') lbNav(1);
+    if (e.key === 'Escape') closeLightbox();
+  } else {
+    if (e.key === 'ArrowLeft') changeSlide(-1);
+    if (e.key === 'ArrowRight') changeSlide(1);
+  }
+});
+
+// Init
+buildThumbs();
+renderSlide(0);
+</script>
+
+</body>
+</html>
