@@ -402,24 +402,16 @@
 
 const slides = [
   {
-    src: "",   // e.g. "screenshot-s3-01.png"
-    caption: "01 · terraform apply: 11 resources provisioned"
+    src: "screenshot-s3-encryption.png",
+    caption: "01 · SC-28: AES-256 encryption confirmed via get-bucket-encryption"
   },
   {
-    src: "",
-    caption: "02 · aws s3api get-bucket-encryption: SC-28 confirmed"
+    src: "screenshot-s3-public-access.png",
+    caption: "02 · AC-3: all four public access flags true via get-public-access-block"
   },
   {
-    src: "",
-    caption: "03 · aws s3api get-bucket-versioning: CM-6 confirmed"
-  },
-  {
-    src: "",
-    caption: "04 · aws s3api get-public-access-block: AC-3 confirmed (all 4 flags true)"
-  },
-  {
-    src: "",
-    caption: "05 · evidence/state.json: machine-readable compliance record"
+    src: "screenshot-s3-versioning.png",
+    caption: "03 · CM-6: versioning status enabled via get-bucket-versioning"
   }
 ];
 
