@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Walkthrough: Compliant S3 Primitive</title>
+<title>Walkthrough — Compliant S3 Primitive</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700&display=swap');
   :root {
@@ -15,26 +15,19 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:15px;line-height:1.75;min-height:100vh;}
-
-  /* NAV */
-  nav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2.8rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  nav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2.8rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
   .nav-brand{font-family:'DM Mono',monospace;font-size:13px;color:var(--coral);letter-spacing:0.05em;}
   .nav-brand span{color:var(--muted);}
   .nav-back{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:0.4rem 0.9rem;border:1px solid transparent;transition:all 0.2s;letter-spacing:0.04em;}
   .nav-back:hover{color:var(--coral);border-color:var(--border2);}
-
-  /* HERO */
   .hero{padding:4.5rem 2.8rem 3.5rem;border-bottom:1px solid var(--border2);max-width:900px;margin:0 auto;}
   .hero-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.8rem;}
   .hero-label::before{content:'';width:30px;height:1px;background:var(--coral);}
   .hero-title{font-size:2rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.8rem;}
-  .hero-sub{font-size:15.5px;color:var(--muted);line-height:1.75;max-width:680px;margin-bottom:2rem;}
+  .hero-sub{font-size:15.5px;color:var(--muted);line-height:1.75;max-width:700px;margin-bottom:2rem;}
   .hero-badges{display:flex;gap:0.5rem;flex-wrap:wrap;}
-  .badge{font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--border2);color:var(--text);letter-spacing:0.04em;transition:all 0.2s;}
+  .badge{font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--border2);color:var(--text);letter-spacing:0.04em;}
   .badge.hot{border-color:var(--coral-dim);color:var(--coral);}
-  .badge:hover{border-color:var(--coral-dim);color:var(--coral);}
-
-  /* MAIN */
   main{max-width:900px;margin:0 auto;padding:0 2.8rem 6rem;}
   .section{padding:3.5rem 0;border-bottom:1px solid var(--border2);}
   .section:last-child{border-bottom:none;}
@@ -42,21 +35,9 @@
   .sec-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.1em;}
   h2{font-size:17px;font-weight:600;color:var(--text-bright);}
   .sec-line{flex:1;height:1px;background:var(--border2);}
-
-  /* PROSE */
   .prose{font-size:15.5px;line-height:1.85;color:var(--text);margin-bottom:1rem;max-width:760px;}
   .prose strong{color:var(--coral);font-weight:500;}
-  .prose em{color:var(--text-bright);font-style:normal;}
-
-  /* STATS */
-  .stats-row{display:flex;gap:1px;background:var(--border2);margin-top:1.8rem;}
-  .stat{background:var(--bg2);padding:1.4rem 2rem;flex:1;text-align:center;transition:background 0.2s;}
-  .stat:hover{background:var(--bg3);}
-  .stat-num{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;color:var(--coral);line-height:1;margin-bottom:0.4rem;}
-  .stat-label{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.04em;}
-
-  /* DECISION CARDS */
-  .decision-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border2);margin-top:1.8rem;}
   .decision-card{background:var(--bg2);padding:1.5rem;transition:background 0.2s;position:relative;overflow:hidden;}
   .decision-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--coral);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
   .decision-card:hover{background:var(--bg3);}
@@ -64,83 +45,65 @@
   .dc-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.6rem;}
   .dc-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.5rem;}
   .dc-body{font-size:13px;color:var(--text);line-height:1.65;}
-
-  /* CONTROL ROWS */
-  .controls-list{display:grid;gap:1px;background:var(--border2);margin-top:1.8rem;}
-  .control-row{background:var(--bg);padding:1.4rem 1.6rem;display:grid;grid-template-columns:160px 1fr;gap:2rem;align-items:start;transition:background 0.2s;position:relative;overflow:hidden;}
-  .control-row::before{content:'';position:absolute;top:0;left:0;bottom:0;width:0;background:linear-gradient(to right,var(--coral-muted),transparent);transition:width 0.3s;}
-  .control-row:hover{background:var(--bg3);}
-  .control-row:hover::before{width:60px;}
-  .ctrl-id{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);font-weight:500;padding-top:2px;}
-  .ctrl-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
-  .ctrl-desc{font-size:13px;color:var(--text);line-height:1.65;margin-bottom:0.5rem;}
-  .ctrl-impl{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
-  .ctrl-impl span{color:var(--coral-dim);}
-
-  /* DECISION TABLE */
-  .decision-table{width:100%;border-collapse:collapse;margin-top:1.8rem;}
-  .decision-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;text-align:left;padding:0.8rem 1.2rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
-  .decision-table td{font-size:13.5px;color:var(--text);padding:1rem 1.2rem;border-bottom:1px solid var(--border2);line-height:1.65;vertical-align:top;}
-  .decision-table tr:hover td{background:var(--bg3);}
-  .decision-table td:first-child{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral-dim);white-space:nowrap;}
-
-  /* CODE BLOCK */
+  .controls-table{width:100%;border-collapse:collapse;margin-top:1.8rem;font-size:13.5px;}
+  .controls-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;text-align:left;padding:0.7rem 1rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .controls-table td{padding:0.9rem 1rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .controls-table tr:hover td{background:var(--bg2);}
+  .controls-table td:first-child{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);white-space:nowrap;}
+  .controls-table td:nth-child(2){font-family:'DM Mono',monospace;font-size:12px;color:var(--text-bright);white-space:nowrap;}
+  .findings-list{display:grid;gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .finding{background:var(--bg);padding:1.4rem 1.6rem;display:grid;grid-template-columns:160px 1fr;gap:2rem;align-items:start;transition:background 0.2s;position:relative;overflow:hidden;}
+  .finding::before{content:'';position:absolute;top:0;left:0;bottom:0;width:0;background:linear-gradient(to right,var(--coral-muted),transparent);transition:width 0.3s;}
+  .finding:hover{background:var(--bg3);}
+  .finding:hover::before{width:60px;}
+  .finding-source{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);font-weight:500;padding-top:2px;}
+  .finding-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .finding-desc{font-size:13px;color:var(--text);line-height:1.65;}
   .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:1.4rem 1.6rem;margin-top:1.6rem;font-family:'DM Mono',monospace;font-size:12.5px;line-height:1.8;overflow-x:auto;}
   .code-label{font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.8rem;}
   .c-comment{color:var(--muted);}
   .c-key{color:var(--coral);}
   .c-val{color:var(--text-bright);}
   .c-str{color:var(--peach);}
-  .c-attr{color:var(--coral-dim);}
-
-  /* CALLOUT */
   .callout{background:var(--coral-muted);border:1px solid var(--coral-dim);border-left:3px solid var(--coral);padding:1.2rem 1.4rem;margin-top:1.8rem;display:flex;gap:1rem;align-items:flex-start;}
   .callout-icon{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);flex-shrink:0;padding-top:2px;}
   .callout-body{font-size:14px;color:var(--text);line-height:1.7;}
   .callout-body strong{color:var(--coral);}
-
-  /* FRAMEWORK GRID */
-  .framework-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);margin-top:1.8rem;}
-  .framework{background:var(--bg);padding:1.2rem 1.4rem;transition:background 0.2s;}
-  .framework:hover{background:var(--coral-muted);}
-  .fw-name{font-family:'DM Mono',monospace;font-size:13px;color:var(--coral);font-weight:500;margin-bottom:0.3rem;}
-  .fw-desc{font-size:12px;color:var(--muted);line-height:1.55;}
-  /* FOOTER */
+  .arch-wrap{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:2.5rem 2rem;margin-top:1.8rem;overflow-x:auto;}
+  .arch-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:2rem;}
+  svg.arch{width:100%;max-width:780px;display:block;margin:0 auto;}
+  .stats-row{display:flex;gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .stat{background:var(--bg2);padding:1.4rem 2rem;flex:1;text-align:center;transition:background 0.2s;}
+  .stat:hover{background:var(--bg3);}
+  .stat-num{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;color:var(--coral);line-height:1;margin-bottom:0.4rem;}
+  .stat-label{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.04em;}
+  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:1.4rem 1.6rem;margin-top:1.8rem;font-family:'DM Mono',monospace;font-size:12.5px;line-height:2.1;}
+  .ft-dir{color:var(--coral);}
+  .ft-file{color:var(--text);}
+  .ft-comment{color:var(--muted);}
   footer{border-top:1px solid var(--border2);padding:2rem 2.8rem;max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
   .footer-brand{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
   .footer-brand span{color:var(--coral);}
   .footer-copy{font-family:'DM Mono',monospace;font-size:11px;color:var(--border2);}
-
-  @media(max-width:720px){
-    .hero,main,footer{padding-left:1.4rem;padding-right:1.4rem;}
-    nav{padding:0 1.4rem;}
-    .decision-grid{grid-template-columns:1fr;}
-    .control-row{grid-template-columns:1fr;}
-    .framework-grid{grid-template-columns:1fr 1fr;}
-    .stats-row{flex-wrap:wrap;}
-
-  }
+  @media(max-width:700px){nav,.hero,main,footer{padding-left:1.4rem;padding-right:1.4rem;}.decision-grid{grid-template-columns:1fr;}.finding{grid-template-columns:1fr;}.stats-row{flex-direction:column;}.hero-title{font-size:1.6rem;}}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-brand">Shayl<span>.Taveras</span></div>
-  <a class="nav-back" href="index.html">← back</a>
+  <a href="index.html" class="nav-back">back to portfolio</a>
 </nav>
 
 <div class="hero">
-  <div class="hero-label">project_02 · walkthrough</div>
-  <div class="hero-title">Compliant S3 Primitive</div>
-  <p class="hero-sub">Five NIST 800-53 controls expressed as Terraform. One JSON file replaces every screenshot an auditor would otherwise request.</p>
+  <div class="hero-label">Project Walkthrough</div>
+  <div class="hero-title">Compliant S3 Primitive — NIST 800-53 as Terraform</div>
+  <p class="hero-sub">A Terraform module that enforces five NIST 800-53 controls directly into every AWS S3 bucket it provisions. After apply, <code style="font-family:'DM Mono',monospace;color:var(--coral);font-size:13px;">terraform show -json</code> produces machine-readable compliance evidence an auditor can traverse without a console login or a screenshot.</p>
   <div class="hero-badges">
     <span class="badge hot">terraform</span>
+    <span class="badge hot">aws s3</span>
     <span class="badge hot">nist 800-53</span>
-    <span class="badge">aws s3</span>
-    <span class="badge">kms</span>
-    <span class="badge">opa</span>
-    <span class="badge">iac-as-evidence</span>
-    <span class="badge">hipaa</span>
+    <span class="badge">kms · iac-as-evidence · hipaa</span>
   </div>
 </div>
 
@@ -148,166 +111,225 @@
 
   <!-- 01 PROBLEM -->
   <section class="section">
-    <div class="sec-header"><span class="sec-num">01 //</span><h2>The Problem</h2><div class="sec-line"></div></div>
-    <p class="prose">Most compliance evidence is still screenshots and spreadsheets: point-in-time captures that are manual, easy to fake, and impossible to diff. When an auditor asks "prove S3 encryption is on," the default response is a console screenshot with a timestamp. It tells you the state at that moment. It says nothing about tomorrow.</p>
-    <p class="prose">The goal: encode the control requirement directly into the infrastructure so the enforcement and the evidence are the same artifact. <strong>The Terraform is the policy. The state file is the proof.</strong></p>
-    <div class="stats-row">
-      <div class="stat"><div class="stat-num">5</div><div class="stat-label">controls enforced</div></div>
-      <div class="stat"><div class="stat-num">11</div><div class="stat-label">resources provisioned</div></div>
-      <div class="stat"><div class="stat-num">0</div><div class="stat-label">screenshots needed</div></div>
-      <div class="stat"><div class="stat-num">1</div><div class="stat-label">JSON file = all evidence</div></div>
-    </div>
+    <div class="sec-header"><span class="sec-num">01 //</span><h2>Problem Statement</h2><div class="sec-line"></div></div>
+    <p class="prose">Every auditor eventually asks the same question: "Show me that your S3 buckets are encrypted, access-controlled, and logging." The typical answer is a console screenshot taken that morning — a point-in-time artifact with no chain of custody, no version history, and no way to prove the configuration was in place before the audit started.</p>
+    <p class="prose">This primitive inverts that. <strong>The Terraform state is the evidence.</strong> Because the controls are defined in code and applied through a plan-and-apply cycle, the configuration is version-controlled, repeatable, and machine-readable. An auditor can read the state file directly — no console access required, no screenshots involved.</p>
   </section>
 
-  <!-- 02 DESIGN DECISION -->
+  <!-- 02 ARCHITECTURE -->
   <section class="section">
-    <div class="sec-header"><span class="sec-num">02 //</span><h2>The Architecture Decision</h2><div class="sec-line"></div></div>
-    <p class="prose">The choice to use Terraform over a Python script or console configuration is a GRC-informed infrastructure decision. Terraform state is machine-readable, versionable, and diffable. A console config is a fact; Terraform state is a <strong>verifiable, repeatable record</strong> of that fact.</p>
-    <div class="decision-grid" style="grid-template-columns:1fr 1fr;">
+    <div class="sec-header"><span class="sec-num">02 //</span><h2>Architecture Decision</h2><div class="sec-line"></div></div>
+    <p class="prose">The core insight is that Terraform both enforces the control and generates the audit artifact in a single step. There is no gap between what was deployed and what the evidence says.</p>
+
+    <div class="decision-grid">
       <div class="decision-card">
-        <div class="dc-label">enforcement</div>
-        <div class="dc-title">IaC as Policy</div>
-        <div class="dc-body">Controls aren't documented alongside the code. They are the code. SC-28 isn't a note in a README; it's an <code>aws_s3_bucket_server_side_encryption_configuration</code> block that fails to apply if removed.</div>
+        <div class="dc-label">// iac as evidence</div>
+        <div class="dc-title">One Step: Deploy and Attest</div>
+        <div class="dc-body">terraform apply enforces the controls. terraform show -json produces the evidence. Both happen in the same pipeline run — the state file is the audit artifact, not a separate document someone has to maintain.</div>
       </div>
       <div class="decision-card">
-        <div class="dc-label">evidence</div>
-        <div class="dc-title">State as Artifact</div>
-        <div class="dc-body"><code>terraform show -json</code> produces a structured state file where an auditor can trace SC-28 to the SSE config, AC-3 to four explicit denies, and AU-3 to the logging target, all in a single JSON traversal.</div>
+        <div class="dc-label">// kms encryption</div>
+        <div class="dc-title">Customer-Managed Keys (SC-28)</div>
+        <div class="dc-body">AES-256 encryption via KMS with customer-managed keys. The key policy, rotation schedule, and ARN are all surfaced in the state — giving auditors direct evidence of encryption at rest without a console login.</div>
       </div>
+      <div class="decision-card">
+        <div class="dc-label">// access control</div>
+        <div class="dc-title">Public Access Block (AC-3)</div>
+        <div class="dc-body">All four public access block settings are enforced at the resource level. No bucket provisioned by this module can be made public — the block is a fixed attribute, not a variable.</div>
+      </div>
+      <div class="decision-card">
+        <div class="dc-label">// audit logging</div>
+        <div class="dc-title">Access Logging (AU-3, AU-6)</div>
+        <div class="dc-body">Server access logging is enabled and pointed at a dedicated log bucket. Every object-level operation is captured. The log destination is enforced in the module — consumers can't disable it.</div>
+      </div>
+    </div>
+
+    <!-- ARCH DIAGRAM -->
+    <div class="arch-wrap">
+      <div class="arch-label">// module architecture</div>
+      <svg class="arch" viewBox="0 0 780 260" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+        <defs>
+          <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#0e8a80"/>
+          </marker>
+        </defs>
+
+        <!-- Terraform -->
+        <rect x="10" y="104" width="130" height="52" fill="#001a18" stroke="#0e8a80" stroke-width="1" rx="2"/>
+        <text x="75" y="125" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">TERRAFORM</text>
+        <text x="75" y="142" text-anchor="middle" fill="#605848" font-size="8.5">plan + apply</text>
+
+        <!-- Arrow -->
+        <line x1="140" y1="130" x2="182" y2="130" stroke="#0e8a80" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- Module box -->
+        <rect x="184" y="70" width="148" height="120" fill="#161614" stroke="#2e2c1e" stroke-width="1" rx="2"/>
+        <text x="258" y="92" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">MODULE</text>
+        <text x="258" y="107" text-anchor="middle" fill="#605848" font-size="8.5">compliant-s3</text>
+        <line x1="200" y1="115" x2="316" y2="115" stroke="#222018" stroke-width="1"/>
+        <text x="258" y="131" text-anchor="middle" fill="#ccc8b0" font-size="9">main.tf</text>
+        <text x="258" y="147" text-anchor="middle" fill="#ccc8b0" font-size="9">variables.tf</text>
+        <text x="258" y="163" text-anchor="middle" fill="#ccc8b0" font-size="9">outputs.tf</text>
+        <text x="258" y="179" text-anchor="middle" fill="#ccc8b0" font-size="9">versions.tf</text>
+
+        <!-- Module to AWS resources -->
+        <line x1="332" y1="114" x2="374" y2="80" stroke="#0e8a80" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+        <line x1="332" y1="130" x2="374" y2="130" stroke="#0e8a80" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+        <line x1="332" y1="148" x2="374" y2="180" stroke="#0e8a80" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+        <!-- S3 Bucket -->
+        <rect x="376" y="56" width="148" height="48" fill="#001a18" stroke="#2e2c1e" stroke-width="1" rx="2"/>
+        <text x="450" y="76" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">S3 BUCKET</text>
+        <text x="450" y="93" text-anchor="middle" fill="#605848" font-size="8.5">encrypted · versioned · blocked</text>
+
+        <!-- KMS -->
+        <rect x="376" y="116" width="148" height="44" fill="#001a18" stroke="#2e2c1e" stroke-width="1" rx="2"/>
+        <text x="450" y="135" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">KMS KEY</text>
+        <text x="450" y="152" text-anchor="middle" fill="#605848" font-size="8.5">AES-256 · customer-managed</text>
+
+        <!-- Log Bucket -->
+        <rect x="376" y="172" width="148" height="44" fill="#001a18" stroke="#2e2c1e" stroke-width="1" rx="2"/>
+        <text x="450" y="191" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">LOG BUCKET</text>
+        <text x="450" y="208" text-anchor="middle" fill="#605848" font-size="8.5">access logs · AU-3 · AU-6</text>
+
+        <!-- Arrow to evidence -->
+        <line x1="524" y1="130" x2="566" y2="130" stroke="#0e8a80" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="545" y="122" text-anchor="middle" fill="#605848" font-size="8">terraform show -json</text>
+
+        <!-- Evidence -->
+        <rect x="568" y="90" width="148" height="80" fill="#001a18" stroke="#2dd4c8" stroke-width="1" rx="2"/>
+        <text x="642" y="114" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">STATE FILE</text>
+        <line x1="584" y1="122" x2="720" y2="122" stroke="#222018" stroke-width="1"/>
+        <text x="642" y="140" text-anchor="middle" fill="#605848" font-size="8.5">5 controls mapped</text>
+        <text x="642" y="156" text-anchor="middle" fill="#605848" font-size="8.5">machine-readable JSON</text>
+        <text x="642" y="170" text-anchor="middle" fill="#0e8a80" font-size="8">auditor-traversable</text>
+      </svg>
     </div>
   </section>
 
-  <!-- 03 FIVE CONTROLS -->
+  <!-- 03 CONTROLS -->
   <section class="section">
-    <div class="sec-header"><span class="sec-num">03 //</span><h2>The Five Controls</h2><div class="sec-line"></div></div>
-    <p class="prose">Each control maps to a specific Terraform resource. The comment in the code cites the control ID so any engineer reading a failed PR knows exactly what compliance requirement they broke.</p>
-    <div class="controls-list">
-      <div class="control-row">
-        <div class="ctrl-id">SC-28</div>
-        <div>
-          <div class="ctrl-title">Protection of Information at Rest</div>
-          <div class="ctrl-desc">AES-256 server-side encryption enforced via <code>aws_s3_bucket_server_side_encryption_configuration</code>. All four flags on the public access block must be <code>true</code>. Three is not enough. AWS treats them as independent doors.</div>
-          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_server_side_encryption_configuration.primary</span></div>
-        </div>
-      </div>
-      <div class="control-row">
-        <div class="ctrl-id">AC-3</div>
-        <div>
-          <div class="ctrl-title">Access Enforcement</div>
-          <div class="ctrl-desc">Explicit deny on every public access vector via <code>aws_s3_bucket_public_access_block</code>. All four flags set to <code>true</code>: <code>block_public_acls</code>, <code>block_public_policy</code>, <code>ignore_public_acls</code>, <code>restrict_public_buckets</code>.</div>
-          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_public_access_block.primary</span></div>
-        </div>
-      </div>
-      <div class="control-row">
-        <div class="ctrl-id">CM-6</div>
-        <div>
-          <div class="ctrl-title">Configuration Settings</div>
-          <div class="ctrl-desc">Two mechanisms. Versioning preserves prior object states for recovery and audit. Compliance tags (<code>Project</code>, <code>Environment</code>, <code>ManagedBy</code>, <code>ComplianceScope</code>) are set on the provider with <code>default_tags</code>, making them non-optional on every taggable resource.</div>
-          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_versioning.primary · provider default_tags</span></div>
-        </div>
-      </div>
-      <div class="control-row">
-        <div class="ctrl-id">AU-3</div>
-        <div>
-          <div class="ctrl-title">Content of Audit Records</div>
-          <div class="ctrl-desc">S3 server access logging routes to a dedicated log bucket. Logs in the same bucket could be deleted or overwritten alongside the data they record. Separation makes the audit trail harder to tamper with.</div>
-          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_logging.primary · aws_s3_bucket.log</span></div>
-        </div>
-      </div>
-      <div class="control-row">
-        <div class="ctrl-id">AU-6</div>
-        <div>
-          <div class="ctrl-title">Audit Record Review, Analysis, and Reporting</div>
-          <div class="ctrl-desc">The log bucket is independently hardened. Its own encryption configuration and public access block ensure the audit trail itself meets the same baseline as the data bucket. An unsecured log bucket is an audit finding waiting to happen.</div>
-          <div class="ctrl-impl">Terraform: <span>aws_s3_bucket_server_side_encryption_configuration.log · aws_s3_bucket_public_access_block.log</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <div class="sec-header"><span class="sec-num">03 //</span><h2>Controls Enforced</h2><div class="sec-line"></div></div>
+    <p class="prose">Five NIST 800-53 controls are hard-coded into every bucket this module provisions. The same controls also satisfy HIPAA Technical Safeguard requirements for ePHI storage.</p>
 
-  <!-- 04 TECHNICAL DECISIONS -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">04 //</span><h2>Key Technical Decisions</h2><div class="sec-line"></div></div>
-    <p class="prose">Every non-obvious choice in the module has a specific reason rooted in either compliance defensibility or operational reliability, not preference.</p>
-    <table class="decision-table">
+    <table class="controls-table">
       <thead>
-        <tr><th>Decision</th><th>Reasoning</th></tr>
+        <tr>
+          <th>Framework</th>
+          <th>Control ID</th>
+          <th>Control Name</th>
+          <th>How It's Enforced</th>
+        </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>default_tags on provider</td>
-          <td>Compliance tags are non-optional. Setting them once on the provider eliminates the risk of any resource being deployed untagged, a single source of truth rather than a per-resource tax.</td>
-        </tr>
-        <tr>
-          <td>Separate log bucket</td>
-          <td>Logs in the same bucket as the data they record can be deleted or overwritten in the same operation. Separation makes the audit trail harder to tamper with and is what most framework auditors expect.</td>
-        </tr>
-        <tr>
-          <td>random_id suffix</td>
-          <td>S3 bucket names are globally unique across all AWS accounts. A random suffix prevents name collisions on first deploy without manual coordination across environments.</td>
-        </tr>
-        <tr>
-          <td>one() expression</td>
-          <td>Terraform stores SSE rules as a set, not an indexable list. <code>one()</code> safely extracts the single element and fails loudly if configuration drift ever adds a second rule, catching misconfiguration at output time, not at audit time.</td>
-        </tr>
-        <tr>
-          <td>terraform show -json</td>
-          <td>Machine-readable state is more auditable than screenshots. It can be parsed, diffed, and verified programmatically by OPA in later labs. The JSON is the evidence artifact, not a byproduct of deployment.</td>
-        </tr>
-        <tr>
-          <td>Variable validation blocks</td>
-          <td>Catches bad inputs (wrong environment name, invalid project name) at plan time with clear error messages rather than cryptic AWS API failures at apply time. Fail early, fail clearly.</td>
-        </tr>
+        <tr><td>NIST 800-53</td><td>SC-28</td><td>Protection of Information at Rest</td><td>AES-256 encryption via KMS with customer-managed key — fixed resource attribute</td></tr>
+        <tr><td>NIST 800-53</td><td>AC-3</td><td>Access Enforcement</td><td>All four S3 public access block settings enforced — not parameterized</td></tr>
+        <tr><td>NIST 800-53</td><td>CM-6</td><td>Configuration Settings</td><td>Object versioning enabled, bucket ownership enforced, ACLs disabled</td></tr>
+        <tr><td>NIST 800-53</td><td>AU-3</td><td>Content of Audit Records</td><td>Server access logging enabled and directed to a dedicated log bucket</td></tr>
+        <tr><td>NIST 800-53</td><td>AU-6</td><td>Audit Review and Analysis</td><td>Log bucket created and managed by the module — consumers cannot disable logging</td></tr>
       </tbody>
     </table>
   </section>
 
-  <!-- 05 THE EVIDENCE -->
+  <!-- 04 THE EVIDENCE -->
   <section class="section">
-    <div class="sec-header"><span class="sec-num">05 //</span><h2>The Evidence Output</h2><div class="sec-line"></div></div>
-    <p class="prose">After a successful apply, two commands capture machine-readable compliance evidence. No console login. No screenshots. The state file is a structured JSON record an auditor or OPA policy to traverse programmatically.</p>
-    <div class="code-block">
-      <div class="code-label">// capture evidence — runs after every apply</div>
-      <div><span class="c-comment"># Capture the plan artifact</span></div>
-      <div><span class="c-key">terraform</span> <span class="c-val">show -json</span> <span class="c-attr">tfplan</span> &gt; <span class="c-str">evidence/plan.json</span></div>
-      <br>
-      <div><span class="c-comment"># Capture live state — this IS the compliance attestation</span></div>
-      <div><span class="c-key">terraform</span> <span class="c-val">show -json</span> &gt; <span class="c-str">evidence/state.json</span></div>
-    </div>
-    <div class="code-block" style="margin-top:1px;">
-      <div class="code-label">// what an auditor finds in state.json</div>
-      <div><span class="c-comment"># SC-28 — encryption at rest</span></div>
-      <div><span class="c-attr">"sse_algorithm"</span>: <span class="c-str">"AES256"</span></div>
-      <br>
-      <div><span class="c-comment"># AC-3 — all four public access denies</span></div>
-      <div><span class="c-attr">"block_public_acls"</span>: <span class="c-val">true</span>,</div>
-      <div><span class="c-attr">"block_public_policy"</span>: <span class="c-val">true</span>,</div>
-      <div><span class="c-attr">"ignore_public_acls"</span>: <span class="c-val">true</span>,</div>
-      <div><span class="c-attr">"restrict_public_buckets"</span>: <span class="c-val">true</span></div>
-      <br>
-      <div><span class="c-comment"># CM-6 — versioning and tags</span></div>
-      <div><span class="c-attr">"versioning_configuration"</span>: [{ <span class="c-attr">"status"</span>: <span class="c-str">"Enabled"</span> }]</div>
-      <div><span class="c-attr">"tags"</span>: { <span class="c-attr">"ComplianceScope"</span>: <span class="c-str">"cge-p-lab"</span>, <span class="c-attr">"ManagedBy"</span>: <span class="c-str">"terraform"</span> }</div>
-      <br>
-      <div><span class="c-comment"># AU-3 — logging target confirmed</span></div>
-      <div><span class="c-attr">"logging"</span>: [{ <span class="c-attr">"target_bucket"</span>: <span class="c-str">"cgep-lab-dev-logs-XXXXXXXX"</span> }]</div>
-    </div>
-    <div class="callout" style="margin-top:1.8rem;">
+    <div class="sec-header"><span class="sec-num">04 //</span><h2>The Evidence Artifact</h2><div class="sec-line"></div></div>
+    <p class="prose">The key insight of this primitive is that <strong>Terraform both enforces the control and generates the audit artifact in one step</strong>. Running <code style="font-family:'DM Mono',monospace;color:var(--coral);font-size:13px;">terraform show -json</code> after apply produces structured, machine-readable output that maps directly to each control. No console screenshots, no manual evidence collection, no gap between what was deployed and what the evidence says.</p>
+
+    <div class="callout">
       <div class="callout-icon">// key insight</div>
-      <div class="callout-body"><strong>terraform show -json output IS the audit artifact.</strong> The same tool that deploys the infrastructure produces a structured record of its compliance state. The enforcement step and the evidence step are a single command, not two separate workflows that can drift apart.</div>
+      <div class="callout-body">An auditor reading the Terraform state can verify SC-28 is satisfied by checking the <strong>server_side_encryption_configuration</strong> block. AC-3 is verified by the <strong>public_access_block</strong> resource. AU-3 is verified by the <strong>logging</strong> block. Every control has a corresponding state field — no interpretation required.</div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">// generate machine-readable evidence</div>
+      <div><span class="c-comment"># After terraform apply, run:</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">show</span> <span class="c-str">-json</span> <span class="c-val">|</span> <span class="c-key">jq</span> <span class="c-str">'.'</span> <span class="c-val">></span> <span class="c-str">compliance-evidence.json</span></div>
+      <br>
+      <div><span class="c-comment"># The output contains every resource attribute as structured data:</span></div>
+      <div><span class="c-comment"># - server_side_encryption_configuration.rule.apply_server_side_encryption_by_default.sse_algorithm</span></div>
+      <div><span class="c-comment"># - public_access_block_configuration.block_public_acls</span></div>
+      <div><span class="c-comment"># - logging.target_bucket</span></div>
+      <div><span class="c-comment"># - versioning.enabled</span></div>
+      <br>
+      <div><span class="c-comment"># Hand compliance-evidence.json directly to an auditor.</span></div>
+      <div><span class="c-comment"># No console access needed. No screenshots. Version-controlled proof.</span></div>
     </div>
   </section>
 
-  <!-- 06 FRAMEWORKS -->
+  <!-- 05 HOW IT WORKS -->
   <section class="section">
-    <div class="sec-header"><span class="sec-num">06 //</span><h2>Compliance Frameworks Addressed</h2><div class="sec-line"></div></div>
-    <p class="prose">The state file maps directly to control references across two frameworks. An assessor can open the JSON and trace each control without additional translation.</p>
-    <div class="framework-grid" style="grid-template-columns:1fr 1fr;">
-      <div class="framework"><div class="fw-name">NIST 800-53</div><div class="fw-desc">SC-28 · AC-3 · CM-6 · AU-3 · AU-6: encryption, access enforcement, configuration management, and audit logging</div></div>
-      <div class="framework"><div class="fw-name">HIPAA</div><div class="fw-desc">§164.312(a)(2)(iv) Encryption and Decryption · §164.312(b) Audit Controls: technical safeguards for PHI at rest and audit trail integrity</div></div>
+    <div class="sec-header"><span class="sec-num">05 //</span><h2>How It Works</h2><div class="sec-line"></div></div>
+    <div class="findings-list">
+      <div class="finding">
+        <div class="finding-source">main.tf</div>
+        <div>
+          <div class="finding-title">Hard-Coded Control Attributes</div>
+          <div class="finding-desc">Encryption, public access block, versioning, ownership controls, and logging are defined as fixed resource attributes. A consumer calling the module passes a bucket name and tags — they cannot pass parameters that override the security settings.</div>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-source">kms key resource</div>
+        <div>
+          <div class="finding-title">Customer-Managed Encryption</div>
+          <div class="finding-desc">A dedicated KMS key is created alongside the bucket. The key ARN is passed directly into the S3 encryption configuration. AWS holds no root key material under the customer's account — SC-28 and SC-13 are satisfied at the infrastructure level.</div>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-source">log bucket resource</div>
+        <div>
+          <div class="finding-title">Dedicated Audit Log Destination</div>
+          <div class="finding-desc">A separate S3 bucket is created to receive server access logs. The logging configuration on the primary bucket points to this destination. Because both resources are managed by the same module, the log destination cannot be removed without destroying the primary bucket first.</div>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-source">outputs.tf</div>
+        <div>
+          <div class="finding-title">Structured Evidence Output</div>
+          <div class="finding-desc">The module exposes outputs for bucket ARN, KMS key ARN, and log bucket ARN — all the references an auditor needs to verify the control chain. Combined with terraform show -json, these outputs make the entire configuration auditor-traversable from the state file alone.</div>
+        </div>
+      </div>
     </div>
   </section>
 
+  <!-- 06 MODULE STRUCTURE -->
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">06 //</span><h2>Module Structure</h2><div class="sec-line"></div></div>
+    <div class="file-tree">
+      <div><span class="ft-dir">tools/terraform/primitives/compliant-s3/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">main.tf</span> <span class="ft-comment"># s3 bucket + kms key + log bucket resources</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">variables.tf</span> <span class="ft-comment"># bucket name, tags, environment inputs</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">outputs.tf</span> <span class="ft-comment"># bucket arn, kms arn, log bucket arn</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">versions.tf</span> <span class="ft-comment"># provider version constraints</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">evidence/</span> <span class="ft-comment"># generated compliance-evidence.json artifacts</span></div>
+    </div>
+
+    <div class="code-block" style="margin-top:1.8rem;">
+      <div class="code-label">// deploy the primitive</div>
+      <div><span class="c-comment"># Initialize providers</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">init</span></div>
+      <br>
+      <div><span class="c-comment"># Review what will be created</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">plan</span> <span class="c-str">-var="bucket_name=my-compliant-bucket"</span></div>
+      <br>
+      <div><span class="c-comment"># Apply and generate evidence in one step</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">apply</span> <span class="c-str">-auto-approve</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">show</span> <span class="c-str">-json</span> <span class="c-val">></span> <span class="c-str">evidence/compliance-evidence.json</span></div>
+    </div>
+  </section>
+
+  <!-- 07 SUMMARY -->
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">07 //</span><h2>Summary</h2><div class="sec-line"></div></div>
+    <p class="prose">The S3 primitive demonstrates a repeatable pattern for compliance-as-code: define controls in infrastructure, deploy them through a version-controlled pipeline, and surface the evidence from the state file. The same pattern scales to any cloud resource — this bucket is the first primitive in a broader library.</p>
+
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">controls enforced</div></div>
+      <div class="stat"><div class="stat-num">0</div><div class="stat-label">optional toggles</div></div>
+      <div class="stat"><div class="stat-num">1</div><div class="stat-label">command for evidence</div></div>
+      <div class="stat"><div class="stat-num">0</div><div class="stat-label">screenshots needed</div></div>
+    </div>
+  </section>
 
 </main>
 
@@ -315,7 +337,6 @@
   <div class="footer-brand">Shayl<span>.Taveras</span></div>
   <div class="footer-copy">© 2026</div>
 </footer>
-
 
 </body>
 </html>

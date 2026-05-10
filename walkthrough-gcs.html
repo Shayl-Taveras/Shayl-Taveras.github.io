@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkthrough — Compliant GCS Bucket Terraform Module</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700&display=swap');
+  :root {
+    --bg:#0f0f0f;--bg2:#161614;--bg3:#1e1e1a;
+    --coral:#2dd4c8;--coral-dim:#0e8a80;--coral-muted:#001a18;
+    --peach:#9eeae5;--text:#ccc8b0;--text-bright:#f5f0dc;--muted:#605848;
+    --border:#222018;--border2:#2e2c1e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:15px;line-height:1.75;min-height:100vh;}
+  nav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2.8rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+  .nav-brand{font-family:'DM Mono',monospace;font-size:13px;color:var(--coral);letter-spacing:0.05em;}
+  .nav-brand span{color:var(--muted);}
+  .nav-back{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:0.4rem 0.9rem;border:1px solid transparent;transition:all 0.2s;letter-spacing:0.04em;}
+  .nav-back:hover{color:var(--coral);border-color:var(--border2);}
+  .hero{padding:4.5rem 2.8rem 3.5rem;border-bottom:1px solid var(--border2);max-width:900px;margin:0 auto;}
+  .hero-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.8rem;}
+  .hero-label::before{content:'';width:30px;height:1px;background:var(--coral);}
+  .hero-title{font-size:2rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.8rem;}
+  .hero-sub{font-size:15.5px;color:var(--muted);line-height:1.75;max-width:700px;margin-bottom:2rem;}
+  .hero-badges{display:flex;gap:0.5rem;flex-wrap:wrap;}
+  .badge{font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--border2);color:var(--text);letter-spacing:0.04em;}
+  .badge.hot{border-color:var(--coral-dim);color:var(--coral);}
+  main{max-width:900px;margin:0 auto;padding:0 2.8rem 6rem;}
+  .section{padding:3.5rem 0;border-bottom:1px solid var(--border2);}
+  .section:last-child{border-bottom:none;}
+  .sec-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
+  .sec-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.1em;}
+  h2{font-size:17px;font-weight:600;color:var(--text-bright);}
+  .sec-line{flex:1;height:1px;background:var(--border2);}
+  .prose{font-size:15.5px;line-height:1.85;color:var(--text);margin-bottom:1rem;max-width:760px;}
+  .prose strong{color:var(--coral);font-weight:500;}
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .decision-card{background:var(--bg2);padding:1.5rem;transition:background 0.2s;position:relative;overflow:hidden;}
+  .decision-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--coral);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .decision-card:hover{background:var(--bg3);}
+  .decision-card:hover::after{transform:scaleX(1);}
+  .dc-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.6rem;}
+  .dc-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.5rem;}
+  .dc-body{font-size:13px;color:var(--text);line-height:1.65;}
+  .controls-table{width:100%;border-collapse:collapse;margin-top:1.8rem;font-size:13.5px;}
+  .controls-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;text-align:left;padding:0.7rem 1rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .controls-table td{padding:0.9rem 1rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .controls-table tr:hover td{background:var(--bg2);}
+  .controls-table td:first-child{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);white-space:nowrap;}
+  .controls-table td:nth-child(2){font-family:'DM Mono',monospace;font-size:12px;color:var(--text-bright);white-space:nowrap;}
+  .findings-list{display:grid;gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .finding{background:var(--bg);padding:1.4rem 1.6rem;display:grid;grid-template-columns:160px 1fr;gap:2rem;align-items:start;transition:background 0.2s;position:relative;overflow:hidden;}
+  .finding::before{content:'';position:absolute;top:0;left:0;bottom:0;width:0;background:linear-gradient(to right,var(--coral-muted),transparent);transition:width 0.3s;}
+  .finding:hover{background:var(--bg3);}
+  .finding:hover::before{width:60px;}
+  .finding-source{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);font-weight:500;padding-top:2px;}
+  .finding-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .finding-desc{font-size:13px;color:var(--text);line-height:1.65;}
+  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:1.4rem 1.6rem;margin-top:1.6rem;font-family:'DM Mono',monospace;font-size:12.5px;line-height:1.8;overflow-x:auto;}
+  .code-label{font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.8rem;}
+  .c-comment{color:var(--muted);}
+  .c-key{color:var(--coral);}
+  .c-val{color:var(--text-bright);}
+  .c-str{color:var(--peach);}
+  .callout{background:var(--coral-muted);border:1px solid var(--coral-dim);border-left:3px solid var(--coral);padding:1.2rem 1.4rem;margin-top:1.8rem;display:flex;gap:1rem;align-items:flex-start;}
+  .callout-icon{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);flex-shrink:0;padding-top:2px;}
+  .callout-body{font-size:14px;color:var(--text);line-height:1.7;}
+  .callout-body strong{color:var(--coral);}
+  .arch-wrap{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:2.5rem 2rem;margin-top:1.8rem;overflow-x:auto;}
+  .arch-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:2rem;}
+  svg.arch{width:100%;max-width:780px;display:block;margin:0 auto;}
+  .stats-row{display:flex;gap:1px;background:var(--border2);margin-top:1.8rem;}
+  .stat{background:var(--bg2);padding:1.4rem 2rem;flex:1;text-align:center;transition:background 0.2s;}
+  .stat:hover{background:var(--bg3);}
+  .stat-num{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;color:var(--coral);line-height:1;margin-bottom:0.4rem;}
+  .stat-label{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.04em;}
+  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:1.4rem 1.6rem;margin-top:1.8rem;font-family:'DM Mono',monospace;font-size:12.5px;line-height:2.1;}
+  .ft-dir{color:var(--coral);}
+  .ft-file{color:var(--text);}
+  .ft-comment{color:var(--muted);}
+  footer{border-top:1px solid var(--border2);padding:2rem 2.8rem;max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+  .footer-brand{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+  .footer-brand span{color:var(--coral);}
+  .footer-copy{font-family:'DM Mono',monospace;font-size:11px;color:var(--border2);}
+  @media(max-width:700px){nav,.hero,main,footer{padding-left:1.4rem;padding-right:1.4rem;}.decision-grid{grid-template-columns:1fr;}.finding{grid-template-columns:1fr;}.stats-row{flex-direction:column;}.hero-title{font-size:1.6rem;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Shayl<span>.Taveras</span></div>
+  <a href="index.html" class="nav-back">back to portfolio</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Project Walkthrough</div>
+  <div class="hero-title">Compliant GCS Bucket Terraform Module</div>
+  <p class="hero-sub">A reusable Terraform module for GCP Cloud Storage that hard-codes six NIST 800-171 controls into every bucket it provisions, with plan-time validation that rejects non-compliant configuration before a single resource reaches GCP.</p>
+  <div class="hero-badges">
+    <span class="badge hot">terraform</span>
+    <span class="badge hot">gcp</span>
+    <span class="badge hot">nist 800-171</span>
+    <span class="badge">cloud storage · kms · cmek · iam</span>
+  </div>
+</div>
+
+<main>
+
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">01 //</span><h2>Problem Statement</h2><div class="sec-line"></div></div>
+    <p class="prose">Most organizations treat compliance as a checklist filled out after infrastructure is already built. Security settings get bolted on after the fact, documentation lags behind the actual state of the environment, and auditors end up reviewing a system that looks compliant on paper but was never engineered to be.</p>
+    <p class="prose">This module <strong>inverts that model entirely</strong>. Instead of checking buckets for compliance after deployment, the controls are the infrastructure. Every Cloud Storage bucket provisioned by this module is compliant by construction — a consumer cannot misconfigure their way out of it, and the evidence is generated automatically at apply time.</p>
+  </section>
+
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">02 //</span><h2>Architecture Decision</h2><div class="sec-line"></div></div>
+    <p class="prose">Every design choice was made to eliminate the gap between what the policy says and what the infrastructure actually does.</p>
+    <div class="decision-grid">
+      <div class="decision-card">
+        <div class="dc-label">// hard-coded controls</div>
+        <div class="dc-title">No Optional Security Settings</div>
+        <div class="dc-body">Encryption, public access prevention, uniform IAM, versioning, and retention are non-negotiable. A consumer can configure bucket names and retention floors — they cannot toggle off a control.</div>
+      </div>
+      <div class="decision-card">
+        <div class="dc-label">// plan-time validation</div>
+        <div class="dc-title">Fail Before Any API Call</div>
+        <div class="dc-body">Terraform validation blocks catch misconfiguration at plan time. A prod bucket with less than 365 days retention fails with a human-readable error before anything reaches GCP.</div>
+      </div>
+      <div class="decision-card">
+        <div class="dc-label">// attestation output</div>
+        <div class="dc-title">Machine-Readable Evidence</div>
+        <div class="dc-body">Post-apply, a structured output surfaces every enforced control with its value and mapped control ID. An auditor reads the Terraform state directly without a console login.</div>
+      </div>
+      <div class="decision-card">
+        <div class="dc-label">// separate kms keyring</div>
+        <div class="dc-title">Customer-Managed Keys (SC-12)</div>
+        <div class="dc-body">Each bucket gets its own KMS keyring. GCP holds no root key material and key lifecycle is fully under the customer's control with 90-day automatic rotation enforced at the module level.</div>
+      </div>
+    </div>
+
+    <div class="arch-wrap">
+      <div class="arch-label">// module architecture</div>
+      <svg class="arch" viewBox="0 0 780 280" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+        <defs>
+          <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#0e8a80"/>
+          </marker>
+          <marker id="arr-red" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#8b2222"/>
+          </marker>
+        </defs>
+        <rect x="10" y="112" width="130" height="52" fill="#001a18" stroke="#0e8a80" stroke-width="1" rx="2"/>
+        <text x="75" y="133" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">CONSUMER</text>
+        <text x="75" y="150" text-anchor="middle" fill="#605848" font-size="8.5">module call</text>
+        <line x1="140" y1="138" x2="182" y2="138" stroke="#0e8a80" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="161" y="130" text-anchor="middle" fill="#605848" font-size="8">terraform plan</text>
+        <rect x="184" y="90" width="148" height="96" fill="#161614" stroke="#2e2c1e" stroke-width="1" rx="2"/>
+        <text x="258" y="112" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">VALIDATION</text>
+        <line x1="200" y1="120" x2="316" y2="120" stroke="#222018" stroke-width="1"/>
+        <text x="258" y="137" text-anchor="middle" fill="#ccc8b0" font-size="9">retention floor check</text>
+        <text x="258" y="153" text-anchor="middle" fill="#ccc8b0" font-size="9">environment gate</text>
+        <text x="258" y="169" text-anchor="middle" fill="#ccc8b0" font-size="9">config assertions</text>
+        <line x1="258" y1="186" x2="258" y2="226" stroke="#cc4444" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-red)"/>
+        <text x="278" y="210" fill="#605848" font-size="8">fails</text>
+        <rect x="184" y="228" width="148" height="36" fill="#1a0000" stroke="#8b2222" stroke-width="1" rx="2"/>
+        <text x="258" y="246" text-anchor="middle" fill="#ff6b6b" font-size="9" letter-spacing="0.5">PLAN REJECTED</text>
+        <text x="258" y="259" text-anchor="middle" fill="#605848" font-size="8">human-readable error</text>
+        <line x1="332" y1="138" x2="374" y2="138" stroke="#0e8a80" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="353" y="130" text-anchor="middle" fill="#605848" font-size="8">passes</text>
+        <rect x="376" y="56" width="148" height="44" fill="#001a18" stroke="#2e2c1e" stroke-width="1" rx="2"/>
+        <text x="450" y="75" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">CLOUD STORAGE</text>
+        <text x="450" y="92" text-anchor="middle" fill="#605848" font-size="8.5">CMEK · IAM · versioning · retention</text>
+        <rect x="376" y="116" width="148" height="44" fill="#001a18" stroke="#2e2c1e" stroke-width="1" rx="2"/>
+        <text x="450" y="135" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">CLOUD KMS</text>
+        <text x="450" y="152" text-anchor="middle" fill="#605848" font-size="8.5">keyring · 90-day rotation</text>
+        <rect x="376" y="176" width="148" height="44" fill="#001a18" stroke="#2e2c1e" stroke-width="1" rx="2"/>
+        <text x="450" y="195" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">IAM BINDINGS</text>
+        <text x="450" y="212" text-anchor="middle" fill="#605848" font-size="8.5">uniform access · no public</text>
+        <line x1="524" y1="138" x2="566" y2="138" stroke="#0e8a80" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="545" y="130" text-anchor="middle" fill="#605848" font-size="8">output</text>
+        <rect x="568" y="100" width="148" height="76" fill="#001a18" stroke="#2dd4c8" stroke-width="1" rx="2"/>
+        <text x="642" y="122" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">ATTESTATION</text>
+        <line x1="584" y1="130" x2="720" y2="130" stroke="#222018" stroke-width="1"/>
+        <text x="642" y="148" text-anchor="middle" fill="#605848" font-size="8.5">6 controls mapped</text>
+        <text x="642" y="163" text-anchor="middle" fill="#605848" font-size="8.5">machine-readable output</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">03 //</span><h2>Controls Enforced</h2><div class="sec-line"></div></div>
+    <p class="prose">Six NIST 800-171 controls are hard-coded into every bucket the module provisions. None of them are optional.</p>
+    <table class="controls-table">
+      <thead>
+        <tr>
+          <th>Framework</th>
+          <th>Control ID</th>
+          <th>Control Name</th>
+          <th>How It's Enforced</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>NIST 800-171</td><td>SC-12</td><td>Cryptographic Key Management</td><td>Separate KMS keyring per bucket, customer-managed, 90-day auto-rotation</td></tr>
+        <tr><td>NIST 800-171</td><td>SC-13</td><td>Cryptographic Protection</td><td>CMEK encryption enforced at the API level — no bucket without it</td></tr>
+        <tr><td>NIST 800-171</td><td>SC-28</td><td>Protection of Information at Rest</td><td>AES-256 via CMEK, public access prevention block always enabled</td></tr>
+        <tr><td>NIST 800-171</td><td>AC-3</td><td>Access Enforcement</td><td>Uniform bucket-level IAM only — no legacy ACLs, no public access</td></tr>
+        <tr><td>NIST 800-171</td><td>CM-6</td><td>Configuration Settings</td><td>Object versioning enabled, all settings non-parameterized</td></tr>
+        <tr><td>NIST 800-171</td><td>AU-11</td><td>Audit Record Retention</td><td>Configurable floor with plan-time validation — prod requires 365+ days</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">04 //</span><h2>How It Works</h2><div class="sec-line"></div></div>
+    <p class="prose">The module enforces controls at three distinct layers, making it impossible to deploy a non-compliant bucket without Terraform explicitly refusing to proceed.</p>
+    <div class="findings-list">
+      <div class="finding">
+        <div class="finding-source">hard-coded resources</div>
+        <div>
+          <div class="finding-title">Controls Are the Infrastructure</div>
+          <div class="finding-desc">Encryption, public access block, uniform IAM, and versioning are fixed resource attributes — not variables. A consumer calling the module cannot override them any more than they can rewrite the GCP API.</div>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-source">validation blocks</div>
+        <div>
+          <div class="finding-title">Plan-Time Rejection</div>
+          <div class="finding-desc">Terraform validation blocks check the retention floor against the environment type before any API call is made. A prod deployment with less than 365 days retention fails at plan time with a clear, human-readable error — not a runtime failure after resources are partially created.</div>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-source">negative test consumer</div>
+        <div>
+          <div class="finding-title">Proof the Gate Fires</div>
+          <div class="finding-desc">The consumers/negative-test/ directory contains a deliberately misconfigured consumer. The bucket is named should-never-exist because it never reaches GCP — the validation gate fires and Terraform exits before any resource is created. This is testable, repeatable proof that the enforcement works.</div>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-source">compliance_attestation</div>
+        <div>
+          <div class="finding-title">Automatic Evidence at Apply Time</div>
+          <div class="finding-desc">After a successful apply, the compliance_attestation output surfaces every enforced control as machine-readable structured data — control ID, value, and enforcement method. An auditor can read the Terraform state directly without a console login or a manual evidence collection process.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">05 //</span><h2>Module Structure</h2><div class="sec-line"></div></div>
+    <p class="prose">The module is organized so the compliance logic, consumer examples, and test cases are all clearly separated and independently runnable.</p>
+    <div class="file-tree">
+      <div><span class="ft-dir">tools/terraform/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">modules/compliant-gcs-bucket/</span> <span class="ft-comment"># the reusable module</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">main.tf</span> <span class="ft-comment"># bucket + KMS resources</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">variables.tf</span> <span class="ft-comment"># inputs with validation blocks</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">outputs.tf</span> <span class="ft-comment"># compliance_attestation output</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">primitives/compliant-gcs/</span> <span class="ft-comment"># dev consumer example</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-dir">evidence/lab-2-4/</span> <span class="ft-comment"># generated attestation artifacts</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">consumers/negative-test/</span> <span class="ft-comment"># proves the validation gate fires</span></div>
+    </div>
+
+    <div class="code-block" style="margin-top:1.8rem;">
+      <div class="code-label">// deploy the compliant bucket</div>
+      <div><span class="c-comment"># Initialize and apply</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">init</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">plan</span> <span class="c-str">-var="environment=prod"</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">apply</span></div>
+      <br>
+      <div><span class="c-comment"># View the compliance attestation output</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">output</span> <span class="c-str">compliance_attestation</span></div>
+      <br>
+      <div><span class="c-comment"># Run the negative test to prove the gate fires</span></div>
+      <div><span class="c-key">cd</span> <span class="c-str">consumers/negative-test</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">plan</span> <span class="c-comment"># exits with validation error</span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sec-header"><span class="sec-num">06 //</span><h2>The Strongest Angle</h2><div class="sec-line"></div></div>
+    <p class="prose">Most compliance tools check whether controls are in place after the fact. This module makes non-compliance impossible to deploy in the first place. That's the shift from compliance theater to compliance engineering.</p>
+    <div class="callout">
+      <div class="callout-icon">// key insight</div>
+      <div class="callout-body"><strong>The audit evidence trail is built into the infrastructure itself.</strong> The compliance_attestation output is generated by the same process that creates the bucket — not assembled afterward by a human. There's no gap between what was deployed and what the evidence says was deployed.</div>
+    </div>
+
+    <div class="stats-row" style="margin-top:1.8rem;">
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">controls enforced</div></div>
+      <div class="stat"><div class="stat-num">0</div><div class="stat-label">optional toggles</div></div>
+      <div class="stat"><div class="stat-num">1</div><div class="stat-label">negative test gate</div></div>
+      <div class="stat"><div class="stat-num">0</div><div class="stat-label">screenshots needed</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-brand">Shayl<span>.Taveras</span></div>
+  <div class="footer-copy">2026</div>
+</footer>
+
+</body>
+</html>
