@@ -241,24 +241,27 @@
           <a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/terraform/primitives/compliant-s3" target="_blank" rel="noopener">github →</a>
         </div>
       </div>
+      
 
-      <div class="project" style="opacity:0.45;pointer-events:none;">
-        <div class="proj-n">project_03</div>
-        <div class="proj-title">Least-Privilege Compliance Checker</div>
-        <div class="proj-desc">Automated IAM least-privilege validation that pulls user and role policies, flags admin access, wildcard usage, and high-risk actions, calculates a per-entity risk score (CRITICAL/HIGH/MEDIUM/LOW), and generates JSON and CSV audit evidence. Executive summary includes compliance posture percentage and remediation guidance.</div>
-        <div class="tags">
-          <span class="tag">python</span>
-          <span class="tag">aws iam</span>
-          <span class="tag">boto3</span>
-          <span class="tag">soc 2 cc6.3</span>
-          <span class="tag">nist ac-6</span>
-          <span class="tag">cmmc l2</span>
-          <span class="tag">cmmc l3</span>
-        </div>
-        <div class="proj-links" style="margin-top:0.5rem;">
-          <span style="font-family:'DM Mono',monospace;font-size:11px;color:#605848;letter-spacing:0.06em;">// in development</span>
-        </div>
-      </div>
+      <div class="project">
+    <div class="proj-n">project_03</div>
+    <div class="proj-title">Compliant GCS Bucket — NIST 800-171 as Terraform (GCP)</div>
+    <div class="proj-desc">Reusable GCP Terraform module that hard-codes six NIST 800-171 controls — SC-12, SC-13, SC-28, AC-3, CM-6, AU-11 — into every Cloud Storage bucket
+  it provisions. Plan-time validation gates reject non-compliant config before any resource reaches GCP. After apply, a <code style="font-family:'DM
+  Mono',monospace;font-size:12px;color:var(--coral);">compliance_attestation</code> output surfaces machine-readable evidence of every enforced control.</div>
+    <div class="tags">
+      <span class="tag">terraform</span>
+      <span class="tag">gcp</span>
+      <span class="tag">cloud kms</span>
+      <span class="tag">nist 800-171</span>
+      <span class="tag">cmek</span>
+      <span class="tag">sc-28</span>
+      <span class="tag">iac-as-evidence</span>
+    </div>
+    <div class="proj-links">
+      <a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/terraform/modules/compliant-gcs-bucket" target="_blank" rel="noopener">github →</a>
+    </div>
+  </div>
 
       <div class="project" style="opacity:0.45;pointer-events:none;">
         <div class="proj-n">project_04</div>
