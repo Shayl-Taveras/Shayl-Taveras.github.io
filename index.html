@@ -264,20 +264,25 @@
     </div>
   </div>
 
-      <div class="project" style="opacity:0.45;pointer-events:none;">
+      <div class="project">
         <div class="proj-n">project_04</div>
-        <div class="proj-title">AWS Password Policy Verification</div>
-        <div class="proj-desc">Automates password policy validation across both traditional IAM and AWS Identity Center. Detects which auth method is in use, maps findings directly to SOC 2 CC6.2 and NIST IA-5, and produces JSON and CSV audit evidence ready to hand to an auditor — replacing manual screenshots with scalable, repeatable compliance proof.</div>
+        <div class="proj-title">GKE Cluster Compliant Primitive — Multi-Framework</div>
+        <div class="proj-desc">Ephemeral, FedRAMP-realistic GKE cluster with private nodes, Cloud NAT egress, and control plane locked to operator /32. Application-layer secrets encrypted via Cloud KMS with 90-day rotation. Four NIST 800-53 controls hard-coded into the cluster definition. Evidence lives in artifacts/plan.json and artifacts/terraform-state.json — auditor-traversable without a console login.</div>
         <div class="tags">
-          <span class="tag">python</span>
-          <span class="tag">aws iam</span>
-          <span class="tag">identity center</span>
-          <span class="tag">boto3</span>
-          <span class="tag">soc 2 cc6.2</span>
-          <span class="tag">nist ia-5</span>
+          <span class="tag">terraform</span>
+          <span class="tag">gcp</span>
+          <span class="tag">gke</span>
+          <span class="tag">kubernetes</span>
+          <span class="tag">nist 800-53</span>
+          <span class="tag">nist 800-171</span>
+          <span class="tag">fedramp</span>
+          <span class="tag">cmmc l2</span>
+          <span class="tag">soc 2</span>
+          <span class="tag">kms</span>
         </div>
-        <div class="proj-links" style="margin-top:0.5rem;">
-          <span style="font-family:'DM Mono',monospace;font-size:11px;color:#605848;letter-spacing:0.06em;">// in development</span>
+        <div class="proj-links">
+          <a href="walkthrough-gke.html">▶ walkthrough</a>
+          <a href="#">github →</a>
         </div>
       </div>
 
