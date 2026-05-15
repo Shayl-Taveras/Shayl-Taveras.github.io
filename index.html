@@ -1,335 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="description" content="GRC Engineer specializing in FedRAMP, HITRUST, CMMC, and compliance automation. Building tools that produce verifiable audit evidence.">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shayl Taveras — GRC Engineer</title>
-<meta name="description" content="GRC Engineer specializing in FedRAMP, HITRUST, CMMC, and compliance automation. Automating the audit process so compliance programs hold up under real scrutiny.">
-<meta property="og:title" content="Shayl Taveras — GRC Engineer">
-<meta property="og:description" content="GRC Engineer specializing in FedRAMP, HITRUST, CMMC, and compliance automation.">
-<meta property="og:type" content="website">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700&display=swap');
-  :root {
-    --bg:#0f0f0f;--bg2:#161614;--bg3:#1e1e1a;
-    --coral:#2dd4c8;--coral-dim:#0e8a80;--coral-muted:#001a18;
-    --peach:#9eeae5;--text:#ccc8b0;--text-bright:#f5f0dc;--muted:#605848;
-    --border:#222018;--border2:#2e2c1e;
+  @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  :root{
+    --bg:#09090b;--bg2:#111113;--bg3:#18181b;--bg4:#1e1e21;
+    --accent:#f97316;--accent-dim:#7c2d12;--accent-muted:#150800;
+    --text:#c8c2bc;--text-bright:#fafaf9;--muted:#9c9590;
+    --border:#1c1917;--border2:#27241f;
+    --green:#22c55e;--red:#ef4444;--blue:#60a5fa;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
-  body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:15px;line-height:1.75;min-height:100vh;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
 
-  /* NAV */
-  nav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2.8rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
-  .nav-brand{font-family:'DM Mono',monospace;font-size:13px;color:var(--coral);letter-spacing:0.05em;}
-  .nav-brand span{color:var(--muted);}
-  .nav-links{display:flex;gap:0.3rem;}
-  .nav-links a{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:0.4rem 0.9rem;border:1px solid transparent;transition:all 0.2s;letter-spacing:0.04em;}
-  .nav-links a:hover{color:var(--coral);border-color:var(--border2);}
+  /* TOP NAV — command bar style */
+  .topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2rem;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+  .tn-left{display:flex;align-items:center;gap:2rem;}
+  .tn-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+  .tn-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .tn-breadcrumb span{color:var(--text);}
+  .tn-right{display:flex;align-items:center;gap:1rem;}
+  .tn-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 10px;background:var(--accent-muted);border:1px solid var(--accent-dim);color:var(--accent);}
+  .tn-links{display:flex;gap:1.5rem;}
+  .tn-links a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+  .tn-links a:hover{color:var(--text-bright);}
 
-  /* HERO */
-  .hero{padding:5rem 2.8rem 4rem;border-bottom:1px solid var(--border2);max-width:1060px;margin:0 auto;}
-  .hero-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:1.4rem;display:flex;align-items:center;gap:0.8rem;}
-  .hero-label::before{content:'';width:30px;height:1px;background:var(--coral);}
-  .hero-name{font-size:2.8rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.025em;line-height:1.05;margin-bottom:0.7rem;}
-  .hero-name span{color:var(--coral);}
-  .hero-sub{font-size:16px;color:var(--muted);max-width:560px;line-height:1.75;margin-bottom:2.2rem;}
-  .hero-chips{display:flex;gap:0.5rem;flex-wrap:wrap;}
-  .chip{font-family:'DM Mono',monospace;font-size:11px;padding:5px 14px;border:1px solid var(--border2);color:var(--text);letter-spacing:0.04em;transition:all 0.2s;}
-  .chip:hover{border-color:var(--coral-dim);color:var(--coral);}
+  /* CONTENT LAYOUT */
+  .layout{display:grid;grid-template-columns:1fr 360px;min-height:calc(100vh - 48px);}
 
-  /* MAIN */
-  main{max-width:1060px;margin:0 auto;padding:0 2.8rem 5rem;}
-  .section{padding:4rem 0;border-bottom:1px solid var(--border2);}
-  .section:last-child{border-bottom:none;}
-  .sec-header{display:flex;align-items:center;gap:1rem;margin-bottom:2.2rem;}
-  .sec-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.1em;}
-  h2{font-size:18px;font-weight:600;color:var(--text-bright);}
-  .sec-line{flex:1;height:1px;background:var(--border2);}
+  /* MAIN COLUMN */
+  .main-col{border-right:1px solid var(--border2);padding:2rem;}
 
-  /* ABOUT */
-  .about-cols{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
-  .about-p{font-size:15.5px;line-height:1.85;color:var(--text);margin-bottom:1rem;}
-  .about-p strong{color:var(--coral);font-weight:500;}
+  /* HERO IN MAIN */
+  .hero-section{padding-bottom:2rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);}
+  .hero-overline{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:1rem;}
+  .hero-name{font-size:2.4rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.025em;line-height:1.1;margin-bottom:0.6rem;}
+  .hero-name span{color:var(--accent);}
+  .hero-desc{font-size:15px;color:var(--text-bright);line-height:1.75;max-width:560px;margin-bottom:1.5rem;}
+  .hero-desc strong{color:var(--text-bright);font-weight:500;}
+  .hero-chips{display:flex;gap:0.4rem;flex-wrap:wrap;}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border:1px solid var(--border2);color:var(--text);transition:all 0.2s;}
+  .chip:hover{border-color:var(--accent-dim);color:var(--accent);}
 
-  .exp-rows{border-top:1px solid var(--border2);}
-  .exp-item{padding:0.95rem 0;border-bottom:1px solid var(--border2);display:grid;grid-template-columns:1fr auto;align-items:center;gap:1rem;transition:padding-left 0.2s;}
-  .exp-item:hover{padding-left:0.5rem;}
-  .exp-co{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.2rem;}
-  .exp-role{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
-  .exp-arr{color:var(--coral-dim);font-size:14px;transition:color 0.2s;}
-  .exp-item:hover .exp-arr{color:var(--coral);}
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border2);}
+  .sh-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;}
+  .sh-count{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border:1px solid var(--border2);color:var(--muted);}
 
-  /* PROJECTS */
-  .proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border2);}
-  .project{background:var(--bg);padding:1.8rem;position:relative;overflow:hidden;transition:background 0.2s;}
-  .project::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--coral);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
-  .project:hover{background:var(--bg3);}
-  .project:hover::after{transform:scaleX(1);}
-  .project::before{content:'';position:absolute;top:0;left:0;bottom:0;width:0;background:linear-gradient(to right,var(--coral-muted),transparent);transition:width 0.3s;}
-  .project:hover::before{width:50px;}
-  .proj-n{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.1em;margin-bottom:0.8rem;}
-  .proj-title{font-size:15px;font-weight:600;color:var(--text-bright);margin-bottom:0.5rem;line-height:1.3;}
-  .proj-desc{font-size:13.5px;color:var(--text);line-height:1.65;margin-bottom:1rem;}
-  .tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1rem;}
-  .tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral-dim);border:1px solid var(--border2);padding:2px 8px;}
-  .proj-links{display:flex;gap:1rem;}
-  .proj-links a{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);text-decoration:none;position:relative;padding-bottom:1px;transition:color 0.2s;}
-  .proj-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--coral);transition:width 0.25s;}
-  .proj-links a:hover::after{width:100%;}
-  .proj-links a:hover{color:var(--text-bright);}
+  /* PROJECT LIST */
+  .proj-section{margin-bottom:2rem;}
+  .proj-item{padding:1.2rem;background:var(--bg2);border:1px solid var(--border2);margin-bottom:0.5rem;transition:border-color 0.2s;position:relative;overflow:hidden;}
+  .proj-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform 0.25s;}
+  .proj-item:hover{border-color:var(--accent-dim);}
+  .proj-item:hover::before{transform:scaleY(1);}
+  .pi-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4rem;}
+  .pi-title{font-size:13.5px;font-weight:600;color:var(--text-bright);}
+  .pi-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+  .pi-desc{font-size:12.5px;color:var(--text);line-height:1.6;margin-bottom:0.7rem;}
+  .pi-footer{display:flex;justify-content:space-between;align-items:center;}
+  .pi-tags{display:flex;gap:0.3rem;flex-wrap:wrap;}
+  .ptag{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent-dim);border:1px solid var(--border2);padding:2px 6px;}
+  .pi-links{display:flex;gap:0.8rem;}
+  .pi-links a{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);text-decoration:none;transition:color 0.2s;}
+  .pi-links a:hover{color:var(--text-bright);}
 
-  /* CERTS */
-  .certs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);}
-  .cert{background:var(--bg);padding:1.6rem 1.2rem;text-align:center;transition:background 0.2s;}
-  .cert:hover{background:var(--coral-muted);}
-  .cert-name{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--muted);margin-bottom:0.3rem;}
-  .cert.on .cert-name{color:var(--coral);}
-  .cert-body{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
-  .cert.wip{opacity:0.5;}
-  .cert.wip .cert-body{color:var(--coral-dim);}
+  /* EXP SECTION */
+  .exp-section{margin-bottom:2rem;}
+  .exp-item{display:flex;gap:1rem;padding:0.9rem 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+  .exp-item:first-child{padding-top:0;}
+  .exp-item:last-child{border-bottom:none;}
+  .exp-indicator{display:flex;flex-direction:column;align-items:center;gap:0;}
+  .exp-dot2{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;margin-top:5px;}
+  .exp-dot2.current{background:var(--accent);box-shadow:0 0 8px var(--accent);}
+  .exp-line{width:1px;flex:1;background:var(--border2);min-height:20px;}
+  .exp-body{}
+  .exp-co{font-size:13px;font-weight:500;color:var(--text-bright);margin-bottom:0.15rem;}
+  .exp-role{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text);}
 
-  /* CONTACT */
-  .contact-cols{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
-  .contact-p{font-size:15.5px;color:var(--text);line-height:1.8;}
-  .contact-p strong{color:var(--coral);}
-  .c-links{display:grid;gap:0;}
-  .c-link{padding:0.9rem 0;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;transition:padding-left 0.2s;}
-  .c-link:first-child{border-top:1px solid var(--border2);}
-  .c-link:hover{padding-left:0.5rem;}
-  .c-link a{font-family:'DM Mono',monospace;font-size:13px;color:var(--text-bright);text-decoration:none;transition:color 0.2s;}
-  .c-link:hover a{color:var(--coral);}
-  .c-link span{font-family:'DM Mono',monospace;font-size:10px;color:var(--border2);}
-  .c-link:hover span{color:var(--coral-dim);}
+  /* RIGHT COLUMN */
+  .right-col{padding:2rem;display:flex;flex-direction:column;gap:1.5rem;}
 
-  /* FOOTER */
-  footer{border-top:1px solid var(--border2);padding:2rem 2.8rem;max-width:1060px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
-  .footer-brand{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
-  .footer-brand span{color:var(--coral);}
-  .footer-copy{font-family:'DM Mono',monospace;font-size:11px;color:var(--border2);}
+  /* PROFILE CARD */
+  .profile-card{background:var(--bg2);border:1px solid var(--border2);padding:1.4rem;}
+  .pc-header{margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border2);}
+  .pc-name{font-size:16px;font-weight:600;color:var(--text-bright);margin-bottom:0.2rem;}
+  .pc-role{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);}
+  .pc-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
+  .pc-stat{background:var(--bg3);padding:0.8rem;text-align:center;}
+  .pc-stat-n{font-size:1.5rem;font-weight:700;color:var(--text-bright);line-height:1;}
+  .pc-stat-l{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);margin-top:0.2rem;}
 
-  /* RESPONSIVE */
-  @media(max-width:720px){
-    .about-cols,.proj-grid,.contact-cols{grid-template-columns:1fr;}
-    .certs-grid{grid-template-columns:1fr 1fr;}
-    .hero,main,footer{padding-left:1.4rem;padding-right:1.4rem;}
-    nav{padding:0 1.4rem;}
-    .hero-name{font-size:2.1rem;}
-    .nav-links a{padding:0.4rem 0.5rem;}
-  }
+  /* CERT CARD */
+  .cert-card{background:var(--bg2);border:1px solid var(--border2);padding:1.4rem;}
+  .cert-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1rem;}
+  .cert-list2{display:grid;gap:0.4rem;}
+  .cert2{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.8rem;background:var(--bg3);}
+  .cert2-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-bright);}
+  .cert2-body{font-size:11px;color:var(--text);}
+  .cert2-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+  .cert2.wip .cert2-name{color:var(--muted);}
+  .cert2.wip .cert2-dot{background:transparent;border:1px solid var(--muted);}
+
+  /* CONNECT CARD */
+  .connect-card{background:var(--bg2);border:1px solid var(--border2);padding:1.4rem;}
+  .connect-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1rem;}
+  .connect-list{display:grid;gap:0.4rem;}
+  .connect-item{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid var(--border);transition:padding-left 0.15s;}
+  .connect-item:last-child{border-bottom:none;}
+  .connect-item:hover{padding-left:0.4rem;}
+  .connect-item a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);text-decoration:none;transition:color 0.2s;}
+  .connect-item:hover a{color:var(--accent);}
+  .connect-item span{font-size:10px;color:var(--muted);}
+
+  @media(max-width:900px){.layout{grid-template-columns:1fr;}.right-col{border-top:1px solid var(--border2);}.main-col{border-right:none;}.tn-breadcrumb{display:none;}}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-brand">Shayl<span>.Taveras</span></div>
-  <div class="nav-links">
-    <a href="#about">about</a>
-    <a href="#projects">projects</a>
-    <a href="#certs">certs</a>
-    <a href="#contact">contact</a>
+<div class="topnav">
+  <div class="tn-left">
+    <div class="tn-brand">Shayl.Taveras</div>
+    <div class="tn-breadcrumb">portfolio / <span>overview</span></div>
   </div>
-</nav>
-
-<div class="hero">
-  <div class="hero-label">GRC Engineer · Compliance Automation</div>
-  <div class="hero-name">Shayl <span>Taveras_</span></div>
-  <p class="hero-sub">Turning compliance requirements into automated, auditor-ready proof.</p>
-  <div style="margin-bottom:0.6rem;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;">Certifications</div>
-  <div class="hero-chips" style="margin-bottom:1.2rem;">
-    <span class="chip">CISSP</span>
-    <span class="chip">CISA</span>
-    <span class="chip">CEH</span>
-  </div>
-  <div style="margin-bottom:0.6rem;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;">Specializations</div>
-  <div class="hero-chips">
-    <span class="chip">FedRAMP</span>
-    <span class="chip">HITRUST</span>
-    <span class="chip">CMMC 2.0</span>
-    <span class="chip">RMF</span>
-    <span class="chip">SOC 2</span>
-    <span class="chip">PCI-DSS</span>
-    <span class="chip">NIST 800-53</span>
+  <div class="tn-right">
+    <div class="tn-badge">● available</div>
+    <div class="tn-links">
+      <a href="#projects">projects</a><a href="#experience">experience</a><a href="#contact">contact</a>
+    </div>
   </div>
 </div>
 
-<main>
+<div class="layout">
 
-  <!-- ABOUT -->
-  <section class="section" id="about">
-    <div class="sec-header">
-      <span class="sec-num">01 //</span>
-      <h2>about</h2>
-      <div class="sec-line"></div>
-    </div>
-    <div class="about-cols">
-      <div>
-        <p class="about-p">My path into GRC wasn't a straight line, and that's what makes it useful. I started in <strong>eDiscovery</strong> supporting litigation data operations for Merck and Johnson &amp; Johnson, where I learned how organizations manage sensitive data under legal scrutiny. From there I moved through a data center role at Nasdaq and network operations at Verizon Wireless, building a foundation in infrastructure and systems that most compliance professionals never have.</p>
-        <p class="about-p">My first compliance exposure came at Syntax, a SaaS company navigating PCI-DSS and SOC I/II audits. Being part of the team that helped prepare for those assessments showed me how much manual effort goes into evidence collection, and how much of it shouldn't be manual at all. That's what pulled me fully into the GRC engineering space.</p>
-        <p class="about-p">Since then I've worked primarily in the <strong>NIST and FedRAMP</strong> compliance space across federal, DoD, and healthcare environments. My current role has expanded that into SOC I/II, HITRUST, and PCI-DSS. My goal is to <strong>make continuous compliance the default</strong> and build the tooling that lets organizations walk into any audit confident their controls will hold.</p>
-      </div>
-      <div class="exp-rows">
-        <div class="exp-item">
-          <div><div class="exp-co">Florida Blue Cross Blue Shield</div><div class="exp-role">IT Systems Compliance Engineer · HITRUST · SOC 2 · CMS ARS</div></div>
-          <div class="exp-arr">→</div>
-        </div>
-        <div class="exp-item">
-          <div><div class="exp-co">Booz Allen Hamilton</div><div class="exp-role">GRC Consultant · FedRAMP High · RMF · NIST 800-53</div></div>
-          <div class="exp-arr">→</div>
-        </div>
-        <div class="exp-item">
-          <div><div class="exp-co">Lockheed Martin</div><div class="exp-role">Senior Cybersecurity Engineer · NIST 800-53 · NIST 800-171 · RMF</div></div>
-          <div class="exp-arr">→</div>
-        </div>
-        <div class="exp-item">
-          <div><div class="exp-co">Future Technologies, Inc</div><div class="exp-role">GRC Specialist · NIST 800-53 · RMF</div></div>
-          <div class="exp-arr">→</div>
-        </div>
-        <div class="exp-item">
-          <div><div class="exp-co">Syntax</div><div class="exp-role">GRC Analyst · PCI DSS · SOC I · SOC II</div></div>
-          <div class="exp-arr">→</div>
-        </div>
+  <!-- MAIN COLUMN -->
+  <div class="main-col">
+
+    <!-- HERO -->
+    <div class="hero-section">
+      <div class="hero-overline">// GRC Engineer · Compliance Automation · Barrington, NJ</div>
+      <div class="hero-name">Shayl <span>Taveras_</span></div>
+      <p class="hero-desc">eDiscovery at Merck and J&amp;J, then data center ops at Nasdaq, then the NOC at Verizon Wireless. None of it was GRC. That's actually the point. I understand what <strong>infrastructure looks like before an auditor shows up</strong>, which is a different starting point than most people in this field. The work now is getting organizations off the cycle of treating audits like events they survive and onto compliance as a property the infrastructure has, not a state someone verifies once a year.</p>
+      <div class="hero-chips">
+        <span class="chip">FedRAMP</span><span class="chip">HITRUST</span><span class="chip">CMMC 2.0</span><span class="chip">RMF</span><span class="chip">SOC 2</span><span class="chip">PCI-DSS</span><span class="chip">NIST 800-53</span>
       </div>
     </div>
-  </section>
 
-  <!-- PROJECTS -->
-  <section class="section" id="projects">
-    <div class="sec-header">
-      <span class="sec-num">02 //</span>
-      <h2>projects</h2>
-      <div class="sec-line"></div>
-    </div>
-    <div class="proj-grid">
-
-      <div class="project">
-        <div class="proj-n">project_01</div>
-        <div class="proj-title">Serverless IAM Access Review System</div>
-        <div class="proj-desc">Orchestrates IAM, IAM Access Analyzer, and Security Hub findings (IAM.1–IAM.9) into an AI-narrated HTML compliance report. EventBridge triggers a Lambda pipeline weekly and deposits a dated self-contained report to S3. Deployed via CloudFormation.</div>
-        <div class="tags">
-          <span class="tag">python</span>
-          <span class="tag">aws lambda</span>
-          <span class="tag">iam</span>
-          <span class="tag">security hub</span>
-          <span class="tag">eventbridge</span>
-          <span class="tag">cloudformation</span>
-          <span class="tag">bedrock</span>
-          <span class="tag">s3</span>
-        </div>
-        <div class="proj-links">
-          <a href="walkthrough.html">▶ walkthrough</a>
-          <a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/access-review" target="_blank" rel="noopener">github →</a>
-        </div>
+    <!-- PROJECTS -->
+    <div class="proj-section" id="projects">
+      <div class="section-header">
+        <div class="sh-title">Projects</div>
+        <div class="sh-count">4 active</div>
       </div>
-
-      <div class="project">
-        <div class="proj-n">project_02</div>
-        <div class="proj-title">Compliant S3 Primitive — NIST 800-53 as Terraform</div>
-        <div class="proj-desc">Terraform module enforcing five NIST 800-53 controls — SC-28, AC-3, CM-6, AU-3, AU-6 — directly in infrastructure. After deploy, <code style="font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);">terraform show -json</code> produces machine-readable compliance evidence an auditor can traverse without a console login or a screenshot.</div>
-        <div class="tags">
-          <span class="tag">terraform</span>
-          <span class="tag">aws s3</span>
-          <span class="tag">kms</span>
-          <span class="tag">nist 800-53</span>
-          <span class="tag">sc-28</span>
-          <span class="tag">iac-as-evidence</span>
-          <span class="tag">hipaa</span>
-        </div>
-        <div class="proj-links">
-          <a href="walkthrough-s3.html">▶ walkthrough</a>
-          <a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/terraform/primitives/compliant-s3" target="_blank" rel="noopener">github →</a>
-        </div>
+      <div class="proj-item">
+        <div class="pi-head"><div class="pi-title">Serverless IAM Access Review System</div><div class="pi-num">01</div></div>
+        <div class="pi-desc">Orchestrates IAM, IAM Access Analyzer, and Security Hub findings into an AI-narrated HTML compliance report. EventBridge weekly trigger, S3 output, CloudFormation deployed.</div>
+        <div class="pi-footer"><div class="pi-tags"><span class="ptag">python</span><span class="ptag">aws lambda</span><span class="ptag">eventbridge</span><span class="ptag">bedrock</span><span class="ptag">s3</span></div><div class="pi-links"><a href="walkthrough.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/access-review" target="_blank" rel="noopener">github →</a></div></div>
       </div>
-      
+      <div class="proj-item">
+        <div class="pi-head"><div class="pi-title">Compliant S3 Primitive — NIST 800-53</div><div class="pi-num">02</div></div>
+        <div class="pi-desc">Terraform module enforcing SC-28, AC-3, CM-6, AU-3, AU-6 into every S3 bucket. terraform show -json produces machine-readable evidence an auditor can traverse without a console login.</div>
+        <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">aws s3</span><span class="ptag">nist 800-53</span><span class="ptag">kms</span></div><div class="pi-links"><a href="walkthrough-s3.html">▶ walkthrough</a><a href="#">github →</a></div></div>
+      </div>
+      <div class="proj-item">
+        <div class="pi-head"><div class="pi-title">Compliant GCS Bucket — NIST 800-171</div><div class="pi-num">03</div></div>
+        <div class="pi-desc">Reusable Terraform module for GCP Cloud Storage hard-coding six NIST 800-171 controls with plan-time validation gates that reject non-compliant config before any resource reaches GCP.</div>
+        <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">gcp</span><span class="ptag">nist 800-171</span><span class="ptag">kms</span></div><div class="pi-links"><a href="walkthrough-gcs.html">▶ walkthrough</a><a href="#">github →</a></div></div>
+      </div>
+      <div class="proj-item">
+        <div class="pi-head"><div class="pi-title">GKE Cluster Compliant Primitive — Multi-Framework</div><div class="pi-num">04</div></div>
+        <div class="pi-desc">Ephemeral FedRAMP-realistic GKE cluster. SC-28, CM-6, AC-3, AU-3 hard-coded. Evidence in artifacts/terraform-state.json — auditor-traversable without console access. Maps to NIST 800-53, FedRAMP, CMMC L2, SOC 2.</div>
+        <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">gke</span><span class="ptag">fedramp</span><span class="ptag">cmmc l2</span><span class="ptag">nist 800-53</span></div><div class="pi-links"><a href="walkthrough-gke.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/labs/lab-05-gke-kyverno" target="_blank" rel="noopener">github →</a></div></div>
+      </div>
+    </div>
 
-      <div class="project">
-    <div class="proj-n">project_03</div>
-    <div class="proj-title">Compliant GCS Bucket — NIST 800-171 as Terraform (GCP)</div>
-    <div class="proj-desc">Reusable GCP Terraform module that hard-codes six NIST 800-171 controls — SC-12, SC-13, SC-28, AC-3, CM-6, AU-11 — into every Cloud Storage bucket
-  it provisions. Plan-time validation gates reject non-compliant config before any resource reaches GCP. After apply, a <code style="font-family:'DM
-  Mono',monospace;font-size:12px;color:var(--coral);">compliance_attestation</code> output surfaces machine-readable evidence of every enforced control.</div>
-    <div class="tags">
-      <span class="tag">terraform</span>
-      <span class="tag">gcp</span>
-      <span class="tag">cloud kms</span>
-      <span class="tag">nist 800-171</span>
-      <span class="tag">cmek</span>
-      <span class="tag">sc-28</span>
-      <span class="tag">iac-as-evidence</span>
+    <!-- EXPERIENCE -->
+    <div class="exp-section" id="experience">
+      <div class="section-header">
+        <div class="sh-title">Experience</div>
+        <div class="sh-count">5 roles</div>
+      </div>
+      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2 current"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Florida Blue Cross Blue Shield</div><div class="exp-role">IT Systems Compliance Engineer · HITRUST · SOC 2 · CMS ARS</div></div></div>
+      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Booz Allen Hamilton</div><div class="exp-role">GRC Consultant · FedRAMP High · RMF · NIST 800-53</div></div></div>
+      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Lockheed Martin</div><div class="exp-role">Senior Cybersecurity Engineer · NIST 800-53 · NIST 800-171 · RMF</div></div></div>
+      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Future Technologies, Inc</div><div class="exp-role">GRC Specialist · NIST 800-53 · RMF</div></div></div>
+      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div></div><div class="exp-body"><div class="exp-co">Syntax</div><div class="exp-role">GRC Analyst · PCI DSS · SOC I · SOC II</div></div></div>
     </div>
-    <div class="proj-links">
-      <a href="walkthrough-gcs.html">▶ walkthrough</a>
-      <a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/terraform/modules/compliant-gcs-bucket" target="_blank" rel="noopener">github →</a>
-    </div>
+
   </div>
 
-      <div class="project">
-        <div class="proj-n">project_04</div>
-        <div class="proj-title">GKE Cluster Compliant Primitive — Multi-Framework</div>
-        <div class="proj-desc">Ephemeral, FedRAMP-realistic GKE cluster with private nodes, Cloud NAT egress, and control plane locked to operator /32. Application-layer secrets encrypted via Cloud KMS with 90-day rotation. Four NIST 800-53 controls hard-coded into the cluster definition. Evidence lives in artifacts/plan.json and artifacts/terraform-state.json — auditor-traversable without a console login.</div>
-        <div class="tags">
-          <span class="tag">terraform</span>
-          <span class="tag">gcp</span>
-          <span class="tag">gke</span>
-          <span class="tag">kubernetes</span>
-          <span class="tag">nist 800-53</span>
-          <span class="tag">nist 800-171</span>
-          <span class="tag">fedramp</span>
-          <span class="tag">cmmc l2</span>
-          <span class="tag">soc 2</span>
-          <span class="tag">kms</span>
-        </div>
-        <div class="proj-links">
-          <a href="walkthrough-gke.html">▶ walkthrough</a>
-          <a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/labs/lab-05-gke-kyverno" target="_blank" rel="noopener">github →</a>
-        </div>
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+
+    <!-- PROFILE -->
+    <div class="profile-card">
+      <div class="pc-header">
+        <div class="pc-name">Shayl Taveras</div>
+        <div class="pc-role">GRC Engineer · Barrington, NJ</div>
       </div>
+      <div class="pc-stat-grid">
+        <div class="pc-stat"><div class="pc-stat-n">8+</div><div class="pc-stat-l">years exp</div></div>
+        <div class="pc-stat"><div class="pc-stat-n">5</div><div class="pc-stat-l">active certs</div></div>
+        <div class="pc-stat"><div class="pc-stat-n">4</div><div class="pc-stat-l">projects</div></div>
+        <div class="pc-stat"><div class="pc-stat-n">6+</div><div class="pc-stat-l">frameworks</div></div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.7;">The work now is getting organizations off the cycle of treating audits like events they survive and onto compliance as a property the infrastructure has, not a state someone verifies once a year.</p>
+    </div>
 
-    </div>
-  </section>
-
-  <!-- CERTIFICATIONS -->
-  <section class="section" id="certs">
-    <div class="sec-header">
-      <span class="sec-num">03 //</span>
-      <h2>certifications</h2>
-      <div class="sec-line"></div>
-    </div>
-    <div class="certs-grid">
-      <div class="cert on"><div class="cert-name">CISSP</div><div class="cert-body">ISC²</div></div>
-      <div class="cert on"><div class="cert-name">CISA</div><div class="cert-body">ISACA</div></div>
-      <div class="cert on"><div class="cert-name">CEH</div><div class="cert-body">EC-Council</div></div>
-      <div class="cert on"><div class="cert-name">CySA+</div><div class="cert-body">CompTIA</div></div>
-      <div class="cert on"><div class="cert-name">Linux+</div><div class="cert-body">CompTIA</div></div>
-      <div class="cert wip"><div class="cert-name">CCP</div><div class="cert-body">in progress</div></div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="section" id="contact">
-    <div class="sec-header">
-      <span class="sec-num">04 //</span>
-      <h2>contact</h2>
-      <div class="sec-line"></div>
-    </div>
-    <div class="contact-cols">
-      <p class="contact-p">Open to <strong>senior GRC Engineer</strong> and analyst roles, FedRAMP and CMMC consulting, and remote-first teams that value evidence over compliance theater.</p>
-      <div class="c-links">
-        <div class="c-link"><a href="https://www.linkedin.com/in/shayltaveras/" target="_blank" rel="noopener">LinkedIn</a><span>→</span></div>
-        <div class="c-link"><a href="https://github.com/Shayl-Taveras" target="_blank" rel="noopener">GitHub</a><span>→</span></div>
-        <div class="c-link"><a href="ST_Resume_2026.pdf" download>Resume</a><span>→</span></div>
-        <div class="c-link"><a href="mailto:shayl.taveras@gmail.com">Email</a><span>→</span></div>
+    <!-- CERTS -->
+    <div class="cert-card">
+      <div class="cert-label">Certifications</div>
+      <div class="cert-list2">
+        <div class="cert2"><div><div class="cert2-name">CISSP</div><div class="cert2-body">ISC²</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2"><div><div class="cert2-name">CISA</div><div class="cert2-body">ISACA</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2"><div><div class="cert2-name">CEH</div><div class="cert2-body">EC-Council</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2"><div><div class="cert2-name">CySA+</div><div class="cert2-body">CompTIA</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2"><div><div class="cert2-name">Linux+</div><div class="cert2-body">CompTIA</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2 wip"><div><div class="cert2-name">CCP</div><div class="cert2-body">in progress · CMMC AB</div></div><div class="cert2-dot"></div></div>
       </div>
     </div>
-  </section>
 
-</main>
+    <!-- CONNECT -->
+    <div class="connect-card" id="contact">
+      <div class="connect-label">Connect</div>
+      <div class="connect-list">
+        <div class="connect-item"><a href="https://www.linkedin.com/in/shayltaveras/" target="_blank">LinkedIn</a><span>↗</span></div>
+        <div class="connect-item"><a href="https://github.com/Shayl-Taveras" target="_blank">GitHub</a><span>↗</span></div>
+        <div class="connect-item"><a href="ST_Resume_2026.pdf" download>Resume</a><span>↓</span></div>
+        <div class="connect-item"><a href="mailto:shayl.taveras@gmail.com">Email</a><span>↗</span></div>
+      </div>
+    </div>
 
-<footer>
-  <div class="footer-brand">Shayl<span>.Taveras</span></div>
-  <div class="footer-copy">© 2026</div>
-</footer>
+  </div>
+</div>
 
+<div style="border-top:1px solid var(--border2);padding:1.2rem 2rem;background:var(--bg2);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;">
+  <span>Shayl<span style="color:var(--accent);">.Taveras</span></span>
+  <span>© 2026</span>
+</div>
 </body>
 </html>

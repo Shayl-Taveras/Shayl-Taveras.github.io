@@ -5,461 +5,310 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Walkthrough — GKE Cluster Compliant Primitive</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700&display=swap');
-  :root {
-    --bg:#0f0f0f;--bg2:#161614;--bg3:#1e1e1a;
-    --coral:#2dd4c8;--coral-dim:#0e8a80;--coral-muted:#001a18;
-    --peach:#9eeae5;--text:#ccc8b0;--text-bright:#f5f0dc;--muted:#605848;
-    --border:#222018;--border2:#2e2c1e;
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  :root{
+    --bg:#09090b;--bg2:#111113;--bg3:#18181b;--bg4:#1e1e21;
+    --accent:#f97316;--accent-dim:#7c2d12;--accent-muted:#150800;
+    --text:#c8c2bc;--text-bright:#fafaf9;--muted:#9c9590;
+    --border:#1c1917;--border2:#27241f;
+    --green:#22c55e;--red:#ef4444;--blue:#60a5fa;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
-  body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:15px;line-height:1.75;min-height:100vh;}
-  nav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2.8rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
-  .nav-brand{font-family:'DM Mono',monospace;font-size:13px;color:var(--coral);letter-spacing:0.05em;}
-  .nav-brand span{color:var(--muted);}
-  .nav-back{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:0.4rem 0.9rem;border:1px solid transparent;transition:all 0.2s;letter-spacing:0.04em;}
-  .nav-back:hover{color:var(--coral);border-color:var(--border2);}
-  .hero{padding:4.5rem 2.8rem 3.5rem;border-bottom:1px solid var(--border2);max-width:900px;margin:0 auto;}
-  .hero-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.8rem;}
-  .hero-label::before{content:'';width:30px;height:1px;background:var(--coral);}
-  .hero-title{font-size:2rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.8rem;}
-  .hero-sub{font-size:15.5px;color:var(--muted);line-height:1.75;max-width:700px;margin-bottom:2rem;}
-  .hero-badges{display:flex;gap:0.5rem;flex-wrap:wrap;}
-  .badge{font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--border2);color:var(--text);letter-spacing:0.04em;}
-  .badge.hot{border-color:var(--coral-dim);color:var(--coral);}
-  main{max-width:900px;margin:0 auto;padding:0 2.8rem 6rem;}
-  .section{padding:3.5rem 0;border-bottom:1px solid var(--border2);}
-  .section:last-child{border-bottom:none;}
-  .sec-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
-  .sec-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--coral);letter-spacing:0.1em;}
-  h2{font-size:17px;font-weight:600;color:var(--text-bright);}
-  .sec-line{flex:1;height:1px;background:var(--border2);}
-  .prose{font-size:15.5px;line-height:1.85;color:var(--text);margin-bottom:1rem;max-width:760px;}
-  .prose strong{color:var(--coral);font-weight:500;}
-  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border2);margin-top:1.8rem;}
-  .decision-card{background:var(--bg2);padding:1.5rem;transition:background 0.2s;position:relative;overflow:hidden;}
-  .decision-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--coral);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
-  .decision-card:hover{background:var(--bg3);}
-  .decision-card:hover::after{transform:scaleX(1);}
-  .dc-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.6rem;}
-  .dc-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.5rem;}
-  .dc-body{font-size:13px;color:var(--text);line-height:1.65;}
-  .controls-table{width:100%;border-collapse:collapse;margin-top:1.8rem;font-size:13.5px;}
-  .controls-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;text-align:left;padding:0.7rem 1rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
-  .controls-table td{padding:0.9rem 1rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
-  .controls-table tr:hover td{background:var(--bg2);}
-  .controls-table td:first-child{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);white-space:nowrap;}
-  .controls-table td:nth-child(2){font-family:'DM Mono',monospace;font-size:12px;color:var(--text-bright);white-space:nowrap;}
-  .findings-list{display:grid;gap:1px;background:var(--border2);margin-top:1.8rem;}
-  .finding{background:var(--bg);padding:1.4rem 1.6rem;display:grid;grid-template-columns:160px 1fr;gap:2rem;align-items:start;transition:background 0.2s;position:relative;overflow:hidden;}
-  .finding::before{content:'';position:absolute;top:0;left:0;bottom:0;width:0;background:linear-gradient(to right,var(--coral-muted),transparent);transition:width 0.3s;}
-  .finding:hover{background:var(--bg3);}
-  .finding:hover::before{width:60px;}
-  .finding-source{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);font-weight:500;padding-top:2px;}
-  .finding-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
-  .finding-desc{font-size:13px;color:var(--text);line-height:1.65;}
-  .finding-map{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:0.4rem;}
-  .finding-map span{color:var(--coral-dim);}
-  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:1.4rem 1.6rem;margin-top:1.6rem;font-family:'DM Mono',monospace;font-size:12.5px;line-height:1.8;overflow-x:auto;}
-  .code-label{font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.8rem;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+  /* NAV */
+  .topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2rem;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+  .tn-left{display:flex;align-items:center;gap:2rem;}
+  .tn-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+  .tn-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .tn-breadcrumb span{color:var(--text);}
+  .tn-right a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+  .tn-right a:hover{color:var(--accent);}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 48px);}
+  .main-col{border-right:1px solid var(--border2);padding:2rem;}
+  .right-col{padding:2rem;display:flex;flex-direction:column;gap:1.5rem;}
+
+  /* HERO */
+  .hero-section{padding-bottom:2rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);}
+  .hero-overline{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:0.8rem;}
+  .hero-name{font-size:1.8rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.6rem;}
+  .hero-name span{color:var(--accent);}
+  .hero-desc{font-size:14px;color:var(--text-bright);line-height:1.75;max-width:600px;margin-bottom:1.2rem;}
+  .hero-badges{display:flex;gap:0.4rem;flex-wrap:wrap;}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 10px;border:1px solid var(--border2);color:var(--text);}
+  .badge.hot{border-color:var(--accent-dim);color:var(--accent);}
+
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border2);}
+  .sh-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;}
+  .sh-num{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border:1px solid var(--border2);color:var(--muted);}
+
+  /* CONTENT SECTION */
+  .content-section{margin-bottom:2rem;}
+
+  /* PROSE */
+  .prose{font-size:14px;line-height:1.8;color:var(--text-bright);margin-bottom:0.8rem;}
+  .prose strong{color:var(--accent);font-weight:500;}
+  .prose code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:var(--accent-muted);padding:1px 5px;}
+
+  /* PANELS */
+  .panel{background:var(--bg2);border:1px solid var(--border2);margin-bottom:0.8rem;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .panel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform 0.25s;}
+  .panel:hover{border-color:var(--accent-dim);}
+  .panel:hover::before{transform:scaleY(1);}
+  .panel-body{padding:1.2rem;}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.5rem;}
+  .panel-title{font-size:13px;font-weight:600;color:var(--text-bright);}
+  .panel-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.08em;}
+  .panel-desc{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+  /* DECISION CARDS */
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.2rem;}
+  .dc{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;transition:border-color 0.2s;position:relative;overflow:hidden;}
+  .dc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .dc:hover{border-color:var(--accent-dim);}
+  .dc:hover::after{transform:scaleX(1);}
+  .dc-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+  .dc-title{font-size:12.5px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .dc-body{font-size:12px;color:var(--text-bright);line-height:1.6;}
+
+  /* CONTROLS TABLE */
+  .ctable{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:12.5px;}
+  .ctable th{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;text-align:left;padding:0.6rem 0.8rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .ctable td{padding:0.75rem 0.8rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .ctable tr:hover td{background:var(--bg2);}
+  .ctable td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);white-space:nowrap;}
+
+  /* CODE BLOCK */
+  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;}
+  .code-label{font-size:9.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
   .c-comment{color:var(--muted);}
-  .c-key{color:var(--coral);}
+  .c-key{color:var(--accent);}
   .c-val{color:var(--text-bright);}
-  .c-str{color:var(--peach);}
-  .callout{background:var(--coral-muted);border:1px solid var(--coral-dim);border-left:3px solid var(--coral);padding:1.2rem 1.4rem;margin-top:1.8rem;display:flex;gap:1rem;align-items:flex-start;}
-  .callout-icon{font-family:'DM Mono',monospace;font-size:12px;color:var(--coral);flex-shrink:0;padding-top:2px;}
-  .callout-body{font-size:14px;color:var(--text);line-height:1.7;}
-  .callout-body strong{color:var(--coral);}
-  .arch-wrap{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:2.5rem 2rem;margin-top:1.8rem;overflow-x:auto;}
-  .arch-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:2rem;}
-  svg.arch{width:100%;max-width:780px;display:block;margin:0 auto;}
-  .stats-row{display:flex;gap:1px;background:var(--border2);margin-top:1.8rem;}
-  .stat{background:var(--bg2);padding:1.4rem 2rem;flex:1;text-align:center;transition:background 0.2s;}
-  .stat:hover{background:var(--bg3);}
-  .stat-num{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;color:var(--coral);line-height:1;margin-bottom:0.4rem;}
-  .stat-label{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.04em;}
-  .cost-table{width:100%;border-collapse:collapse;margin-top:1.8rem;font-size:13.5px;}
-  .cost-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;text-align:left;padding:0.7rem 1rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
-  .cost-table td{padding:0.8rem 1rem;border-bottom:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;}
-  .cost-table tr:hover td{background:var(--bg2);}
-  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:1.4rem 1.6rem;margin-top:1.8rem;font-family:'DM Mono',monospace;font-size:12.5px;line-height:2.1;}
-  .ft-dir{color:var(--coral);}
+  .c-str{color:#fdba74;}
+
+  /* CALLOUT */
+  .callout{background:var(--accent-muted);border:1px solid var(--accent-dim);border-left:2px solid var(--accent);padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;gap:0.8rem;align-items:flex-start;}
+  .callout-icon{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);flex-shrink:0;padding-top:1px;}
+  .callout-body{font-size:13px;color:var(--text);line-height:1.7;}
+  .callout-body strong{color:var(--accent);}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1.2rem;}
+  .stat-card{background:var(--bg2);border:1px solid var(--border2);padding:1rem;text-align:center;transition:border-color 0.2s;}
+  .stat-card:hover{border-color:var(--accent-dim);}
+  .stat-n{font-size:1.8rem;font-weight:700;color:var(--text-bright);line-height:1;margin-bottom:0.3rem;}
+  .stat-l{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);letter-spacing:0.06em;}
+
+  /* FILE TREE */
+  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;}
+  .ft-dir{color:var(--accent);}
   .ft-file{color:var(--text);}
   .ft-comment{color:var(--muted);}
-  footer{border-top:1px solid var(--border2);padding:2rem 2.8rem;max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
-  .footer-brand{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
-  .footer-brand span{color:var(--coral);}
-  .footer-copy{font-family:'DM Mono',monospace;font-size:11px;color:var(--border2);}
-  @media(max-width:700px){nav,.hero,main,footer{padding-left:1.4rem;padding-right:1.4rem;}.decision-grid{grid-template-columns:1fr;}.finding{grid-template-columns:1fr;}.stats-row{flex-direction:column;}.hero-title{font-size:1.6rem;}}
+
+  /* SCREENSHOT */
+  .screenshot-wrap{background:var(--bg2);border:1px solid var(--border2);padding:0.5rem;margin-bottom:1.2rem;}
+  .screenshot-wrap img{width:100%;display:block;}
+  .screenshot-caption{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:0.06em;margin-top:0.6rem;}
+
+  /* RIGHT PANEL CARDS */
+  .info-card{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;margin-bottom:0;}
+  .ic-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border2);}
+  .ic-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+  .ic-row:last-child{border-bottom:none;}
+  .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+  .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
+  .ic-val.green{color:var(--green);}
+  .ic-val.orange{color:var(--accent);}
+
+  /* FRAMEWORK GRID */
+  .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
+  .fw-item{background:var(--bg2);border:1px solid var(--border2);padding:0.9rem;transition:border-color 0.2s;}
+  .fw-item:hover{border-color:var(--accent-dim);}
+  .fw-name{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:0.3rem;}
+  .fw-desc{font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+  /* ARCH DIAGRAM */
+  .arch-wrap{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:2rem 1.5rem;margin-bottom:1.2rem;overflow-x:auto;}
+  .arch-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.5rem;}
+  svg.arch{width:100%;max-width:700px;display:block;margin:0 auto;}
+
+  /* FOOTER */
+  .wt-footer{border-top:1px solid var(--border2);padding:1.2rem 2rem;background:var(--bg2);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+  .wt-footer span:first-child{color:var(--accent);}
+
+  @media(max-width:880px){.layout{grid-template-columns:1fr;}.main-col{border-right:none;}.right-col{border-top:1px solid var(--border2);}.decision-grid,.fw-grid,.stats-row{grid-template-columns:1fr 1fr;}.tn-breadcrumb{display:none;}}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-brand">Shayl<span>.Taveras</span></div>
-  <a href="index.html" class="nav-back">back to portfolio</a>
-</nav>
-
-<div class="hero">
-  <div class="hero-label">Project Walkthrough</div>
-  <div class="hero-title">GKE Cluster Compliant Primitive</div>
-  <p class="hero-sub">An ephemeral, FedRAMP-realistic GKE cluster with four NIST 800-53 controls hard-coded into the cluster definition. Private nodes, KMS-backed secrets encryption, Calico network policy, and full audit logging — all enforced at the infrastructure layer and evidenced in machine-readable artifacts.</p>
-  <div class="hero-badges">
-    <span class="badge hot">terraform</span>
-    <span class="badge hot">gcp</span>
-    <span class="badge hot">gke</span>
-    <span class="badge hot">nist 800-53</span>
-    <span class="badge">kubernetes · kms · fedramp · calico</span>
+<div class="topnav">
+  <div class="tn-left">
+    <div class="tn-brand">Shayl.Taveras</div>
+    <div class="tn-breadcrumb">portfolio / projects / <span>gke-cluster</span></div>
   </div>
+  <div class="tn-right"><a href="index.html">← back to portfolio</a></div>
 </div>
 
-<main>
+<div class="layout">
+<div class="main-col">
+
+  <div class="hero-section">
+    <div class="hero-overline">// Project Walkthrough · 04</div>
+    <div class="hero-name">GKE Cluster <span>Compliant Primitive</span></div>
+    <p class="hero-desc">An ephemeral, FedRAMP-realistic GKE cluster with four NIST 800-53 controls hard-coded into the cluster definition. Private nodes, KMS-backed secrets encryption, Calico network policy, and full audit logging — all enforced at the infrastructure layer and evidenced in machine-readable artifacts.</p>
+    <div class="hero-badges">
+      <span class="badge hot">terraform</span>
+      <span class="badge hot">gcp</span>
+      <span class="badge hot">gke</span>
+      <span class="badge hot">nist 800-53</span>
+      <span class="badge">kubernetes · kms · fedramp · cmmc l2 · soc 2</span>
+    </div>
+  </div>
 
   <!-- 01 PROBLEM -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">01 //</span><h2>Problem Statement</h2><div class="sec-line"></div></div>
-    <p class="prose">Kubernetes clusters are one of the hardest environments to evidence for compliance. The attack surface is broad, the configuration options are numerous, and most of the security-relevant settings are buried in cluster flags that change between GKE versions. The typical approach is to deploy a cluster, then run a checklist against it after the fact.</p>
-    <p class="prose">This primitive takes the opposite position. <strong>The controls are baked into the Terraform definition before the cluster exists.</strong> SC-28, CM-6, AC-3, and AU-3 are not audit findings waiting to happen — they are resource attributes. The evidence is generated at plan time and captured in <code style="font-family:'DM Mono',monospace;color:var(--coral);font-size:13px;">artifacts/plan.json</code> and <code style="font-family:'DM Mono',monospace;color:var(--coral);font-size:13px;">artifacts/terraform-state.json</code> without any console interaction.</p>
-  </section>
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
+    <p class="prose">Kubernetes clusters are one of the hardest environments to evidence for compliance. The configuration options are numerous, security-relevant settings change between GKE versions, and most are buried deep enough that a standard checklist review misses them. The typical approach is to deploy a cluster, then run a checklist after the fact.</p>
+    <p class="prose">This primitive takes the opposite position. <strong>The controls are baked into the Terraform definition before the cluster exists.</strong> SC-28, CM-6, AC-3, and AU-3 are not audit findings waiting to happen — they are resource attributes. The evidence is captured in <code>artifacts/plan.json</code> and <code>artifacts/terraform-state.json</code> without any console interaction.</p>
+  </div>
 
   <!-- 02 ARCHITECTURE -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">02 //</span><h2>Architecture Decision</h2><div class="sec-line"></div></div>
-    <p class="prose">Every design choice was made to satisfy a specific compliance requirement, not just to follow GKE best practices. The cluster is intentionally minimal — two e2-small nodes, one zone, one lab session — so the compliance primitives are visible without being obscured by production complexity.</p>
-
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Architecture Decision</div><div class="sh-num">02</div></div>
+    <p class="prose">Every design choice was made to satisfy a specific compliance requirement. The cluster is intentionally minimal — two e2-small nodes, one zone, one lab session — so the compliance primitives are visible without being obscured by production complexity.</p>
     <div class="decision-grid">
-      <div class="decision-card">
-        <div class="dc-label">// private nodes</div>
-        <div class="dc-title">No Public Node IPs (AC-3)</div>
-        <div class="dc-body">Nodes have no external IP addresses. Egress goes through Cloud NAT. The control plane is locked to a single operator /32 via master authorized networks — no range, no CIDR block, one IP.</div>
-      </div>
-      <div class="decision-card">
-        <div class="dc-label">// kms encryption</div>
-        <div class="dc-title">Application-Layer Secrets (SC-28)</div>
-        <div class="dc-body">A dedicated Cloud KMS key encrypts Kubernetes secrets at the application layer, on top of GCP's default at-rest encryption. 90-day rotation enforced. The key ARN and state are captured in the evidence artifacts.</div>
-      </div>
-      <div class="decision-card">
-        <div class="dc-label">// shielded nodes</div>
-        <div class="dc-title">Verified Boot + Integrity (CM-6)</div>
-        <div class="dc-body">Secure boot and integrity monitoring are enabled. STABLE release channel enforces tested, predictable GKE versions. Default node pool removed. GKE_METADATA mode prevents workloads from accessing the underlying VM metadata endpoint.</div>
-      </div>
-      <div class="decision-card">
-        <div class="dc-label">// audit logging</div>
-        <div class="dc-title">Five Log Components + Audit Config (AU-3)</div>
-        <div class="dc-body">The cluster logging_config enables five components: SYSTEM_COMPONENTS, WORKLOADS, API_SERVER, SCHEDULER, CONTROLLER_MANAGER. A separate google_project_iam_audit_config captures ADMIN_READ, DATA_READ, and DATA_WRITE for container.googleapis.com.</div>
-      </div>
+      <div class="dc"><div class="dc-label">// private nodes</div><div class="dc-title">No Public Node IPs (AC-3)</div><div class="dc-body">Nodes have no external IP addresses. Egress goes through Cloud NAT. Control plane locked to a single operator /32 via master authorized networks.</div></div>
+      <div class="dc"><div class="dc-label">// kms encryption</div><div class="dc-title">Application-Layer Secrets (SC-28)</div><div class="dc-body">A dedicated Cloud KMS key encrypts Kubernetes secrets at the application layer. 90-day rotation enforced. Key ARN and state captured in the evidence artifacts.</div></div>
+      <div class="dc"><div class="dc-label">// shielded nodes</div><div class="dc-title">Verified Boot + Integrity (CM-6)</div><div class="dc-body">Secure boot and integrity monitoring enabled. STABLE release channel enforces tested GKE versions. GKE_METADATA mode prevents workloads from accessing the underlying VM metadata endpoint.</div></div>
+      <div class="dc"><div class="dc-label">// audit logging</div><div class="dc-title">Five Log Components (AU-3)</div><div class="dc-body">logging_config enables SYSTEM_COMPONENTS, WORKLOADS, API_SERVER, SCHEDULER, CONTROLLER_MANAGER. A separate google_project_iam_audit_config captures ADMIN_READ, DATA_READ, DATA_WRITE for container.googleapis.com.</div></div>
     </div>
-
-    <!-- ARCH DIAGRAM -->
-    <div class="arch-wrap">
-      <div class="arch-label">// cluster architecture</div>
-      <svg class="arch" viewBox="0 0 780 300" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
-        <defs>
-          <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L7,3 z" fill="#0e8a80"/>
-          </marker>
-        </defs>
-
-        <!-- Operator -->
-        <rect x="10" y="124" width="110" height="44" fill="#001a18" stroke="#0e8a80" stroke-width="1" rx="2"/>
-        <text x="65" y="143" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">OPERATOR</text>
-        <text x="65" y="159" text-anchor="middle" fill="#605848" font-size="8.5">single /32 CIDR</text>
-
-        <!-- Arrow to Control Plane -->
-        <line x1="120" y1="146" x2="162" y2="146" stroke="#0e8a80" stroke-width="1.5" marker-end="url(#arr)"/>
-        <text x="141" y="138" text-anchor="middle" fill="#605848" font-size="8">kubectl</text>
-
-        <!-- Control Plane -->
-        <rect x="164" y="106" width="140" height="80" fill="#161614" stroke="#2e2c1e" stroke-width="1" rx="2"/>
-        <text x="234" y="128" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">CONTROL PLANE</text>
-        <line x1="180" y1="136" x2="288" y2="136" stroke="#222018" stroke-width="1"/>
-        <text x="234" y="152" text-anchor="middle" fill="#ccc8b0" font-size="9">master authorized networks</text>
-        <text x="234" y="168" text-anchor="middle" fill="#ccc8b0" font-size="9">workload identity enabled</text>
-        <text x="234" y="181" text-anchor="middle" fill="#605848" font-size="8.5">us-central1-a</text>
-
-        <!-- Arrow to Node Pool -->
-        <line x1="304" y1="146" x2="346" y2="146" stroke="#0e8a80" stroke-width="1.5" marker-end="url(#arr)"/>
-
-        <!-- Node Pool -->
-        <rect x="348" y="86" width="140" height="120" fill="#161614" stroke="#2e2c1e" stroke-width="1" rx="2"/>
-        <text x="418" y="108" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">NODE POOL</text>
-        <line x1="364" y1="116" x2="472" y2="116" stroke="#222018" stroke-width="1"/>
-        <text x="418" y="132" text-anchor="middle" fill="#ccc8b0" font-size="9">2x e2-small · private IPs</text>
-        <text x="418" y="148" text-anchor="middle" fill="#ccc8b0" font-size="9">shielded · secure boot</text>
-        <text x="418" y="164" text-anchor="middle" fill="#ccc8b0" font-size="9">GKE_METADATA mode</text>
-        <text x="418" y="180" text-anchor="middle" fill="#ccc8b0" font-size="9">Calico network policy</text>
-        <text x="418" y="196" text-anchor="middle" fill="#605848" font-size="8.5">Cloud NAT egress</text>
-
-        <!-- KMS -->
-        <rect x="348" y="222" width="140" height="44" fill="#001a18" stroke="#2e2c1e" stroke-width="1" rx="2"/>
-        <text x="418" y="241" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">CLOUD KMS</text>
-        <text x="418" y="258" text-anchor="middle" fill="#605848" font-size="8.5">secrets encryption · 90-day rotation</text>
-
-        <!-- Arrow KMS to Node Pool -->
-        <line x1="418" y1="222" x2="418" y2="206" stroke="#0e8a80" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
-
-        <!-- Logging -->
-        <rect x="528" y="60" width="140" height="80" fill="#001a18" stroke="#2e2c1e" stroke-width="1" rx="2"/>
-        <text x="598" y="80" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">CLOUD LOGGING</text>
-        <line x1="544" y1="88" x2="652" y2="88" stroke="#222018" stroke-width="1"/>
-        <text x="598" y="104" text-anchor="middle" fill="#605848" font-size="8.5">5 log components</text>
-        <text x="598" y="119" text-anchor="middle" fill="#605848" font-size="8.5">ADMIN · DATA_READ · DATA_WRITE</text>
-        <text x="598" y="133" text-anchor="middle" fill="#605848" font-size="8.5">container.googleapis.com</text>
-
-        <!-- Evidence box -->
-        <rect x="528" y="170" width="140" height="80" fill="#001a18" stroke="#2dd4c8" stroke-width="1" rx="2"/>
-        <text x="598" y="192" text-anchor="middle" fill="#2dd4c8" font-size="9.5" letter-spacing="1">ARTIFACTS</text>
-        <line x1="544" y1="200" x2="652" y2="200" stroke="#222018" stroke-width="1"/>
-        <text x="598" y="216" text-anchor="middle" fill="#605848" font-size="8.5">plan.json</text>
-        <text x="598" y="232" text-anchor="middle" fill="#605848" font-size="8.5">terraform-state.json</text>
-        <text x="598" y="243" text-anchor="middle" fill="#0e8a80" font-size="8">auditor-traversable</text>
-
-        <!-- Arrows to right side -->
-        <line x1="488" y1="116" x2="528" y2="90" stroke="#0e8a80" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
-        <line x1="488" y1="156" x2="528" y2="200" stroke="#0e8a80" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
-      </svg>
-    </div>
-  </section>
+  </div>
 
   <!-- 03 CONTROLS -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">03 //</span><h2>Controls Enforced</h2><div class="sec-line"></div></div>
-    <p class="prose">Four NIST 800-53 controls are hard-coded into the cluster definition. Each one has a direct mapping to a field in the Terraform state — no interpretation required.</p>
-
-    <table class="controls-table">
-      <thead>
-        <tr>
-          <th>Control ID</th>
-          <th>Control Name</th>
-          <th>Mechanism</th>
-          <th>Evidence Field in State</th>
-        </tr>
-      </thead>
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Controls Enforced</div><div class="sh-num">03</div></div>
+    <table class="ctable">
+      <thead><tr><th>Control ID</th><th>Mechanism</th><th>Evidence Field in State</th></tr></thead>
       <tbody>
-        <tr>
-          <td>SC-28</td>
-          <td>Protection at Rest</td>
-          <td>KMS-backed application-layer secrets encryption, 90-day key rotation</td>
-          <td><code style="font-family:'DM Mono',monospace;font-size:11px;">database_encryption[].state + key_name</code></td>
-        </tr>
-        <tr>
-          <td>CM-6</td>
-          <td>Configuration Settings</td>
-          <td>STABLE release channel, shielded nodes, secure boot, integrity monitoring, Calico, GKE_METADATA, restricted OAuth scopes</td>
-          <td>cluster + node_pool config blocks</td>
-        </tr>
-        <tr>
-          <td>AC-3</td>
-          <td>Access Enforcement</td>
-          <td>Private nodes, control plane locked to operator /32, workload identity, network policy, least-scope node OAuth</td>
-          <td><code style="font-family:'DM Mono',monospace;font-size:11px;">private_cluster_config, master_authorized_networks_config, workload_identity_config</code></td>
-        </tr>
-        <tr>
-          <td>AU-3</td>
-          <td>Content of Audit Records</td>
-          <td>Five logging components + project audit log config for container.googleapis.com (ADMIN_READ, DATA_READ, DATA_WRITE)</td>
-          <td><code style="font-family:'DM Mono',monospace;font-size:11px;">logging_config.enable_components + google_project_iam_audit_config</code></td>
-        </tr>
+        <tr><td>SC-28</td><td>KMS-backed application-layer secrets encryption, 90-day key rotation</td><td>database_encryption[].state + key_name</td></tr>
+        <tr><td>CM-6</td><td>STABLE release channel, shielded nodes, secure boot, integrity monitoring, Calico, GKE_METADATA</td><td>cluster + node_pool config blocks</td></tr>
+        <tr><td>AC-3</td><td>Private nodes, control plane locked to operator /32, workload identity, network policy, least-scope OAuth</td><td>private_cluster_config, master_authorized_networks_config, workload_identity_config</td></tr>
+        <tr><td>AU-3</td><td>Five logging components + project audit log config for container.googleapis.com</td><td>logging_config.enable_components + google_project_iam_audit_config</td></tr>
       </tbody>
     </table>
-  </section>
+  </div>
 
-  <!-- 04 WHAT IT CHECKS -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">04 //</span><h2>How the Controls Are Enforced</h2><div class="sec-line"></div></div>
-    <p class="prose">Each control maps to one or more concrete Terraform resource attributes. The enforcement is in the code, not a runbook.</p>
-
-    <div class="findings-list">
-      <div class="finding">
-        <div class="finding-source">SC-28 · secrets</div>
-        <div>
-          <div class="finding-title">Application-Layer Encryption</div>
-          <div class="finding-desc">A dedicated KMS keyring and key are provisioned for the cluster. The database_encryption block in the GKE cluster resource references this key directly. GCP encrypts Kubernetes secrets at the application layer before writing them to etcd — on top of the default at-rest encryption. 90-day rotation is enforced at the key resource level.</div>
-          <div class="finding-map">Evidence: <span>google_container_cluster.database_encryption[].state + key_name in plan.json</span></div>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-source">CM-6 · config</div>
-        <div>
-          <div class="finding-title">Hardened Cluster Configuration</div>
-          <div class="finding-desc">STABLE release channel pins the cluster to tested, supported GKE versions. Shielded nodes enforce secure boot and integrity monitoring at the hypervisor level. The default node pool is removed and replaced with an explicit pool. GKE_METADATA mode blocks workloads from querying the underlying VM metadata endpoint. OAuth scopes are restricted to the minimum required.</div>
-          <div class="finding-map">Evidence: <span>cluster + node_pool config blocks in terraform-state.json</span></div>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-source">AC-3 · access</div>
-        <div>
-          <div class="finding-title">Private Cluster with Locked Control Plane</div>
-          <div class="finding-desc">Nodes have no public IP addresses. Egress routes through Cloud NAT. The control plane's master authorized networks is set to a single /32 CIDR — the operator's IP at session time. Workload identity is enabled so pods authenticate to GCP APIs as Kubernetes service accounts, not as the node's service account. Calico enforces network policy at the pod level.</div>
-          <div class="finding-map">Evidence: <span>private_cluster_config, master_authorized_networks_config, workload_identity_config in plan.json</span></div>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-source">AU-3 · logging</div>
-        <div>
-          <div class="finding-title">Five-Component Audit Trail</div>
-          <div class="finding-desc">The cluster logging_config enables SYSTEM_COMPONENTS, WORKLOADS, API_SERVER, SCHEDULER, and CONTROLLER_MANAGER. A separate google_project_iam_audit_config resource enables ADMIN_READ, DATA_READ, and DATA_WRITE for container.googleapis.com — capturing all control plane API calls at the project level, not just cluster-level events.</div>
-          <div class="finding-map">Evidence: <span>logging_config.enable_components + google_project_iam_audit_config in terraform-state.json</span></div>
-        </div>
-      </div>
+  <!-- 04 EVIDENCE SCREENSHOT -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">What the Auditor Sees</div><div class="sh-num">04</div></div>
+    <p class="prose">After apply, a single jq query against <code>artifacts/terraform-state.json</code> produces structured evidence for every enforced control. No console login, no manual evidence collection.</p>
+    <div class="screenshot-wrap">
+      <img src="gke-evidence.png" alt="jq query output showing private_nodes: true, encryption_state: ENCRYPTED, release_channel: STABLE, five logging components">
+      <div class="screenshot-caption">// jq output from artifacts/terraform-state.json — all four controls confirmed in a single query</div>
     </div>
-  </section>
-
-  <!-- EVIDENCE SCREENSHOT -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">04b //</span><h2>What the Auditor Actually Sees</h2><div class="sec-line"></div></div>
-    <p class="prose">After apply, a single <code style="font-family:'DM Mono',monospace;color:var(--coral);font-size:13px;">jq</code> query against <code style="font-family:'DM Mono',monospace;color:var(--coral);font-size:13px;">artifacts/terraform-state.json</code> produces structured evidence for every enforced control. No console login. No screenshots of toggles. The state file is the audit artifact.</p>
-
-    <div style="background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--coral);padding:0.5rem;margin-top:1.8rem;">
-      <img src="gke-evidence.png" alt="jq query against terraform-state.json showing private_nodes: true, encryption_state: ENCRYPTED, release_channel: STABLE, workload_pool, and all five logging components" style="width:100%;display:block;border:1px solid var(--border2);">
-    </div>
-    <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-top:0.8rem;">// jq query against artifacts/terraform-state.json — private_nodes: true, encryption_state: ENCRYPTED, release_channel: STABLE, five logging components confirmed</p>
-
-    <table class="controls-table" style="margin-top:1.4rem;">
-      <thead>
-        <tr>
-          <th>Field in Output</th>
-          <th>Value</th>
-          <th>NIST 800-53</th>
-          <th>NIST 800-171</th>
-          <th>FedRAMP</th>
-          <th>CMMC L2</th>
-          <th>SOC 2</th>
-        </tr>
-      </thead>
+    <table class="ctable">
+      <thead><tr><th>Field in Output</th><th>Value</th><th>NIST 800-53</th><th>NIST 800-171</th><th>FedRAMP</th><th>CMMC L2</th><th>SOC 2</th></tr></thead>
       <tbody>
-        <tr>
-          <td>private_nodes</td>
-          <td style="color:var(--peach);font-family:'DM Mono',monospace;font-size:11px;">true</td>
-          <td>AC-3</td>
-          <td>3.1.1 · 3.1.2</td>
-          <td>AC-3</td>
-          <td>AC.L2-3.1.1</td>
-          <td>CC6.1</td>
-        </tr>
-        <tr>
-          <td>encryption_state</td>
-          <td style="color:var(--peach);font-family:'DM Mono',monospace;font-size:11px;">"ENCRYPTED"</td>
-          <td>SC-28</td>
-          <td>3.13.16</td>
-          <td>SC-28</td>
-          <td>SC.L2-3.13.16</td>
-          <td>CC6.7</td>
-        </tr>
-        <tr>
-          <td>release_channel</td>
-          <td style="color:var(--peach);font-family:'DM Mono',monospace;font-size:11px;">"STABLE"</td>
-          <td>CM-6</td>
-          <td>3.4.2</td>
-          <td>CM-6</td>
-          <td>CM.L2-3.4.2</td>
-          <td>CC7.1</td>
-        </tr>
-        <tr>
-          <td>workload_pool</td>
-          <td style="color:var(--peach);font-family:'DM Mono',monospace;font-size:11px;">*.svc.id.goog</td>
-          <td>AC-3</td>
-          <td>3.1.1 · 3.1.2</td>
-          <td>AC-3</td>
-          <td>AC.L2-3.1.2</td>
-          <td>CC6.3</td>
-        </tr>
-        <tr>
-          <td>logging_components</td>
-          <td style="color:var(--peach);font-family:'DM Mono',monospace;font-size:11px;">[ 5 components ]</td>
-          <td>AU-3</td>
-          <td>3.3.1</td>
-          <td>AU-3</td>
-          <td>AU.L2-3.3.1</td>
-          <td>CC7.2</td>
-        </tr>
+        <tr><td>private_nodes</td><td>true</td><td>AC-3</td><td>3.1.1 · 3.1.2</td><td>AC-3</td><td>AC.L2-3.1.1</td><td>CC6.1</td></tr>
+        <tr><td>encryption_state</td><td>"ENCRYPTED"</td><td>SC-28</td><td>3.13.16</td><td>SC-28</td><td>SC.L2-3.13.16</td><td>CC6.7</td></tr>
+        <tr><td>release_channel</td><td>"STABLE"</td><td>CM-6</td><td>3.4.2</td><td>CM-6</td><td>CM.L2-3.4.2</td><td>CC7.1</td></tr>
+        <tr><td>workload_pool</td><td>*.svc.id.goog</td><td>AC-3</td><td>3.1.1 · 3.1.2</td><td>AC-3</td><td>AC.L2-3.1.2</td><td>CC6.3</td></tr>
+        <tr><td>logging_components</td><td>[5 components]</td><td>AU-3</td><td>3.3.1</td><td>AU-3</td><td>AU.L2-3.3.1</td><td>CC7.2</td></tr>
       </tbody>
     </table>
-  </section>
+  </div>
 
   <!-- 05 SESSION FLOW -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">05 //</span><h2>Session Flow</h2><div class="sec-line"></div></div>
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Session Flow</div><div class="sh-num">05</div></div>
     <p class="prose">The cluster is designed for a single lab session and torn down immediately after. The Makefile wraps every step so the session flow is consistent and reproducible.</p>
-
     <div class="code-block">
       <div class="code-label">// full session flow</div>
-      <div><span class="c-comment"># Set your project and lock the control plane to your IP</span></div>
       <div><span class="c-key">export</span> <span class="c-val">TF_VAR_project_id</span>=<span class="c-str">your-lab-project-id</span></div>
       <div><span class="c-key">export</span> <span class="c-val">TF_VAR_authorized_cidr</span>=<span class="c-str">$(curl -s https://api.ipify.org)/32</span></div>
       <br>
-      <div><span class="c-comment"># Initialize, plan, apply</span></div>
       <div><span class="c-key">make</span> <span class="c-val">init</span></div>
-      <div><span class="c-key">make</span> <span class="c-val">plan</span>   <span class="c-comment"># generates artifacts/plan.json</span></div>
-      <div><span class="c-key">make</span> <span class="c-val">apply</span>  <span class="c-comment"># generates artifacts/terraform-state.json</span></div>
+      <div><span class="c-key">make</span> <span class="c-val">plan</span>  <span class="c-comment"># generates artifacts/plan.json</span></div>
+      <div><span class="c-key">make</span> <span class="c-val">apply</span> <span class="c-comment"># generates artifacts/terraform-state.json</span></div>
       <div><span class="c-key">make</span> <span class="c-val">kubeconfig</span></div>
+      <div><span class="c-key">kubectl</span> <span class="c-val">get nodes</span> <span class="c-comment"># expect two Ready nodes</span></div>
       <br>
-      <div><span class="c-comment"># Verify two Ready nodes</span></div>
-      <div><span class="c-key">kubectl</span> <span class="c-val">get nodes</span></div>
-      <br>
-      <div><span class="c-comment"># Tear down and end billing immediately</span></div>
-      <div><span class="c-key">make</span> <span class="c-val">destroy</span></div>
+      <div><span class="c-key">make</span> <span class="c-val">destroy</span> <span class="c-comment"># ends billing immediately</span></div>
     </div>
-
-    <div class="callout" style="margin-top:1.8rem;">
-      <div class="callout-icon">// evidence</div>
-      <div class="callout-body">The <code style="font-family:'DM Mono',monospace;color:var(--coral);font-size:12px;">make plan</code> and <code style="font-family:'DM Mono',monospace;color:var(--coral);font-size:12px;">make apply</code> targets automatically write to <strong>artifacts/plan.json</strong> and <strong>artifacts/terraform-state.json</strong>. Both files are gitignored — they are session artifacts, not committed state. An auditor receives these files directly as compliance evidence.</div>
+    <div class="callout">
+      <div class="callout-icon">// phase 2</div>
+      <div class="callout-body">Phase 1 stops at the cluster. <strong>Phase 2 installs Kyverno</strong> and adds pod-level compliance policies on top of this infrastructure.</div>
     </div>
-  </section>
+  </div>
 
-  <!-- 06 MODULE STRUCTURE -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">06 //</span><h2>File Structure</h2><div class="sec-line"></div></div>
+  <!-- 06 FILE STRUCTURE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">File Structure</div><div class="sh-num">06</div></div>
     <div class="file-tree">
-      <div><span class="ft-dir">tools/terraform/</span></div>
+      <div><span class="ft-dir">labs/lab-05-gke-kyverno/</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">versions.tf</span> <span class="ft-comment"># terraform + provider version pins</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">variables.tf</span> <span class="ft-comment"># project, zone, authorized CIDR, cluster shape</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">main.tf</span> <span class="ft-comment"># provider, KMS, VPC + NAT, GKE cluster, node pool, audit log config</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">outputs.tf</span> <span class="ft-comment"># cluster identifiers, kubeconfig command, artifact paths</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">Makefile</span> <span class="ft-comment"># init / plan / apply / kubeconfig / destroy / clean</span></div>
       <div>&nbsp;&nbsp;<span class="ft-dir">artifacts/</span> <span class="ft-comment"># gitignored — generated evidence per session</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">plan.json</span> <span class="ft-comment"># generated by make plan</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">terraform-state.json</span> <span class="ft-comment"># generated by make apply</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">plan.json</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">terraform-state.json</span></div>
     </div>
-  </section>
+  </div>
 
-  <!-- 07 COST + SCOPE -->
-  <section class="section">
-    <div class="sec-header"><span class="sec-num">07 //</span><h2>Cost and Scope</h2><div class="sec-line"></div></div>
-    <p class="prose">The cluster is intentionally minimal. GCP bills per second — a 45-minute lab session costs roughly $0.075. <code style="font-family:'DM Mono',monospace;color:var(--coral);font-size:13px;">make destroy</code> ends billing immediately.</p>
-
-    <table class="cost-table">
-      <thead>
-        <tr><th>Component</th><th>Rate</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>2x e2-small nodes</td><td>$0.054 / hr combined</td></tr>
-        <tr><td>Cloud NAT</td><td>$0.044 / hr + minor egress</td></tr>
-        <tr><td>Cloud KMS</td><td>&lt;$0.01 / month — effectively zero per session</td></tr>
-        <tr><td>Zonal control plane</td><td>$0 — first zonal cluster per billing account is free</td></tr>
-      </tbody>
-    </table>
-
-    <div class="callout" style="margin-top:1.8rem;">
-      <div class="callout-icon">// phase 2</div>
-      <div class="callout-body">Phase 1 stops at the cluster. <strong>Phase 2 installs Kyverno</strong> and adds pod-level compliance policies on top of this infrastructure. The cluster this primitive provisions is the foundation for that work.</div>
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Summary</div><div class="sh-num">07</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">4</div><div class="stat-l">controls enforced</div></div>
+      <div class="stat-card"><div class="stat-n">2</div><div class="stat-l">evidence artifacts</div></div>
+      <div class="stat-card"><div class="stat-n">5</div><div class="stat-l">log components</div></div>
+      <div class="stat-card"><div class="stat-n">5</div><div class="stat-l">frameworks mapped</div></div>
     </div>
+  </div>
 
-    <div class="stats-row" style="margin-top:1.8rem;">
-      <div class="stat"><div class="stat-num">4</div><div class="stat-label">controls enforced</div></div>
-      <div class="stat"><div class="stat-num">2</div><div class="stat-label">evidence artifacts</div></div>
-      <div class="stat"><div class="stat-num">5</div><div class="stat-label">log components</div></div>
-      <div class="stat"><div class="stat-num">~$0.10</div><div class="stat-label">per hour running</div></div>
-    </div>
-  </section>
+</div>
+<div class="right-col">
+  <div class="info-card">
+    <div class="ic-label">Project Details</div>
+    <div class="ic-row"><div class="ic-key">type</div><div class="ic-val">terraform module</div></div>
+    <div class="ic-row"><div class="ic-key">cloud</div><div class="ic-val">GCP</div></div>
+    <div class="ic-row"><div class="ic-key">resource</div><div class="ic-val">GKE + KMS + VPC</div></div>
+    <div class="ic-row"><div class="ic-key">nodes</div><div class="ic-val">2x e2-small</div></div>
+    <div class="ic-row"><div class="ic-key">cost</div><div class="ic-val">~$0.10/hr</div></div>
+    <div class="ic-row"><div class="ic-key">evidence</div><div class="ic-val orange">plan.json + state</div></div>
+    <div class="ic-row"><div class="ic-key">phase 2</div><div class="ic-val green">kyverno</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Controls</div>
+    <div class="ic-row"><div class="ic-key">SC-28</div><div class="ic-val">Secrets Encryption</div></div>
+    <div class="ic-row"><div class="ic-key">CM-6</div><div class="ic-val">Config Settings</div></div>
+    <div class="ic-row"><div class="ic-key">AC-3</div><div class="ic-val">Access Enforce</div></div>
+    <div class="ic-row"><div class="ic-key">AU-3</div><div class="ic-val">Audit Records</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Frameworks</div>
+    <div class="ic-row"><div class="ic-key">NIST 800-53</div><div class="ic-val green">mapped</div></div>
+    <div class="ic-row"><div class="ic-key">NIST 800-171</div><div class="ic-val green">mapped</div></div>
+    <div class="ic-row"><div class="ic-key">FedRAMP</div><div class="ic-val green">mapped</div></div>
+    <div class="ic-row"><div class="ic-key">CMMC L2</div><div class="ic-val green">mapped</div></div>
+    <div class="ic-row"><div class="ic-key">SOC 2</div><div class="ic-val green">mapped</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Links</div>
+    <div class="ic-row"><div class="ic-key">github</div><div class="ic-val"><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/labs/lab-05-gke-kyverno" target="_blank" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">view →</a></div></div>
+    <div class="ic-row"><div class="ic-key">portfolio</div><div class="ic-val"><a href="index.html" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">← back</a></div></div>
+  </div>
+</div>
+</div>
 
-</main>
-
-<footer>
-  <div class="footer-brand">Shayl<span>.Taveras</span></div>
-  <div class="footer-copy">© 2026</div>
-</footer>
-
+<div class="wt-footer">
+  <span>Shayl.Taveras</span>
+  <span style="color:var(--muted);">© 2026</span>
+</div>
 </body>
 </html>
