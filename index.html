@@ -155,7 +155,7 @@
     <div class="proj-section" id="projects">
       <div class="section-header">
         <div class="sh-title">Projects</div>
-        <div class="sh-count">4 active</div>
+        <div class="sh-count">5 active</div>
       </div>
       <div class="proj-item">
         <div class="pi-head"><div class="pi-title">Serverless IAM Access Review System</div><div class="pi-num">01</div></div>
@@ -176,6 +176,11 @@
         <div class="pi-head"><div class="pi-title">GKE Cluster Compliant Primitive — Multi-Framework</div><div class="pi-num">04</div></div>
         <div class="pi-desc">Ephemeral FedRAMP-realistic GKE cluster. SC-28, CM-6, AC-3, AU-3 hard-coded. Evidence in artifacts/terraform-state.json — auditor-traversable without console access. Maps to NIST 800-53, FedRAMP, CMMC L2, SOC 2.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">gke</span><span class="ptag">fedramp</span><span class="ptag">cmmc l2</span><span class="ptag">nist 800-53</span></div><div class="pi-links"><a href="walkthrough-gke.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/labs/lab-05-gke-kyverno" target="_blank" rel="noopener">github →</a></div></div>
+      </div>
+      <div class="proj-item">
+        <div class="pi-head"><div class="pi-title">Rego Compliance Policy Library — GCP</div><div class="pi-num">05</div></div>
+        <div class="pi-desc">Three OPA Rego policies that validate a Terraform plan against NIST 800-53 SC-28, AC-3, and CM-6 before any resource is deployed. Runs as a pre-apply gate against terraform plan -json output. Each deny message returns the resource address and NIST control ID so developers know exactly what to fix without filing a GRC ticket. Eight tests, three controls, no cloud access needed.</div>
+        <div class="pi-footer"><div class="pi-tags"><span class="ptag">opa</span><span class="ptag">rego</span><span class="ptag">terraform</span><span class="ptag">gcp</span><span class="ptag">nist 800-53</span><span class="ptag">policy-as-code</span></div><div class="pi-links"><a href="walkthrough-rego.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/rego-policies" target="_blank" rel="noopener">github →</a></div></div>
       </div>
     </div>
 

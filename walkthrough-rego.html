@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkthrough — Rego Compliance Policy Library</title>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  :root{
+    --bg:#09090b;--bg2:#111113;--bg3:#18181b;--bg4:#1e1e21;
+    --accent:#f97316;--accent-dim:#7c2d12;--accent-muted:#150800;
+    --text:#c8c2bc;--text-bright:#fafaf9;--muted:#9c9590;
+    --border:#1c1917;--border2:#27241f;
+    --green:#22c55e;--red:#ef4444;--blue:#60a5fa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+  /* NAV */
+  .topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2rem;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+  .tn-left{display:flex;align-items:center;gap:2rem;}
+  .tn-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+  .tn-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .tn-breadcrumb span{color:var(--text);}
+  .tn-right a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+  .tn-right a:hover{color:var(--accent);}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 48px);}
+  .main-col{border-right:1px solid var(--border2);padding:2rem;}
+  .right-col{padding:2rem;display:flex;flex-direction:column;gap:1.5rem;}
+
+  /* HERO */
+  .hero-section{padding-bottom:2rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);}
+  .hero-overline{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:0.8rem;}
+  .hero-name{font-size:1.8rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.6rem;}
+  .hero-name span{color:var(--accent);}
+  .hero-desc{font-size:14px;color:var(--text-bright);line-height:1.75;max-width:600px;margin-bottom:1.2rem;}
+  .hero-badges{display:flex;gap:0.4rem;flex-wrap:wrap;}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 10px;border:1px solid var(--border2);color:var(--text);}
+  .badge.hot{border-color:var(--accent-dim);color:var(--accent);}
+
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border2);}
+  .sh-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;}
+  .sh-num{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border:1px solid var(--border2);color:var(--muted);}
+
+  /* CONTENT SECTION */
+  .content-section{margin-bottom:2rem;}
+
+  /* PROSE */
+  .prose{font-size:14px;line-height:1.8;color:var(--text-bright);margin-bottom:0.8rem;}
+  .prose strong{color:var(--accent);font-weight:500;}
+  .prose code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:var(--accent-muted);padding:1px 5px;}
+
+  /* PANELS */
+  .panel{background:var(--bg2);border:1px solid var(--border2);margin-bottom:0.8rem;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .panel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform 0.25s;}
+  .panel:hover{border-color:var(--accent-dim);}
+  .panel:hover::before{transform:scaleY(1);}
+  .panel-body{padding:1.2rem;}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.5rem;}
+  .panel-title{font-size:13px;font-weight:600;color:var(--text-bright);}
+  .panel-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.08em;}
+  .panel-desc{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+  /* DECISION CARDS */
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.2rem;}
+  .dc{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;transition:border-color 0.2s;position:relative;overflow:hidden;}
+  .dc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .dc:hover{border-color:var(--accent-dim);}
+  .dc:hover::after{transform:scaleX(1);}
+  .dc-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+  .dc-title{font-size:12.5px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .dc-body{font-size:12px;color:var(--text-bright);line-height:1.6;}
+
+  /* CONTROLS TABLE */
+  .ctable{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:12.5px;}
+  .ctable th{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;text-align:left;padding:0.6rem 0.8rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .ctable td{padding:0.75rem 0.8rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .ctable tr:hover td{background:var(--bg2);}
+  .ctable td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);white-space:nowrap;}
+
+  /* CODE BLOCK */
+  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;}
+  .code-label{font-size:9.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
+  .c-comment{color:var(--muted);}
+  .c-key{color:var(--accent);}
+  .c-val{color:var(--text-bright);}
+  .c-str{color:#fdba74;}
+
+  /* CALLOUT */
+  .callout{background:var(--accent-muted);border:1px solid var(--accent-dim);border-left:2px solid var(--accent);padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;gap:0.8rem;align-items:flex-start;}
+  .callout-icon{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);flex-shrink:0;padding-top:1px;}
+  .callout-body{font-size:13px;color:var(--text);line-height:1.7;}
+  .callout-body strong{color:var(--accent);}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1.2rem;}
+  .stat-card{background:var(--bg2);border:1px solid var(--border2);padding:1rem;text-align:center;transition:border-color 0.2s;}
+  .stat-card:hover{border-color:var(--accent-dim);}
+  .stat-n{font-size:1.8rem;font-weight:700;color:var(--text-bright);line-height:1;margin-bottom:0.3rem;}
+  .stat-l{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);letter-spacing:0.06em;}
+
+  /* FILE TREE */
+  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;}
+  .ft-dir{color:var(--accent);}
+  .ft-file{color:var(--text);}
+  .ft-comment{color:var(--muted);}
+
+  /* SCREENSHOT */
+  .screenshot-wrap{background:var(--bg2);border:1px solid var(--border2);padding:0.5rem;margin-bottom:1.2rem;}
+  .screenshot-wrap img{width:100%;display:block;}
+  .screenshot-caption{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:0.06em;margin-top:0.6rem;}
+
+  /* RIGHT PANEL CARDS */
+  .info-card{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;margin-bottom:0;}
+  .ic-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border2);}
+  .ic-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+  .ic-row:last-child{border-bottom:none;}
+  .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+  .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
+  .ic-val.green{color:var(--green);}
+  .ic-val.orange{color:var(--accent);}
+
+  /* FRAMEWORK GRID */
+  .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
+  .fw-item{background:var(--bg2);border:1px solid var(--border2);padding:0.9rem;transition:border-color 0.2s;}
+  .fw-item:hover{border-color:var(--accent-dim);}
+  .fw-name{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:0.3rem;}
+  .fw-desc{font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+  /* ARCH DIAGRAM */
+  .arch-wrap{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:2rem 1.5rem;margin-bottom:1.2rem;overflow-x:auto;}
+  .arch-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.5rem;}
+  svg.arch{width:100%;max-width:700px;display:block;margin:0 auto;}
+
+  /* FOOTER */
+  .wt-footer{border-top:1px solid var(--border2);padding:1.2rem 2rem;background:var(--bg2);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+  .wt-footer span:first-child{color:var(--accent);}
+
+  @media(max-width:880px){.layout{grid-template-columns:1fr;}.main-col{border-right:none;}.right-col{border-top:1px solid var(--border2);}.decision-grid,.fw-grid,.stats-row{grid-template-columns:1fr 1fr;}.tn-breadcrumb{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-left">
+    <div class="tn-brand">Shayl.Taveras</div>
+    <div class="tn-breadcrumb">portfolio / projects / <span>rego-policy-library</span></div>
+  </div>
+  <div class="tn-right"><a href="index.html">← back to portfolio</a></div>
+</div>
+
+<div class="layout">
+<div class="main-col">
+
+  <div class="hero-section">
+    <div class="hero-overline">// Project Walkthrough · 05</div>
+    <div class="hero-name">Rego Compliance <span>Policy Library</span></div>
+    <p class="hero-desc">Three OPA Rego policies that run as a pre-apply gate against terraform plan -json output, validating GCP resources against NIST 800-53 SC-28, AC-3, and CM-6 before anything is deployed. Each deny message returns the resource address and control ID so developers fix the problem without filing a GRC ticket.</p>
+    <div class="hero-badges">
+      <span class="badge hot">opa</span>
+      <span class="badge hot">rego</span>
+      <span class="badge hot">nist 800-53</span>
+      <span class="badge">terraform · gcp · policy-as-code</span>
+    </div>
+  </div>
+
+  <!-- 01 PROBLEM -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
+    <p class="prose">Most compliance validation happens after infrastructure is deployed. A resource gets created, someone runs a check, a finding gets filed, and the team spends a sprint remediating something that should never have been deployed in the first place. The loop is slow, reactive, and produces GRC tickets as a side effect of normal engineering work.</p>
+    <p class="prose">This library moves the validation upstream. <strong>Policies run against the Terraform plan before apply</strong> — no cloud access required, no resources created, instant feedback. A developer who tries to deploy an unencrypted bucket or a resource missing compliance labels sees the denial, the resource address, and the NIST control ID in the same terminal window where they ran the plan.</p>
+  </div>
+
+  <!-- 02 HOW IT WORKS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">How It Works</div><div class="sh-num">02</div></div>
+    <p class="prose">OPA evaluates Rego policies against the JSON output of <code>terraform plan -json</code>. The plan contains every resource Terraform intends to create or modify, including all attribute values. Policies inspect those values and emit deny messages for any resource that fails a control check.</p>
+    <div class="decision-grid">
+      <div class="dc"><div class="dc-label">// pre-apply gate</div><div class="dc-title">Shift Left, Not Post-Deploy</div><div class="dc-body">Validation runs at plan time — before any API call reaches GCP. A failing policy blocks the apply entirely, not after resources are half-created.</div></div>
+      <div class="dc"><div class="dc-label">// rego v1 semantics</div><div class="dc-title">OPA import rego.v1</div><div class="dc-body">Strict Rego v1 syntax with explicit import rego.v1 for forward compatibility. Partial set rules with contains to recurse into child_modules for module-wrapped resources.</div></div>
+      <div class="dc"><div class="dc-label">// actionable denials</div><div class="dc-title">Resource Address + Control ID</div><div class="dc-body">Every deny message returns the full resource address and the NIST control ID. Developers know exactly what to fix and why without a GRC ticket or Slack thread.</div></div>
+      <div class="dc"><div class="dc-label">// in-memory tests</div><div class="dc-title">No Cloud Access Needed</div><div class="dc-body">The test suite runs entirely against in-memory fixtures — no apply, no GCP credentials, instant CI feedback. Eight tests across three policies.</div></div>
+    </div>
+  </div>
+
+  <!-- 03 POLICIES -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Policies and Controls</div><div class="sh-num">03</div></div>
+    <p class="prose">Three policies, each enforcing one NIST 800-53 control. Each runs independently so teams can adopt them incrementally.</p>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">SC-28 · encryption.rego</div><div class="panel-title">Encryption at Rest via CMEK</div></div>
+        <div class="panel-desc">Validates that every google_storage_bucket resource has a customer-managed encryption key configured. A bucket using default Google-managed encryption fails the policy — SC-28 requires customer control of the key material. Deny message returns the bucket resource address and SC-28.</div>
+      </div>
+    </div>
+    <div class="screenshot-wrap">
+      <img src="rego-deny-sc28.png" alt="SC-28 deny output — missing CMEK on google_storage_bucket.bad_no_cmek with remediation">
+      <div class="screenshot-caption">// SC-28 deny output — resource address, missing CMEK, and remediation step returned in a single message</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">AC-3 · public_access.rego</div><div class="panel-title">Public Access Lockdown</div></div>
+        <div class="panel-desc">Checks both google_storage_bucket resources (uniform_bucket_level_access must be true, public_access_prevention must be enforced) and google_compute_firewall rules (no ingress rules allowing 0.0.0.0/0 on sensitive ports). Any resource that exposes access beyond the account boundary fails. Deny returns the resource address and AC-3.</div>
+      </div>
+    </div>
+    <div class="screenshot-wrap">
+      <img src="rego-deny-ac3.png" alt="AC-3 deny output — firewall port 22 open to 0.0.0.0/0 and bucket allowing public access">
+      <div class="screenshot-caption">// AC-3 deny output — two violations caught: firewall rule exposing port 22 and bucket missing public access prevention</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">CM-6 · labels.rego</div><div class="panel-title">Required Compliance Labels</div></div>
+        <div class="panel-desc">Iterates all taggable resource types and validates that required compliance labels are present. Uses set subtraction — required_labels minus provided_labels — to identify exactly which labels are missing. Deny message returns the resource address, the missing label keys, and CM-6. No false positives on resources that do not support labels.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 KEY TECHNICAL DECISIONS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Key Technical Decisions</div><div class="sh-num">04</div></div>
+    <table class="ctable">
+      <thead><tr><th>Decision</th><th>Reasoning</th></tr></thead>
+      <tbody>
+        <tr><td>import rego.v1</td><td>Strict Rego v1 semantics for forward compatibility — avoids deprecated syntax that will break in future OPA releases</td></tr>
+        <tr><td>Partial set rules + contains</td><td>Recurses into child_modules in the plan JSON so policies catch resources wrapped inside Terraform modules, not just root-level resources</td></tr>
+        <tr><td>Set subtraction for labels</td><td>required_labels - provided_labels surfaces exactly which labels are missing per resource — cleaner than a loop and easier to extend</td></tr>
+        <tr><td>No METADATA blocks</td><td>Simple control coverage comments instead of YAML METADATA blocks avoids OPA parser issues and keeps policies readable without tooling</td></tr>
+        <tr><td>In-memory test fixtures</td><td>Tests run against hardcoded plan JSON fixtures — no cloud credentials, no apply, instant feedback in CI pipelines</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 05 USAGE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Usage</div><div class="sh-num">05</div></div>
+    <div class="code-block">
+      <div class="code-label">// run policies against a terraform plan</div>
+      <div><span class="c-comment"># Generate plan JSON</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">plan</span> <span class="c-str">-out=tfplan.binary</span></div>
+      <div><span class="c-key">terraform</span> <span class="c-val">show</span> <span class="c-str">-json tfplan.binary</span> > <span class="c-str">plan.json</span></div>
+      <br>
+      <div><span class="c-comment"># Evaluate all policies</span></div>
+      <div><span class="c-key">opa</span> <span class="c-val">eval</span> <span class="c-str">-d policies/ -i plan.json "data.compliance.deny"</span></div>
+      <br>
+      <div><span class="c-comment"># Run the test suite (no cloud access needed)</span></div>
+      <div><span class="c-key">opa</span> <span class="c-val">test</span> <span class="c-str">policies/ tests/ -v</span></div>
+      <br>
+      <div><span class="c-comment"># Example deny output:</span></div>
+      <div><span class="c-comment"># "google_storage_bucket.data_lake does not have CMEK — SC-28"</span></div>
+      <div><span class="c-comment"># "google_storage_bucket.logs is missing labels: [env, owner] — CM-6"</span></div>
+    </div>
+  </div>
+
+  <!-- 06 FILE STRUCTURE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">File Structure</div><div class="sh-num">06</div></div>
+    <div class="file-tree">
+      <div><span class="ft-dir">tools/rego-policies/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">policies/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">encryption.rego</span> <span class="ft-comment"># SC-28 — CMEK enforcement</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">public_access.rego</span> <span class="ft-comment"># AC-3 — public access lockdown</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">labels.rego</span> <span class="ft-comment"># CM-6 — required compliance labels</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">tests/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">encryption_test.rego</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">public_access_test.rego</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">labels_test.rego</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">fixtures/</span> <span class="ft-comment"># in-memory plan JSON test fixtures</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">README.md</span></div>
+    </div>
+  </div>
+
+  <!-- 07 SUMMARY -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Summary</div><div class="sh-num">07</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">policies</div></div>
+      <div class="stat-card"><div class="stat-n">8</div><div class="stat-l">tests passing</div></div>
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">controls enforced</div></div>
+      <div class="stat-card"><div class="stat-n">0</div><div class="stat-l">cloud calls needed</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-col">
+  <div class="info-card">
+    <div class="ic-label">Project Details</div>
+    <div class="ic-row"><div class="ic-key">type</div><div class="ic-val">policy-as-code</div></div>
+    <div class="ic-row"><div class="ic-key">engine</div><div class="ic-val">OPA + Rego v1</div></div>
+    <div class="ic-row"><div class="ic-key">cloud</div><div class="ic-val">GCP</div></div>
+    <div class="ic-row"><div class="ic-key">input</div><div class="ic-val orange">terraform plan -json</div></div>
+    <div class="ic-row"><div class="ic-key">gate</div><div class="ic-val">pre-apply</div></div>
+    <div class="ic-row"><div class="ic-key">tests</div><div class="ic-val green">8 passing</div></div>
+    <div class="ic-row"><div class="ic-key">cloud access</div><div class="ic-val green">not required</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Controls</div>
+    <div class="ic-row"><div class="ic-key">SC-28</div><div class="ic-val">Encryption at Rest</div></div>
+    <div class="ic-row"><div class="ic-key">AC-3</div><div class="ic-val">Access Enforcement</div></div>
+    <div class="ic-row"><div class="ic-key">CM-6</div><div class="ic-val">Config Settings</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Framework</div>
+    <div class="ic-row"><div class="ic-key">NIST 800-53</div><div class="ic-val green">Rev 5</div></div>
+    <div class="ic-row"><div class="ic-key">SC-28</div><div class="ic-val">encryption.rego</div></div>
+    <div class="ic-row"><div class="ic-key">AC-3</div><div class="ic-val">public_access.rego</div></div>
+    <div class="ic-row"><div class="ic-key">CM-6</div><div class="ic-val">labels.rego</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Links</div>
+    <div class="ic-row"><div class="ic-key">github</div><div class="ic-val"><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/rego-policies" target="_blank" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">view →</a></div></div>
+    <div class="ic-row"><div class="ic-key">portfolio</div><div class="ic-val"><a href="index.html" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">← back</a></div></div>
+  </div>
+</div>
+</div>
+
+<div class="wt-footer">
+  <span>Shayl.Taveras</span>
+  <span style="color:var(--muted);">© 2026</span>
+</div>
+</body>
+</html>
