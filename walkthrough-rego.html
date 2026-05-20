@@ -199,22 +199,12 @@
         <div class="panel-desc">Validates that every google_storage_bucket resource has a customer-managed encryption key configured. A bucket using default Google-managed encryption fails the policy — SC-28 requires customer control of the key material. Deny message returns the bucket resource address and SC-28.</div>
       </div>
     </div>
-    <div class="screenshot-wrap">
-      <img src="rego-deny-sc28.png" alt="SC-28 deny output — missing CMEK on google_storage_bucket.bad_no_cmek with remediation">
-      <div class="screenshot-caption">// SC-28 deny output — resource address, missing CMEK, and remediation step returned in a single message</div>
-    </div>
-
     <div class="panel">
       <div class="panel-body">
         <div class="panel-head"><div class="panel-label">AC-3 · public_access.rego</div><div class="panel-title">Public Access Lockdown</div></div>
         <div class="panel-desc">Checks both google_storage_bucket resources (uniform_bucket_level_access must be true, public_access_prevention must be enforced) and google_compute_firewall rules (no ingress rules allowing 0.0.0.0/0 on sensitive ports). Any resource that exposes access beyond the account boundary fails. Deny returns the resource address and AC-3.</div>
       </div>
     </div>
-    <div class="screenshot-wrap">
-      <img src="rego-deny-ac3.png" alt="AC-3 deny output — firewall port 22 open to 0.0.0.0/0 and bucket allowing public access">
-      <div class="screenshot-caption">// AC-3 deny output — two violations caught: firewall rule exposing port 22 and bucket missing public access prevention</div>
-    </div>
-
     <div class="panel">
       <div class="panel-body">
         <div class="panel-head"><div class="panel-label">CM-6 · labels.rego</div><div class="panel-title">Required Compliance Labels</div></div>
