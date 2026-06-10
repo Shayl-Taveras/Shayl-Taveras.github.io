@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkthrough — PaC Gate with Conftest (AWS)</title>
+<style>
+
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  :root{
+    --bg:#09090b;--bg2:#111113;--bg3:#18181b;--bg4:#1e1e21;
+    --accent:#f97316;--accent-dim:#7c2d12;--accent-muted:#150800;
+    --text:#c8c2bc;--text-bright:#fafaf9;--muted:#9c9590;
+    --border:#1c1917;--border2:#27241f;
+    --green:#22c55e;--red:#ef4444;--blue:#60a5fa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+  /* NAV */
+  .topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2rem;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+  .tn-left{display:flex;align-items:center;gap:2rem;}
+  .tn-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+  .tn-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .tn-breadcrumb span{color:var(--text);}
+  .tn-right a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+  .tn-right a:hover{color:var(--accent);}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 48px);}
+  .main-col{border-right:1px solid var(--border2);padding:2rem;}
+  .right-col{padding:2rem;display:flex;flex-direction:column;gap:1.5rem;}
+
+  /* HERO */
+  .hero-section{padding-bottom:2rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);}
+  .hero-overline{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:0.8rem;}
+  .hero-name{font-size:1.8rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.6rem;}
+  .hero-name span{color:var(--accent);}
+  .hero-desc{font-size:14px;color:var(--text-bright);line-height:1.75;max-width:600px;margin-bottom:1.2rem;}
+  .hero-badges{display:flex;gap:0.4rem;flex-wrap:wrap;}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 10px;border:1px solid var(--border2);color:var(--text);}
+  .badge.hot{border-color:var(--accent-dim);color:var(--accent);}
+
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border2);}
+  .sh-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;}
+  .sh-num{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border:1px solid var(--border2);color:var(--muted);}
+
+  /* CONTENT SECTION */
+  .content-section{margin-bottom:2rem;}
+
+  /* PROSE */
+  .prose{font-size:14px;line-height:1.8;color:var(--text-bright);margin-bottom:0.8rem;}
+  .prose strong{color:var(--accent);font-weight:500;}
+  .prose code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:var(--accent-muted);padding:1px 5px;}
+
+  /* PANELS */
+  .panel{background:var(--bg2);border:1px solid var(--border2);margin-bottom:0.8rem;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .panel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform 0.25s;}
+  .panel:hover{border-color:var(--accent-dim);}
+  .panel:hover::before{transform:scaleY(1);}
+  .panel-body{padding:1.2rem;}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.5rem;}
+  .panel-title{font-size:13px;font-weight:600;color:var(--text-bright);}
+  .panel-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.08em;}
+  .panel-desc{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+  /* DECISION CARDS */
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.2rem;}
+  .dc{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;transition:border-color 0.2s;position:relative;overflow:hidden;}
+  .dc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .dc:hover{border-color:var(--accent-dim);}
+  .dc:hover::after{transform:scaleX(1);}
+  .dc-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+  .dc-title{font-size:12.5px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .dc-body{font-size:12px;color:var(--text-bright);line-height:1.6;}
+
+  /* CONTROLS TABLE */
+  .ctable{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:12.5px;}
+  .ctable th{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;text-align:left;padding:0.6rem 0.8rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .ctable td{padding:0.75rem 0.8rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .ctable tr:hover td{background:var(--bg2);}
+  .ctable td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);white-space:nowrap;}
+
+  /* CODE BLOCK */
+  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;}
+  .code-label{font-size:9.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
+  .c-comment{color:var(--muted);}
+  .c-key{color:var(--accent);}
+  .c-val{color:var(--text-bright);}
+  .c-str{color:#fdba74;}
+
+  /* CALLOUT */
+  .callout{background:var(--accent-muted);border:1px solid var(--accent-dim);border-left:2px solid var(--accent);padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;gap:0.8rem;align-items:flex-start;}
+  .callout-icon{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);flex-shrink:0;padding-top:1px;}
+  .callout-body{font-size:13px;color:var(--text);line-height:1.7;}
+  .callout-body strong{color:var(--accent);}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1.2rem;}
+  .stat-card{background:var(--bg2);border:1px solid var(--border2);padding:1rem;text-align:center;transition:border-color 0.2s;}
+  .stat-card:hover{border-color:var(--accent-dim);}
+  .stat-n{font-size:1.8rem;font-weight:700;color:var(--text-bright);line-height:1;margin-bottom:0.3rem;}
+  .stat-l{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);letter-spacing:0.06em;}
+
+  /* FILE TREE */
+  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;}
+  .ft-dir{color:var(--accent);}
+  .ft-file{color:var(--text);}
+  .ft-comment{color:var(--muted);}
+
+  /* SCREENSHOT */
+  .screenshot-wrap{background:var(--bg2);border:1px solid var(--border2);padding:0.5rem;margin-bottom:1.2rem;}
+  .screenshot-wrap img{width:100%;display:block;}
+  .screenshot-caption{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:0.06em;margin-top:0.6rem;}
+
+  /* RIGHT PANEL CARDS */
+  .info-card{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;margin-bottom:0;}
+  .ic-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border2);}
+  .ic-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+  .ic-row:last-child{border-bottom:none;}
+  .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+  .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
+  .ic-val.green{color:var(--green);}
+  .ic-val.orange{color:var(--accent);}
+
+  /* FRAMEWORK GRID */
+  .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
+  .fw-item{background:var(--bg2);border:1px solid var(--border2);padding:0.9rem;transition:border-color 0.2s;}
+  .fw-item:hover{border-color:var(--accent-dim);}
+  .fw-name{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:0.3rem;}
+  .fw-desc{font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+  /* ARCH DIAGRAM */
+  .arch-wrap{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:2rem 1.5rem;margin-bottom:1.2rem;overflow-x:auto;}
+  .arch-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.5rem;}
+  svg.arch{width:100%;max-width:700px;display:block;margin:0 auto;}
+
+  /* FOOTER */
+  .wt-footer{border-top:1px solid var(--border2);padding:1.2rem 2rem;background:var(--bg2);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+  .wt-footer span:first-child{color:var(--accent);}
+
+  @media(max-width:880px){.layout{grid-template-columns:1fr;}.main-col{border-right:none;}.right-col{border-top:1px solid var(--border2);}.decision-grid,.fw-grid,.stats-row{grid-template-columns:1fr 1fr;}.tn-breadcrumb{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-left">
+    <div class="tn-brand">Shayl.Taveras</div>
+    <div class="tn-breadcrumb">portfolio / projects / <span>policy-as-code-gate-conftest</span></div>
+  </div>
+  <div class="tn-right"><a href="index.html">← back to portfolio</a></div>
+</div>
+
+<div class="layout">
+<div class="main-col">
+
+  <div class="hero-section">
+    <div class="hero-overline">// Project Walkthrough · 06</div>
+    <div class="hero-name">Policy as Code Gate with <span>Conftest — AWS</span></div>
+    <p class="hero-desc">Conftest policy gate that blocks Terraform applies on non-compliant AWS infrastructure by running three Rego policies against plan JSON — fail-closed, exit-code-driven, zero screenshots.</p>
+    <div class="hero-badges">
+      <span class="badge hot">conftest</span>
+      <span class="badge hot">opa</span>
+      <span class="badge hot">rego</span>
+      <span class="badge hot">aws</span>
+      <span class="badge">terraform · nist 800-53 · ci · policy-as-code</span>
+    </div>
+  </div>
+
+  <!-- 01 PROBLEM -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
+    <p class="prose">Wiring the Rego policy library into a real AWS Terraform workflow immediately surfaced the <strong>cross-cloud coverage gap</strong>: a Rego rule that checks <code>google_storage_bucket</code> returns zero findings against an AWS plan — it passes silently, proves nothing, and gives a false sense of compliance.</p>
+    <p class="prose">The fix is AWS-specific policy variants that check <code>aws_s3_bucket</code> resource types while keeping the same NIST control IDs. The result is a <strong>fail-closed, exit-code-driven gate</strong> that blocks applies on non-compliant infrastructure and deposits machine-readable JSON evidence — no console screenshots, no manual attestation.</p>
+  </div>
+
+  <!-- 02 THE CROSS-CLOUD PROBLEM -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">The Cross-Cloud Coverage Problem</div><div class="sh-num">02</div></div>
+    <p class="prose">This is the core insight of the lab and the reason cloud-agnostic policy libraries are a trap. A policy written for GCP resource types will evaluate to <code>undefined</code> against an AWS plan — OPA treats undefined as an empty set, which means no denials, which means the gate passes. From the outside it looks like the infrastructure passed the compliance check. It didn't — it was never checked at all.</p>
+    <div class="callout">
+      <div class="callout-icon">// key insight</div>
+      <div class="callout-body">A policy gate that passes because no rules matched is <strong>indistinguishable from a gate that passed because everything was compliant</strong>. The fix is not a single multi-cloud policy — it's cloud-specific variants under the same control IDs, each covering the resource types that actually exist in that plan.</div>
+    </div>
+  </div>
+
+  <!-- 03 ARCHITECTURE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Architecture Decision</div><div class="sh-num">03</div></div>
+    <div class="decision-grid">
+      <div class="dc"><div class="dc-label">// sc-28 by reference</div><div class="dc-title">Match Configuration, Not Values</div><div class="dc-body">Bucket names contain a random_id suffix unknown at plan time — planned_values.bucket is null. Matching by configuration.references against aws_s3_bucket.primary.id resolves correctly at plan time.</div></div>
+      <div class="dc"><div class="dc-label">// ac-3 by planned values</div><div class="dc-title">Split the Lookup</div><div class="dc-body">The four public-access-block flags are concrete in planned_values even though the bucket ID isn't. Reference matching lives in configuration, flag validation lives in planned_values.</div></div>
+      <div class="dc"><div class="dc-label">// tags_all not tags</div><div class="dc-title">CM-6 Catches Provider Tags</div><div class="dc-body">tags_all merges provider default_tags with resource-level tags. Checking tags alone misses tags applied at the provider level — a compliance gap that looks clean at the resource level.</div></div>
+      <div class="dc"><div class="dc-label">// || true per namespace</div><div class="dc-title">All Namespaces Evaluate</div><div class="dc-body">A failure in one namespace doesn't abort the script before others run. Every policy evaluates, every result lands in the evidence file, exit code is set at the end.</div></div>
+    </div>
+  </div>
+
+  <!-- 04 POLICIES -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">AWS Policy Variants</div><div class="sh-num">04</div></div>
+    <p class="prose">Three policies, each an AWS-specific variant of the GCP policies built in Lab 3.3. Same control IDs, different resource types and attribute paths.</p>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">SC-28 · aws_encryption.rego</div><div class="panel-title">S3 Encryption via KMS Reference</div></div>
+        <div class="panel-desc">Matches by configuration.references rather than planned_values because the bucket name contains a random_id suffix that is null at plan time. Checks that a KMS key reference exists in the bucket's encryption configuration. Deny returns the resource address and SC-28 with exact remediation step.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">AC-3 · aws_public_access.rego</div><div class="panel-title">All Four Public Access Block Flags</div></div>
+        <div class="panel-desc">Validates all four AWS S3 public access block flags against planned_values — block_public_acls, block_public_policy, ignore_public_acls, restrict_public_buckets must all be true. Any single flag missing or false triggers a deny. Resource address and AC-3 returned with the specific flag that failed.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">CM-6 · aws_tags.rego</div><div class="panel-title">Required Tags via tags_all</div></div>
+        <div class="panel-desc">Checks tags_all rather than tags to catch labels applied at the provider level via default_tags. Uses set subtraction — required_keys minus provided_keys — to identify exactly which tags are missing per resource. Deny returns the resource address, missing tag keys, and CM-6.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 POLICY GATE WRAPPER -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">The policy-gate.sh Wrapper</div><div class="sh-num">05</div></div>
+    <p class="prose">The wrapper script is the CI entrypoint. It runs all policy namespaces, captures machine-readable JSON evidence, and exits non-zero on any failure. The <code>|| true</code> pattern on each conftest call ensures all namespaces evaluate before the exit code is determined. A python3 one-liner parses the JSON output to set the exit code without depending on conftest's text format.</p>
+    <div class="code-block">
+      <div class="code-label">// policy-gate.sh — simplified</div>
+      <div><span class="c-comment">#!/bin/bash</span></div>
+      <div><span class="c-key">PLAN</span>=<span class="c-str">"terraform/plan.json"</span></div>
+      <div><span class="c-key">EVIDENCE</span>=<span class="c-str">"evidence/policy-results.json"</span></div>
+      <br>
+      <div><span class="c-comment"># Run all namespaces — || true so one failure doesn't abort the rest</span></div>
+      <div><span class="c-key">conftest</span> <span class="c-val">test</span> <span class="c-str">--namespace compliance.sc28 --output json</span> $PLAN >> $EVIDENCE || true</div>
+      <div><span class="c-key">conftest</span> <span class="c-val">test</span> <span class="c-str">--namespace compliance.ac3  --output json</span> $PLAN >> $EVIDENCE || true</div>
+      <div><span class="c-key">conftest</span> <span class="c-val">test</span> <span class="c-str">--namespace compliance.cm6  --output json</span> $PLAN >> $EVIDENCE || true</div>
+      <br>
+      <div><span class="c-comment"># Parse JSON evidence to set exit code</span></div>
+      <div><span class="c-key">python3</span> <span class="c-str">-c "import json,sys; results=json.load(open('$EVIDENCE')); sys.exit(1 if any(r.get('failures') for r in results) else 0)"</span></div>
+    </div>
+    <div class="callout">
+      <div class="callout-icon">// ci entrypoint</div>
+      <div class="callout-body">The <strong>--output=json flag</strong> means CI gets a machine-readable artifact it can parse, store, and diff across runs — not a text blob that breaks on conftest version upgrades.</div>
+    </div>
+  </div>
+
+  <!-- 06 SCREENSHOT PLACEHOLDER -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Gate Output Evidence</div><div class="sh-num">06</div></div>
+    <p class="prose">The broken-plan test confirms the gate fires with a deny message naming the resource, the control, and the exact remediation step. The wrapper exits non-zero, blocking the apply.</p>
+    <div class="screenshot-wrap">
+      <img src="conftest-gate-pass.png" alt="Conftest gate passing — all three namespaces green on compliant plan">
+      <div class="screenshot-caption">// compliant plan — all three namespaces pass: sc28_aws, ac3_aws, cm6_aws · 1 test, 1 passed, 0 failures each</div>
+    </div>
+    <div class="screenshot-wrap" style="margin-top:1rem;">
+      <img src="conftest-gate-fail.png" alt="Conftest gate firing — SC-28 FAIL with full deny message on broken plan">
+      <div class="screenshot-caption">// broken plan — SC-28 fires: aws_s3_bucket.primary has no matching server_side_encryption_configuration · resource address, control ID, and remediation returned</div>
+    </div>
+  </div>
+
+  <!-- 07 FILE STRUCTURE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">File Structure</div><div class="sh-num">07</div></div>
+    <div class="file-tree">
+      <div><span class="ft-dir">tools/rego-policies/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">policies/aws/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_encryption.rego</span> <span class="ft-comment"># SC-28 — S3 KMS reference matching</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_public_access.rego</span> <span class="ft-comment"># AC-3 — all four block flags</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_tags.rego</span> <span class="ft-comment"># CM-6 — tags_all required key check</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">tests/aws/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_encryption_test.rego</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_public_access_test.rego</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_tags_test.rego</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">terraform/</span> <span class="ft-comment"># compliant + broken plan fixtures</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">policy-gate.sh</span> <span class="ft-comment"># CI entrypoint — runs all namespaces, exits non-zero on failure</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">evidence/</span> <span class="ft-comment"># policy-results.json — machine-readable gate output</span></div>
+    </div>
+  </div>
+
+  <!-- 08 SUMMARY -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Summary</div><div class="sh-num">08</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">aws policies</div></div>
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">controls enforced</div></div>
+      <div class="stat-card"><div class="stat-n">1</div><div class="stat-l">gate script</div></div>
+      <div class="stat-card"><div class="stat-n">0</div><div class="stat-l">screenshots needed</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-col">
+
+  <div class="info-card">
+    <div class="ic-label">Controls</div>
+    <div class="ic-row"><div class="ic-key">SC-28</div><div class="ic-val">Encryption at Rest</div></div>
+    <div class="ic-row"><div class="ic-key">AC-3</div><div class="ic-val">Access Enforcement</div></div>
+    <div class="ic-row"><div class="ic-key">CM-6</div><div class="ic-val">Config Settings</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Key Decisions</div>
+    <div class="ic-row"><div class="ic-key">SC-28 match</div><div class="ic-val">configuration.references</div></div>
+    <div class="ic-row"><div class="ic-key">AC-3 flags</div><div class="ic-val">planned_values</div></div>
+    <div class="ic-row"><div class="ic-key">CM-6 tags</div><div class="ic-val">tags_all</div></div>
+    <div class="ic-row"><div class="ic-key">wrapper</div><div class="ic-val">|| true + json parse</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Links</div>
+    <div class="ic-row"><div class="ic-key">github</div><div class="ic-val"><a href="#" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">view →</a></div></div>
+    <div class="ic-row"><div class="ic-key">portfolio</div><div class="ic-val"><a href="index.html" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">← back</a></div></div>
+  </div>
+</div>
+</div>
+
+<div class="wt-footer">
+  <span>Shayl.Taveras</span>
+  <span style="color:var(--muted);">© 2026</span>
+</div>
+</body>
+</html>
