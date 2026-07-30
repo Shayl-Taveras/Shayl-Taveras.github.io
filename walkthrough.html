@@ -141,6 +141,16 @@
   .wt-footer span:first-child{color:var(--accent);}
 
   @media(max-width:880px){.layout{grid-template-columns:1fr;}.main-col{border-right:none;}.right-col{border-top:1px solid var(--border2);}.decision-grid,.fw-grid,.stats-row{grid-template-columns:1fr 1fr;}.tn-breadcrumb{display:none;}}
+
+  /* LIGHTBOX */
+  .lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:100;align-items:center;justify-content:center;cursor:zoom-out;}
+  .lightbox-overlay.active{display:flex;}
+  .lightbox-overlay img{max-width:92vw;max-height:92vh;object-fit:contain;box-shadow:0 0 60px rgba(0,0,0,0.8);}
+  .lightbox-close{position:fixed;top:1.2rem;right:1.5rem;font-family:'JetBrains Mono',monospace;font-size:13px;color:#9c9590;cursor:pointer;letter-spacing:0.1em;transition:color 0.2s;}
+  .lightbox-close:hover{color:#f97316;}
+  .screenshot-wrap img{cursor:zoom-in;transition:opacity 0.2s;}
+  .screenshot-wrap img:hover{opacity:0.85;}
+
 </style>
 </head>
 <body>
@@ -187,45 +197,77 @@
     </div>
 
     <div class="arch-wrap">
-      <div class="arch-label">// system architecture</div>
-      <svg class="arch" viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, monospace">
-        <defs><marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#7c2d12"/></marker></defs>
-        <rect x="10" y="110" width="120" height="48" fill="#150800" stroke="#7c2d12" stroke-width="1" rx="2"/>
-        <text x="70" y="130" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">EVENTBRIDGE</text>
-        <text x="70" y="147" text-anchor="middle" fill="#44403c" font-size="8.5">weekly trigger</text>
-        <line x1="130" y1="134" x2="168" y2="134" stroke="#7c2d12" stroke-width="1.5" marker-end="url(#arr)"/>
-        <rect x="170" y="76" width="138" height="116" fill="#111113" stroke="#27241f" stroke-width="1" rx="2"/>
-        <text x="239" y="96" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">LAMBDA</text>
-        <text x="239" y="110" text-anchor="middle" fill="#44403c" font-size="8">handler.py</text>
-        <line x1="190" y1="117" x2="298" y2="117" stroke="#1c1917" stroke-width="1"/>
-        <text x="239" y="131" text-anchor="middle" fill="#a8a29e" font-size="8.5">iam_findings.py</text>
-        <text x="239" y="145" text-anchor="middle" fill="#a8a29e" font-size="8.5">access_analyzer.py</text>
-        <text x="239" y="159" text-anchor="middle" fill="#a8a29e" font-size="8.5">security_hub.py</text>
-        <text x="239" y="173" text-anchor="middle" fill="#a8a29e" font-size="8.5">narrative.py</text>
-        <text x="239" y="185" text-anchor="middle" fill="#a8a29e" font-size="8.5">report.py</text>
-        <line x1="308" y1="125" x2="350" y2="90" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
-        <line x1="308" y1="140" x2="350" y2="140" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
-        <line x1="308" y1="158" text-anchor="middle" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
-        <line x1="308" y1="158" x2="350" y2="190" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
-        <rect x="352" y="66" width="128" height="44" fill="#150800" stroke="#27241f" stroke-width="1" rx="2"/>
-        <text x="416" y="84" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">IAM</text>
-        <text x="416" y="100" text-anchor="middle" fill="#44403c" font-size="8">stale · MFA · tags</text>
-        <rect x="352" y="118" width="128" height="44" fill="#150800" stroke="#27241f" stroke-width="1" rx="2"/>
-        <text x="416" y="136" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">ACCESS ANALYZER</text>
-        <text x="416" y="152" text-anchor="middle" fill="#44403c" font-size="8">external exposure</text>
-        <rect x="352" y="170" width="128" height="44" fill="#150800" stroke="#27241f" stroke-width="1" rx="2"/>
-        <text x="416" y="188" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">SECURITY HUB</text>
-        <text x="416" y="204" text-anchor="middle" fill="#44403c" font-size="8">IAM.1 – IAM.9</text>
-        <line x1="239" y1="192" x2="239" y2="228" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
-        <rect x="170" y="230" width="138" height="38" fill="#150800" stroke="#27241f" stroke-width="1" rx="2"/>
-        <text x="239" y="248" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">BEDROCK</text>
-        <text x="239" y="261" text-anchor="middle" fill="#44403c" font-size="8">AI executive summary</text>
-        <line x1="480" y1="140" x2="518" y2="140" stroke="#7c2d12" stroke-width="1.5" marker-end="url(#arr)"/>
-        <rect x="520" y="106" width="140" height="68" fill="#150800" stroke="#f97316" stroke-width="1" rx="2"/>
-        <text x="590" y="128" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">S3</text>
-        <text x="590" y="144" text-anchor="middle" fill="#44403c" font-size="8">access-review-</text>
-        <text x="590" y="158" text-anchor="middle" fill="#44403c" font-size="8">YYYYMMDD.html</text>
-        <text x="590" y="170" text-anchor="middle" fill="#7c2d12" font-size="7.5">timestamped · immutable</text>
+      <div class="arch-label">// system architecture · eventbridge → lambda → aws services → bedrock → s3</div>
+      <svg class="arch" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, monospace">
+        <defs>
+          <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#7c2d12"/>
+          </marker>
+        </defs>
+
+        <!-- ROW 1: EVENTBRIDGE (trigger) -->
+        <rect x="240" y="10" width="200" height="46" fill="#150800" stroke="#7c2d12" stroke-width="1" rx="2"/>
+        <text x="340" y="29" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1.5">EVENTBRIDGE</text>
+        <text x="340" y="45" text-anchor="middle" fill="#9c9590" font-size="8">weekly schedule trigger</text>
+
+        <!-- Arrow down to Lambda -->
+        <line x1="340" y1="56" x2="340" y2="80" stroke="#7c2d12" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="348" y="72" fill="#44403c" font-size="7.5">invoke</text>
+
+        <!-- ROW 2: LAMBDA -->
+        <rect x="140" y="82" width="400" height="90" fill="#111113" stroke="#27241f" stroke-width="1" rx="2"/>
+        <text x="340" y="100" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1.5">LAMBDA · handler.py</text>
+        <line x1="160" y1="108" x2="520" y2="108" stroke="#1c1917" stroke-width="1"/>
+        <!-- Module list in two columns -->
+        <text x="210" y="124" text-anchor="middle" fill="#c8c2bc" font-size="8">iam_findings.py</text>
+        <text x="210" y="138" text-anchor="middle" fill="#c8c2bc" font-size="8">access_analyzer.py</text>
+        <text x="210" y="152" text-anchor="middle" fill="#c8c2bc" font-size="8">security_hub.py</text>
+        <text x="430" y="124" text-anchor="middle" fill="#c8c2bc" font-size="8">narrative.py</text>
+        <text x="430" y="138" text-anchor="middle" fill="#c8c2bc" font-size="8">report.py</text>
+        <text x="430" y="152" text-anchor="middle" fill="#44403c" font-size="7.5">→ assembles final HTML</text>
+
+        <!-- Arrows down from Lambda to 3 AWS services -->
+        <line x1="200" y1="172" x2="100" y2="212" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+        <line x1="340" y1="172" x2="340" y2="212" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+        <line x1="480" y1="172" x2="580" y2="212" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+        <!-- ROW 3: 3 AWS SERVICES -->
+        <!-- IAM -->
+        <rect x="20" y="214" width="160" height="52" fill="#150800" stroke="#27241f" stroke-width="1" rx="2"/>
+        <text x="100" y="234" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">IAM</text>
+        <text x="100" y="249" text-anchor="middle" fill="#9c9590" font-size="7.5">stale accounts · MFA</text>
+        <text x="100" y="260" text-anchor="middle" fill="#9c9590" font-size="7.5">unused credentials</text>
+
+        <!-- ACCESS ANALYZER -->
+        <rect x="255" y="214" width="170" height="52" fill="#150800" stroke="#27241f" stroke-width="1" rx="2"/>
+        <text x="340" y="234" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">ACCESS ANALYZER</text>
+        <text x="340" y="249" text-anchor="middle" fill="#9c9590" font-size="7.5">cross-account exposure</text>
+        <text x="340" y="260" text-anchor="middle" fill="#9c9590" font-size="7.5">public resource policies</text>
+
+        <!-- SECURITY HUB -->
+        <rect x="500" y="214" width="160" height="52" fill="#150800" stroke="#27241f" stroke-width="1" rx="2"/>
+        <text x="580" y="234" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1">SECURITY HUB</text>
+        <text x="580" y="249" text-anchor="middle" fill="#9c9590" font-size="7.5">IAM.1 through IAM.9</text>
+        <text x="580" y="260" text-anchor="middle" fill="#9c9590" font-size="7.5">active control failures</text>
+
+        <!-- Arrows converging back to Lambda center then down to Bedrock -->
+        <line x1="100" y1="266" x2="280" y2="306" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+        <line x1="340" y1="266" x2="340" y2="306" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+        <line x1="580" y1="266" x2="400" y2="306" stroke="#7c2d12" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+        <!-- ROW 4: BEDROCK -->
+        <rect x="210" y="308" width="260" height="46" fill="#150800" stroke="#27241f" stroke-width="1" rx="2"/>
+        <text x="340" y="327" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1.5">BEDROCK</text>
+        <text x="340" y="343" text-anchor="middle" fill="#9c9590" font-size="8">AI narrative · findings → plain-language risk summary</text>
+
+        <!-- Arrow down to S3 -->
+        <line x1="340" y1="354" x2="340" y2="378" stroke="#7c2d12" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="348" y="370" fill="#44403c" font-size="7.5">HTML report</text>
+
+        <!-- ROW 5: S3 OUTPUT -->
+        <rect x="190" y="380" width="300" height="34" fill="#150800" stroke="#f97316" stroke-width="1" rx="2"/>
+        <text x="340" y="394" text-anchor="middle" fill="#f97316" font-size="9" letter-spacing="1.5">S3</text>
+        <text x="340" y="408" text-anchor="middle" fill="#9c9590" font-size="7.5">access-review-YYYYMMDD.html · timestamped · immutable</text>
       </svg>
     </div>
   </div>
@@ -321,6 +363,28 @@
   <span>Shayl.Taveras</span>
   <span style="color:var(--muted);">© 2026</span>
 </div>
+
+
+<div class="lightbox-overlay" id="lightbox">
+  <span class="lightbox-close" onclick="closeLightbox()">[ close × ]</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+<script>
+  document.querySelectorAll('.screenshot-wrap img').forEach(img => {
+    img.addEventListener('click', () => {
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox-img').alt = img.alt;
+      document.getElementById('lightbox').classList.add('active');
+    });
+  });
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
 
 </body>
 </html>
