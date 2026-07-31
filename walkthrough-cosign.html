@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkthrough — Evidence Management & Chain of Custody</title>
+<style>
+
+
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  :root{
+    --bg:#09090b;--bg2:#111113;--bg3:#18181b;--bg4:#1e1e21;
+    --accent:#f97316;--accent-dim:#7c2d12;--accent-muted:#150800;
+    --text:#c8c2bc;--text-bright:#fafaf9;--muted:#9c9590;
+    --border:#1c1917;--border2:#27241f;
+    --green:#22c55e;--red:#ef4444;--blue:#60a5fa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+  /* NAV */
+  .topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2rem;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+  .tn-left{display:flex;align-items:center;gap:2rem;}
+  .tn-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+  .tn-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .tn-breadcrumb span{color:var(--text);}
+  .tn-right a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+  .tn-right a:hover{color:var(--accent);}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 48px);}
+  .main-col{border-right:1px solid var(--border2);padding:2rem;}
+  .right-col{padding:2rem;display:flex;flex-direction:column;gap:1.5rem;}
+
+  /* HERO */
+  .hero-section{padding-bottom:2rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);}
+  .hero-overline{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:0.8rem;}
+  .hero-name{font-size:1.8rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.6rem;}
+  .hero-name span{color:var(--accent);}
+  .hero-desc{font-size:14px;color:var(--text-bright);line-height:1.75;max-width:600px;margin-bottom:1.2rem;}
+  .hero-badges{display:flex;gap:0.4rem;flex-wrap:wrap;}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 10px;border:1px solid var(--border2);color:var(--text);}
+  .badge.hot{border-color:var(--accent-dim);color:var(--accent);}
+
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border2);}
+  .sh-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;}
+  .sh-num{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border:1px solid var(--border2);color:var(--muted);}
+
+  /* CONTENT SECTION */
+  .content-section{margin-bottom:2rem;}
+
+  /* PROSE */
+  .prose{font-size:14px;line-height:1.8;color:var(--text-bright);margin-bottom:0.8rem;}
+  .prose strong{color:var(--accent);font-weight:500;}
+  .prose code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:var(--accent-muted);padding:1px 5px;}
+
+  /* PANELS */
+  .panel{background:var(--bg2);border:1px solid var(--border2);margin-bottom:0.8rem;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .panel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform 0.25s;}
+  .panel:hover{border-color:var(--accent-dim);}
+  .panel:hover::before{transform:scaleY(1);}
+  .panel-body{padding:1.2rem;}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.5rem;}
+  .panel-title{font-size:13px;font-weight:600;color:var(--text-bright);}
+  .panel-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.08em;}
+  .panel-desc{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+  /* DECISION CARDS */
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.2rem;}
+  .dc{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;transition:border-color 0.2s;position:relative;overflow:hidden;}
+  .dc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .dc:hover{border-color:var(--accent-dim);}
+  .dc:hover::after{transform:scaleX(1);}
+  .dc-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+  .dc-title{font-size:12.5px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .dc-body{font-size:12px;color:var(--text-bright);line-height:1.6;}
+
+  /* CONTROLS TABLE */
+  .ctable{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:12.5px;}
+  .ctable th{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;text-align:left;padding:0.6rem 0.8rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .ctable td{padding:0.75rem 0.8rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .ctable tr:hover td{background:var(--bg2);}
+  .ctable td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);white-space:nowrap;}
+
+  /* CODE BLOCK */
+  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;}
+  .code-label{font-size:9.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
+  .c-comment{color:var(--muted);}
+  .c-key{color:var(--accent);}
+  .c-val{color:var(--text-bright);}
+  .c-str{color:#fdba74;}
+
+  /* CALLOUT */
+  .callout{background:var(--accent-muted);border:1px solid var(--accent-dim);border-left:2px solid var(--accent);padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;gap:0.8rem;align-items:flex-start;}
+  .callout-icon{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);flex-shrink:0;padding-top:1px;}
+  .callout-body{font-size:13px;color:var(--text);line-height:1.7;}
+  .callout-body strong{color:var(--accent);}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1.2rem;}
+  .stat-card{background:var(--bg2);border:1px solid var(--border2);padding:1rem;text-align:center;transition:border-color 0.2s;}
+  .stat-card:hover{border-color:var(--accent-dim);}
+  .stat-n{font-size:1.8rem;font-weight:700;color:var(--text-bright);line-height:1;margin-bottom:0.3rem;}
+  .stat-l{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);letter-spacing:0.06em;}
+
+  /* FILE TREE */
+  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;}
+  .ft-dir{color:var(--accent);}
+  .ft-file{color:var(--text);}
+  .ft-comment{color:var(--muted);}
+
+  /* SCREENSHOT */
+  .screenshot-wrap{background:var(--bg2);border:1px solid var(--border2);padding:0.5rem;margin-bottom:1.2rem;}
+  .screenshot-wrap img{width:100%;display:block;}
+  .screenshot-caption{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:0.06em;margin-top:0.6rem;}
+
+  /* RIGHT PANEL CARDS */
+  .info-card{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;margin-bottom:0;}
+  .ic-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border2);}
+  .ic-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+  .ic-row:last-child{border-bottom:none;}
+  .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+  .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
+  .ic-val.green{color:var(--green);}
+  .ic-val.orange{color:var(--accent);}
+
+  /* FRAMEWORK GRID */
+  .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
+  .fw-item{background:var(--bg2);border:1px solid var(--border2);padding:0.9rem;transition:border-color 0.2s;}
+  .fw-item:hover{border-color:var(--accent-dim);}
+  .fw-name{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:0.3rem;}
+  .fw-desc{font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+  /* ARCH DIAGRAM */
+  .arch-wrap{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:2rem 1.5rem;margin-bottom:1.2rem;overflow-x:auto;}
+  .arch-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.5rem;}
+  svg.arch{width:100%;max-width:700px;display:block;margin:0 auto;}
+
+  /* FOOTER */
+  .wt-footer{border-top:1px solid var(--border2);padding:1.2rem 2rem;background:var(--bg2);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+  .wt-footer span:first-child{color:var(--accent);}
+
+  @media(max-width:880px){.layout{grid-template-columns:1fr;}.main-col{border-right:none;}.right-col{border-top:1px solid var(--border2);}.decision-grid,.fw-grid,.stats-row{grid-template-columns:1fr 1fr;}.tn-breadcrumb{display:none;}}
+
+  /* LIGHTBOX */
+  .lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:100;align-items:center;justify-content:center;cursor:zoom-out;}
+  .lightbox-overlay.active{display:flex;}
+  .lightbox-overlay img{max-width:92vw;max-height:92vh;object-fit:contain;}
+  .lightbox-close{position:fixed;top:1.2rem;right:1.5rem;font-family:'JetBrains Mono',monospace;font-size:13px;color:#9c9590;cursor:pointer;letter-spacing:0.1em;transition:color 0.2s;}
+  .lightbox-close:hover{color:#f97316;}
+  .screenshot-wrap img{cursor:zoom-in;max-width:100%;max-height:320px;object-fit:contain;display:block;transition:opacity 0.2s;}
+  .screenshot-wrap img:hover{opacity:0.85;}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-left">
+    <div class="tn-brand">Shayl.Taveras</div>
+    <div class="tn-breadcrumb">portfolio / projects / <span>evidence-chain-of-custody</span></div>
+  </div>
+  <div class="tn-right"><a href="index.html">← back to portfolio</a></div>
+</div>
+
+<div class="layout">
+<div class="main-col">
+
+  <div class="hero-section">
+    <div class="hero-overline">// Project Walkthrough · 07</div>
+    <div class="hero-name">Evidence Management <span>&amp; Chain of Custody</span></div>
+    <p class="hero-desc">Extended the CI policy gate with keyless Cosign signing over GitHub OIDC so every evidence bundle landing in the vault is cryptographically tied to the exact CI run that produced it. Object Lock proves evidence can't be deleted. This proves who put it there and when — an auditor verifies the chain independently without trusting the AWS account.</p>
+    <div class="hero-badges">
+      <span class="badge hot">cosign</span>
+      <span class="badge hot">sigstore</span>
+      <span class="badge hot">github oidc</span>
+      <span class="badge hot">aws s3</span>
+      <span class="badge">object lock · rekor · fulcio · nist 800-53 · fedramp moderate</span>
+    </div>
+  </div>
+
+  <!-- 01 PROBLEM -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
+    <p class="prose">Object Lock proves evidence can't be deleted. It doesn't prove who put it there or when. A privileged account holder could drop a tampered bundle in under a different key and point a careless auditor at it — the object would pass an integrity check against the wrong hash, and nothing in Object Lock would flag it.</p>
+    <p class="prose">The gap is <strong>authenticity and non-repudiation</strong>. AU-10 requires that audit records be traceable to a specific identity and time. A signed S3 object with no provenance doesn't satisfy that — it satisfies immutability, which is a different control entirely. Cosign over GitHub OIDC closes that gap by binding every evidence bundle to the exact workflow, repository, and commit that produced it.</p>
+  </div>
+
+  <!-- 02 HOW IT CLOSES THE GAP -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">How It Closes the Gap</div><div class="sh-num">02</div></div>
+    <p class="prose">The CI job runs <code>cosign sign-blob</code> on the evidence bundle. Sigstore's Fulcio CA issues a short-lived certificate based on the GitHub Actions OIDC token — no private key ever exists to leak or rotate. The certificate's Subject Alternative Name encodes the exact repo and workflow. Signature, cert, and a Rekor transparency-log timestamp all pack into a single <code>.sig.bundle</code> file uploaded next to the bundle.</p>
+
+    <div class="decision-grid">
+      <div class="dc"><div class="dc-label">// fulcio CA</div><div class="dc-title">No Key to Leak or Rotate</div><div class="dc-body">Identity comes from the GitHub OIDC token scoped to the exact repo and workflow. The Fulcio cert's SAN encodes the subject directly. There is no private key in the repo, no secrets to manage, nothing to steal.</div></div>
+      <div class="dc"><div class="dc-label">// rekor log</div><div class="dc-title">Public Transparency Log Entry</div><div class="dc-body">Every signing event gets a timestamped, append-only Rekor entry. An auditor can verify the signature against the Rekor log independently — no AWS account access, no trust relationship with the account owner required.</div></div>
+      <div class="dc"><div class="dc-label">// .sig.bundle</div><div class="dc-title">One File, Self-Contained</div><div class="dc-body">The bundle format packs signature, certificate, and Rekor reference into one file. Verification needs nothing else — no separate cert fetch, no key lookup, no external state.</div></div>
+      <div class="dc"><div class="dc-label">// if: always()</div><div class="dc-title">Sign on Failure Too</div><div class="dc-body">The sign and upload step runs even when the gate fails. Proving the gate fired matters as much as proving it passed. A failed gate run with a signed evidence bundle is a stronger audit artifact than a passing run with none.</div></div>
+    </div>
+  </div>
+
+  <!-- 03 VERIFY SCRIPT -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">What verify-evidence.sh Proves</div><div class="sh-num">03</div></div>
+    <p class="prose">The verification script proves three things independently. An auditor runs it against any bundle in the vault and gets a pass or fail on each assertion — no interpretation required.</p>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">check 1 · integrity</div><div class="panel-title">Hash Matches the Sidecar</div></div>
+        <div class="panel-desc">Recomputes SHA-256 of the downloaded bundle and compares it against the sidecar hash file. Any byte-level change to the bundle — including appending a single byte — produces a completely different hash. The tamper test confirmed this: the modified copy produced 0d9d3b1c... against the sidecar's d131c41e...</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">check 2 · authenticity + timestamp</div><div class="panel-title">Cosign Verifies Against Public OIDC Issuer</div></div>
+        <div class="panel-desc">Cosign verifies the signature against the public GitHub OIDC issuer and confirms the Rekor transparency log entry. This proves the bundle was signed by a GitHub Actions workflow in the specified repository — not just that it was signed by someone with the right key.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">check 3 · preservation</div><div class="panel-title">Object Lock Retention Still Active</div></div>
+        <div class="panel-desc">Checks that S3 Object Lock's RetainUntilDate is still in the future. A tampered copy can never overwrite the real object because Object Lock blocks rewrites until retention expires. The combination of integrity, authenticity, and preservation together is what AU-9(3) and AU-10 require.</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">// verify-evidence.sh — three independent checks</div>
+      <div><span class="c-comment"># 1. Integrity — recompute and compare hash</span></div>
+      <div><span class="c-key">sha256sum</span> <span class="c-str">evidence-bundle.zip</span> | <span class="c-key">diff</span> - <span class="c-str">evidence-bundle.zip.sha256</span></div>
+      <br>
+      <div><span class="c-comment"># 2. Authenticity — verify signature against Rekor + GitHub OIDC</span></div>
+      <div><span class="c-key">cosign</span> <span class="c-val">verify-blob</span> <span class="c-str">evidence-bundle.zip</span> \</div>
+      <div>&nbsp;&nbsp;<span class="c-str">--bundle evidence-bundle.zip.sig.bundle</span> \</div>
+      <div>&nbsp;&nbsp;<span class="c-str">--certificate-identity-regexp "github.com/Shayl-Taveras"</span> \</div>
+      <div>&nbsp;&nbsp;<span class="c-str">--certificate-oidc-issuer "https://token.actions.githubusercontent.com"</span></div>
+      <br>
+      <div><span class="c-comment"># 3. Preservation — confirm Object Lock is still active</span></div>
+      <div><span class="c-key">aws s3api</span> <span class="c-val">get-object-retention</span> <span class="c-str">--bucket vault-bucket --key evidence-bundle.zip</span></div>
+    </div>
+  </div>
+
+  <!-- 04 TAMPER TEST -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">The Tamper Test</div><div class="sh-num">04</div></div>
+    <p class="prose">Downloaded the real signed bundle from the vault, appended one byte, and recomputed the hash. The result was a clean, unambiguous mismatch — <code>0d9d3b1c...</code> versus the sidecar's <code>d131c41e...</code>. The tampered copy couldn't be uploaded to overwrite the original because Object Lock blocked the write until retention expires.</p>
+    <div class="callout">
+      <div class="callout-icon">// why it matters</div>
+      <div class="callout-body">Testing against a <strong>real downloaded vault object</strong> rather than a synthetic example proves detection works against actual bytes produced by the pipeline — not a toy scenario constructed to pass. An auditor reviewing this output can trust the tamper detection is real.</div>
+    </div>
+  </div>
+
+  <!-- 05 KEY DECISIONS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Key Technical Decisions</div><div class="sh-num">05</div></div>
+    <table class="ctable">
+      <thead><tr><th>Decision</th><th>Reasoning</th></tr></thead>
+      <tbody>
+        <tr><td>Keyless OIDC signing</td><td>Identity scoped to the exact repo and workflow — no private key to leak, rotate, or steal. Fulcio cert SAN encodes the subject directly.</td></tr>
+        <tr><td>--bundle output format</td><td>One file carries signature, cert, and Rekor reference. Verification needs nothing else.</td></tr>
+        <tr><td>if: always() on sign/upload</td><td>Evidence from a failed gate run still gets signed and preserved. Proving the gate fired matters as much as proving it passed.</td></tr>
+        <tr><td>Inline IAM policy scoped to one bucket</td><td>The CI role had only ReadOnlyAccess. New grant adds nothing beyond PutObject, GetObject, and GetBucketLocation on that one bucket.</td></tr>
+        <tr><td>GOVERNANCE retention, not COMPLIANCE</td><td>Lab needs same-day cleanup. Production evidence uses COMPLIANCE, which nobody including root can bypass before expiry.</td></tr>
+        <tr><td>Real tamper test, not synthetic</td><td>Corrupting an actual downloaded vault object proves detection against real bytes, not a constructed example.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 06 FILE STRUCTURE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">File Structure</div><div class="sh-num">06</div></div>
+    <div class="file-tree">
+      <div><span class="ft-dir">.github/workflows/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">policy-gate.yml</span> <span class="ft-comment"># CI gate — includes cosign sign + upload steps</span></div>
+      <div><span class="ft-dir">scripts/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">verify-evidence.sh</span> <span class="ft-comment"># three-check verification script</span></div>
+      <div><span class="ft-dir">evidence/ (S3 vault)</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">evidence-bundle.zip</span> <span class="ft-comment"># signed bundle — Object Lock protected</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">evidence-bundle.zip.sha256</span> <span class="ft-comment"># SHA-256 sidecar</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">evidence-bundle.zip.sig.bundle</span> <span class="ft-comment"># cosign bundle: sig + cert + rekor ref</span></div>
+    </div>
+  </div>
+
+  <!-- 07 SUMMARY -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Summary</div><div class="sh-num">07</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">checks verified</div></div>
+      <div class="stat-card"><div class="stat-n">4</div><div class="stat-l">controls covered</div></div>
+      <div class="stat-card"><div class="stat-n">0</div><div class="stat-l">keys to manage</div></div>
+      <div class="stat-card"><div class="stat-n">0</div><div class="stat-l">console logins needed</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-col">
+  <div class="info-card">
+    <div class="ic-label">Controls</div>
+    <div class="ic-row"><div class="ic-key">AU-9(3)</div><div class="ic-val">Crypto Protection of Audit Info</div></div>
+    <div class="ic-row"><div class="ic-key">AU-10</div><div class="ic-val">Non-Repudiation</div></div>
+    <div class="ic-row"><div class="ic-key">AU-11</div><div class="ic-val">Audit Retention</div></div>
+    <div class="ic-row"><div class="ic-key">SC-13</div><div class="ic-val">Crypto Protection</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Stack</div>
+    <div class="ic-row"><div class="ic-key">signing</div><div class="ic-val orange">Cosign + Sigstore</div></div>
+    <div class="ic-row"><div class="ic-key">identity</div><div class="ic-val">GitHub OIDC</div></div>
+    <div class="ic-row"><div class="ic-key">CA</div><div class="ic-val">Fulcio</div></div>
+    <div class="ic-row"><div class="ic-key">log</div><div class="ic-val">Rekor</div></div>
+    <div class="ic-row"><div class="ic-key">storage</div><div class="ic-val">S3 + Object Lock</div></div>
+    <div class="ic-row"><div class="ic-key">retention</div><div class="ic-val green">GOVERNANCE</div></div>
+    <div class="ic-row"><div class="ic-key">key management</div><div class="ic-val green">none — keyless</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Frameworks</div>
+    <div class="ic-row"><div class="ic-key">NIST 800-53</div><div class="ic-val green">Rev 5</div></div>
+    <div class="ic-row"><div class="ic-key">FedRAMP</div><div class="ic-val green">Moderate</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Links</div>
+    <div class="ic-row"><div class="ic-key">github</div><div class="ic-val"><a href="#" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">view →</a></div></div>
+    <div class="ic-row"><div class="ic-key">portfolio</div><div class="ic-val"><a href="index.html" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">← back</a></div></div>
+  </div>
+</div>
+</div>
+
+<div class="wt-footer">
+  <span>Shayl.Taveras</span>
+  <span style="color:var(--muted);">© 2026</span>
+</div>
+
+<div class="lightbox-overlay" id="lightbox">
+  <span class="lightbox-close" onclick="closeLightbox()">[ close × ]</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+<script>
+  document.querySelectorAll('.screenshot-wrap img').forEach(img => {
+    img.addEventListener('click', () => {
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox-img').alt = img.alt;
+      document.getElementById('lightbox').classList.add('active');
+    });
+  });
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+</body>
+</html>

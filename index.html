@@ -155,7 +155,7 @@
     <div class="proj-section" id="projects">
       <div class="section-header">
         <div class="sh-title">Projects</div>
-        <div class="sh-count">6 active</div>
+        <div class="sh-count">7 active</div>
       </div>
       <div class="proj-item">
         <div class="pi-head"><div class="pi-title">Serverless IAM Access Review System</div><div class="pi-num">01</div></div>
@@ -185,7 +185,12 @@
       <div class="proj-item">
         <div class="pi-head"><div class="pi-title">Policy as Code Gate with Conftest — AWS</div><div class="pi-num">06</div></div>
         <div class="pi-desc">Conftest policy gate that blocks Terraform applies on non-compliant AWS infrastructure by running three Rego policies against plan JSON — fail-closed, exit-code-driven, zero screenshots. AWS-specific variants of SC-28, AC-3, and CM-6 solve the cross-cloud coverage gap: a GCP policy against an AWS plan passes silently and proves nothing. A policy-gate.sh wrapper captures machine-readable JSON evidence and exits non-zero on any failure.</div>
-        <div class="pi-footer"><div class="pi-tags"><span class="ptag">conftest</span><span class="ptag">opa</span><span class="ptag">rego</span><span class="ptag">aws</span><span class="ptag">terraform</span><span class="ptag">nist 800-53</span><span class="ptag">ci</span></div><div class="pi-links"><a href="walkthrough-conftest.html">▶ walkthrough</a><a href="#" >github →</a></div></div>
+        <div class="pi-footer"><div class="pi-tags"><span class="ptag">conftest</span><span class="ptag">opa</span><span class="ptag">rego</span><span class="ptag">aws</span><span class="ptag">terraform</span><span class="ptag">nist 800-53</span><span class="ptag">ci</span></div><div class="pi-links"><a href="walkthrough-conftest.html">▶ walkthrough</a><a href="#">github →</a></div></div>
+      </div>
+      <div class="proj-item">
+        <div class="pi-head"><div class="pi-title">Evidence Management &amp; Chain of Custody — Cosign + Sigstore</div><div class="pi-num">07</div></div>
+        <div class="pi-desc">Extended the CI policy gate with keyless Cosign signing over GitHub OIDC so every evidence bundle is cryptographically tied to the exact CI run that produced it. Object Lock proves evidence can't be deleted — this proves who put it there and when. An auditor verifies the chain independently without trusting the AWS account.</div>
+        <div class="pi-footer"><div class="pi-tags"><span class="ptag">cosign</span><span class="ptag">sigstore</span><span class="ptag">github oidc</span><span class="ptag">aws s3</span><span class="ptag">object lock</span><span class="ptag">nist 800-53</span><span class="ptag">fedramp</span></div><div class="pi-links"><a href="walkthrough-cosign.html">▶ walkthrough</a><a href="#">github →</a></div></div>
       </div>
     </div>
 
