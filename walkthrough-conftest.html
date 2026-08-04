@@ -161,7 +161,7 @@
   <div class="hero-section">
     <div class="hero-overline">// Project Walkthrough · 06</div>
     <div class="hero-name">Policy as Code Gate with <span>Conftest — AWS</span></div>
-    <p class="hero-desc">Conftest policy gate that blocks Terraform applies on non-compliant AWS infrastructure by running three Rego policies against plan JSON — fail-closed, exit-code-driven, zero screenshots.</p>
+    <p class="hero-desc">Conftest policy gate that blocks Terraform applies on non-compliant AWS infrastructure by running three Rego policies against plan JSON. Fail-closed, exit-code-driven, zero screenshots.</p>
     <div class="hero-badges">
       <span class="badge hot">conftest</span>
       <span class="badge hot">opa</span>
@@ -174,17 +174,17 @@
   <!-- 01 PROBLEM -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
-    <p class="prose">Wiring the Rego policy library into a real AWS Terraform workflow immediately surfaced the <strong>cross-cloud coverage gap</strong>: a Rego rule that checks <code>google_storage_bucket</code> returns zero findings against an AWS plan — it passes silently, proves nothing, and gives a false sense of compliance.</p>
-    <p class="prose">The fix is AWS-specific policy variants that check <code>aws_s3_bucket</code> resource types while keeping the same NIST control IDs. The result is a <strong>fail-closed, exit-code-driven gate</strong> that blocks applies on non-compliant infrastructure and deposits machine-readable JSON evidence — no console screenshots, no manual attestation.</p>
+    <p class="prose">Running the Rego policy library against a real AWS Terraform plan exposed a coverage problem: a rule written for <code>google_storage_bucket</code> returns zero findings on an AWS plan. Not because the infrastructure is compliant. Because the rule never evaluated anything. It passed silently.</p>
+    <p class="prose">AWS-specific variants of each policy fix that. They check <code>aws_s3_bucket</code> resource types under the same NIST control IDs. The gate is <strong>fail-closed and exit-code-driven</strong>, drops machine-readable JSON evidence, and requires no console access.</p>
   </div>
 
   <!-- 02 THE CROSS-CLOUD PROBLEM -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">The Cross-Cloud Coverage Problem</div><div class="sh-num">02</div></div>
-    <p class="prose">This is the core insight of the lab and the reason cloud-agnostic policy libraries are a trap. A policy written for GCP resource types will evaluate to <code>undefined</code> against an AWS plan — OPA treats undefined as an empty set, which means no denials, which means the gate passes. From the outside it looks like the infrastructure passed the compliance check. It didn't — it was never checked at all.</p>
+    <p class="prose">A policy written for GCP resource types evaluates to <code>undefined</code> against an AWS plan. OPA treats undefined as an empty set: no denials, no failures, gate passes. From the outside it looks like the plan is compliant. It was never evaluated. That is the trap with cloud-agnostic policy libraries.</p>
     <div class="callout">
       <div class="callout-icon">// key insight</div>
-      <div class="callout-body">A policy gate that passes because no rules matched is <strong>indistinguishable from a gate that passed because everything was compliant</strong>. The fix is not a single multi-cloud policy — it's cloud-specific variants under the same control IDs, each covering the resource types that actually exist in that plan.</div>
+      <div class="callout-body">A policy gate that passes because no rules matched is <strong>indistinguishable from a gate that passed because everything was compliant</strong>. The answer is not a single multi-cloud policy. Cloud-specific variants under the same control IDs, each covering the resource types that actually exist in that plan, are what close it.</div>
     </div>
   </div>
 
@@ -192,9 +192,9 @@
   <div class="content-section">
     <div class="section-header"><div class="sh-title">Architecture Decision</div><div class="sh-num">03</div></div>
     <div class="decision-grid">
-      <div class="dc"><div class="dc-label">// sc-28 by reference</div><div class="dc-title">Match Configuration, Not Values</div><div class="dc-body">Bucket names contain a random_id suffix unknown at plan time — planned_values.bucket is null. Matching by configuration.references against aws_s3_bucket.primary.id resolves correctly at plan time.</div></div>
-      <div class="dc"><div class="dc-label">// ac-3 by planned values</div><div class="dc-title">Split the Lookup</div><div class="dc-body">The four public-access-block flags are concrete in planned_values even though the bucket ID isn't. Reference matching lives in configuration, flag validation lives in planned_values.</div></div>
-      <div class="dc"><div class="dc-label">// tags_all not tags</div><div class="dc-title">CM-6 Catches Provider Tags</div><div class="dc-body">tags_all merges provider default_tags with resource-level tags. Checking tags alone misses tags applied at the provider level — a compliance gap that looks clean at the resource level.</div></div>
+      <div class="dc"><div class="dc-label">// sc-28 by reference</div><div class="dc-title">Match Configuration, Not Values</div><div class="dc-body">Bucket names contain a random_id suffix unknown at plan time, so planned_values.bucket is null. Matching by configuration.references against aws_s3_bucket.primary.id resolves correctly at plan time.</div></div>
+      <div class="dc"><div class="dc-label">// ac-3 by planned values</div><div class="dc-title">Split the Lookup</div><div class="dc-body">The four public-access-block flags are concrete in planned_values even though the bucket ID is not. Reference matching lives in configuration; flag validation lives in planned_values.</div></div>
+      <div class="dc"><div class="dc-label">// tags_all not tags</div><div class="dc-title">CM-6 Catches Provider Tags</div><div class="dc-body">tags_all merges provider default_tags with resource-level tags. Checking tags alone misses tags applied at the provider level, a gap that looks clean at the resource level.</div></div>
       <div class="dc"><div class="dc-label">// || true per namespace</div><div class="dc-title">All Namespaces Evaluate</div><div class="dc-body">A failure in one namespace doesn't abort the script before others run. Every policy evaluates, every result lands in the evidence file, exit code is set at the end.</div></div>
     </div>
   </div>
@@ -214,14 +214,14 @@
     <div class="panel">
       <div class="panel-body">
         <div class="panel-head"><div class="panel-label">AC-3 · aws_public_access.rego</div><div class="panel-title">All Four Public Access Block Flags</div></div>
-        <div class="panel-desc">Validates all four AWS S3 public access block flags against planned_values — block_public_acls, block_public_policy, ignore_public_acls, restrict_public_buckets must all be true. Any single flag missing or false triggers a deny. Resource address and AC-3 returned with the specific flag that failed.</div>
+        <div class="panel-desc">Validates all four AWS S3 public access block flags against planned_values: block_public_acls, block_public_policy, ignore_public_acls, restrict_public_buckets must all be true. Any single flag missing or false triggers a deny. Resource address and AC-3 returned with the specific flag that failed.</div>
       </div>
     </div>
 
     <div class="panel">
       <div class="panel-body">
         <div class="panel-head"><div class="panel-label">CM-6 · aws_tags.rego</div><div class="panel-title">Required Tags via tags_all</div></div>
-        <div class="panel-desc">Checks tags_all rather than tags to catch labels applied at the provider level via default_tags. Uses set subtraction — required_keys minus provided_keys — to identify exactly which tags are missing per resource. Deny returns the resource address, missing tag keys, and CM-6.</div>
+        <div class="panel-desc">Checks tags_all rather than tags to catch labels applied at the provider level via default_tags. Uses set subtraction (required_keys minus provided_keys) to identify exactly which tags are missing per resource. Deny returns the resource address, missing tag keys, and CM-6.</div>
       </div>
     </div>
   </div>
@@ -246,7 +246,7 @@
     </div>
     <div class="callout">
       <div class="callout-icon">// ci entrypoint</div>
-      <div class="callout-body">The <strong>--output=json flag</strong> means CI gets a machine-readable artifact it can parse, store, and diff across runs — not a text blob that breaks on conftest version upgrades.</div>
+      <div class="callout-body">The <strong>--output=json flag</strong> means CI gets a machine-readable artifact it can parse, store, and diff across runs, not a text blob that breaks on conftest version upgrades.</div>
     </div>
   </div>
 

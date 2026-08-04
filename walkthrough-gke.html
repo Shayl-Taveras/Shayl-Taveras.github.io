@@ -159,7 +159,7 @@
   <div class="hero-section">
     <div class="hero-overline">// Project Walkthrough · 04</div>
     <div class="hero-name">GKE Cluster <span>Compliant Primitive</span></div>
-    <p class="hero-desc">An ephemeral, FedRAMP-realistic GKE cluster with four NIST 800-53 controls hard-coded into the cluster definition. Private nodes, KMS-backed secrets encryption, Calico network policy, and full audit logging — all enforced at the infrastructure layer and evidenced in machine-readable artifacts.</p>
+    <p class="hero-desc">An ephemeral, FedRAMP-realistic GKE cluster with four NIST 800-53 controls hard-coded into the cluster definition. Private nodes, KMS-backed secrets encryption, Calico network policy, and full audit logging. All enforced at the infrastructure layer and evidenced in machine-readable artifacts.</p>
     <div class="hero-badges">
       <span class="badge hot">terraform</span>
       <span class="badge hot">gcp</span>
@@ -173,13 +173,13 @@
   <div class="content-section">
     <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
     <p class="prose">Kubernetes clusters are one of the hardest environments to evidence for compliance. The configuration options are numerous, security-relevant settings change between GKE versions, and most are buried deep enough that a standard checklist review misses them. The typical approach is to deploy a cluster, then run a checklist after the fact.</p>
-    <p class="prose">This primitive takes the opposite position. <strong>The controls are baked into the Terraform definition before the cluster exists.</strong> SC-28, CM-6, AC-3, and AU-3 are not audit findings waiting to happen — they are resource attributes. The evidence is captured in <code>artifacts/plan.json</code> and <code>artifacts/terraform-state.json</code> without any console interaction.</p>
+    <p class="prose">This primitive takes the opposite position. <strong>The controls are baked into the Terraform definition before the cluster exists.</strong> SC-28, CM-6, AC-3, and AU-3 are not audit findings waiting to happen. They are resource attributes. The evidence is captured in <code>artifacts/plan.json</code> and <code>artifacts/terraform-state.json</code> without any console interaction.</p>
   </div>
 
   <!-- 02 ARCHITECTURE -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">Architecture Decision</div><div class="sh-num">02</div></div>
-    <p class="prose">Every design choice was made to satisfy a specific compliance requirement. The cluster is intentionally minimal — two e2-small nodes, one zone, one lab session — so the compliance primitives are visible without being obscured by production complexity.</p>
+    <p class="prose">Every design choice was made to satisfy a specific compliance requirement. The cluster is intentionally minimal: two e2-small nodes, one zone, one lab session. That keeps the compliance primitives visible without production complexity getting in the way.</p>
     <div class="decision-grid">
       <div class="dc"><div class="dc-label">// private nodes</div><div class="dc-title">No Public Node IPs (AC-3)</div><div class="dc-body">Nodes have no external IP addresses. Egress goes through Cloud NAT. Control plane locked to a single operator /32 via master authorized networks.</div></div>
       <div class="dc"><div class="dc-label">// kms encryption</div><div class="dc-title">Application-Layer Secrets (SC-28)</div><div class="dc-body">A dedicated Cloud KMS key encrypts Kubernetes secrets at the application layer. 90-day rotation enforced. Key ARN and state captured in the evidence artifacts.</div></div>

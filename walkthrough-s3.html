@@ -171,7 +171,7 @@
   <!-- 01 PROBLEM -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
-    <p class="prose">Every auditor eventually asks: "Show me that your S3 buckets are encrypted, access-controlled, and logging." The typical answer is a console screenshot taken that morning — a point-in-time artifact with no chain of custody and no way to prove the configuration was in place before the audit started.</p>
+    <p class="prose">Every auditor eventually asks: "Show me that your S3 buckets are encrypted, access-controlled, and logging." The typical answer is a console screenshot taken that morning: a point-in-time artifact with no chain of custody and no way to prove the configuration was in place before the audit started.</p>
     <p class="prose">This primitive inverts that. <strong>The Terraform state is the evidence.</strong> Because the controls are defined in code and applied through a plan-and-apply cycle, the configuration is version-controlled, repeatable, and machine-readable.</p>
   </div>
 
@@ -180,10 +180,10 @@
     <div class="section-header"><div class="sh-title">Architecture Decision</div><div class="sh-num">02</div></div>
     <p class="prose">The core insight is that Terraform both enforces the control and generates the audit artifact in a single step. There is no gap between what was deployed and what the evidence says.</p>
     <div class="decision-grid">
-      <div class="dc"><div class="dc-label">// iac as evidence</div><div class="dc-title">One Step: Deploy and Attest</div><div class="dc-body">terraform apply enforces the controls. terraform show -json produces the evidence. Both happen in the same run — the state file is the audit artifact.</div></div>
-      <div class="dc"><div class="dc-label">// kms encryption</div><div class="dc-title">Customer-Managed Keys (SC-28)</div><div class="dc-body">AES-256 via KMS with customer-managed keys. Key ARN, rotation schedule, and policy all surfaced in state — direct evidence of encryption at rest.</div></div>
+      <div class="dc"><div class="dc-label">// iac as evidence</div><div class="dc-title">One Step: Deploy and Attest</div><div class="dc-body">terraform apply enforces the controls. terraform show -json produces the evidence. Both happen in the same run. The state file is the audit artifact.</div></div>
+      <div class="dc"><div class="dc-label">// kms encryption</div><div class="dc-title">Customer-Managed Keys (SC-28)</div><div class="dc-body">AES-256 via KMS with customer-managed keys. Key ARN, rotation schedule, and policy all appear in state: direct evidence of encryption at rest.</div></div>
       <div class="dc"><div class="dc-label">// access control</div><div class="dc-title">Public Access Block (AC-3)</div><div class="dc-body">All four public access block settings enforced at the resource level. No bucket provisioned by this module can be made public.</div></div>
-      <div class="dc"><div class="dc-label">// audit logging</div><div class="dc-title">Dedicated Log Bucket (AU-3, AU-6)</div><div class="dc-body">Server access logging enabled and pointed at a dedicated log bucket. Enforced in the module — consumers cannot disable it.</div></div>
+      <div class="dc"><div class="dc-label">// audit logging</div><div class="dc-title">Dedicated Log Bucket (AU-3, AU-6)</div><div class="dc-body">Server access logging enabled and pointed at a dedicated log bucket. Enforced in the module so consumers cannot disable it.</div></div>
     </div>
   </div>
 
@@ -193,11 +193,11 @@
     <table class="ctable">
       <thead><tr><th>Control ID</th><th>Control Name</th><th>How It's Enforced</th></tr></thead>
       <tbody>
-        <tr><td>SC-28</td><td>Protection of Information at Rest</td><td>AES-256 encryption via KMS with customer-managed key — fixed resource attribute</td></tr>
-        <tr><td>AC-3</td><td>Access Enforcement</td><td>All four S3 public access block settings enforced — not parameterized</td></tr>
+        <tr><td>SC-28</td><td>Protection of Information at Rest</td><td>AES-256 encryption via KMS with customer-managed key: fixed resource attribute</td></tr>
+        <tr><td>AC-3</td><td>Access Enforcement</td><td>All four S3 public access block settings enforced, not parameterized</td></tr>
         <tr><td>CM-6</td><td>Configuration Settings</td><td>Object versioning enabled, bucket ownership enforced, ACLs disabled</td></tr>
         <tr><td>AU-3</td><td>Content of Audit Records</td><td>Server access logging enabled and directed to a dedicated log bucket</td></tr>
-        <tr><td>AU-6</td><td>Audit Review and Analysis</td><td>Log bucket created and managed by the module — consumers cannot disable logging</td></tr>
+        <tr><td>AU-6</td><td>Audit Review and Analysis</td><td>Log bucket created and managed by the module: consumers cannot disable logging</td></tr>
       </tbody>
     </table>
   </div>

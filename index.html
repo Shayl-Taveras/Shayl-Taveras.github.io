@@ -145,7 +145,7 @@
     <div class="hero-section">
       <div class="hero-overline">// GRC Engineer · Compliance Automation · Barrington, NJ</div>
       <div class="hero-name">Shayl <span>Taveras_</span></div>
-      <p class="hero-desc">I came into compliance through the back door. eDiscovery at Merck and J&amp;J, data center ops at Nasdaq, network operations at Verizon Wireless — none of it was planned as a GRC career path. But understanding how <strong>infrastructure actually runs before anyone starts auditing it</strong> turns out to be a real advantage. That's the lens I bring to this work.</p>
+      <p class="hero-desc">I came into compliance through the back door. eDiscovery at Merck and J&amp;J, data center ops at Nasdaq, network operations at Verizon Wireless. None of it was planned as a GRC career path. But understanding how <strong>infrastructure actually runs before anyone starts auditing it</strong> turns out to be a real advantage. That's the lens I bring to this work.</p>
       <div class="hero-chips">
         <span class="chip">FedRAMP</span><span class="chip">HITRUST</span><span class="chip">CMMC 2.0</span><span class="chip">RMF</span><span class="chip">SOC 2</span><span class="chip">PCI-DSS</span><span class="chip">NIST 800-53</span>
       </div>
@@ -174,7 +174,7 @@
       </div>
       <div class="proj-item">
         <div class="pi-head"><div class="pi-title">GKE Cluster Compliant Primitive — Multi-Framework</div><div class="pi-num">04</div></div>
-        <div class="pi-desc">Ephemeral FedRAMP-realistic GKE cluster. SC-28, CM-6, AC-3, AU-3 hard-coded. Evidence in artifacts/terraform-state.json — auditor-traversable without console access. Maps to NIST 800-53, FedRAMP, CMMC L2, SOC 2.</div>
+        <div class="pi-desc">Ephemeral FedRAMP-realistic GKE cluster. SC-28, CM-6, AC-3, AU-3 hard-coded. Evidence lives in artifacts/terraform-state.json, auditor-traversable without console access. Maps to NIST 800-53, FedRAMP, CMMC L2, SOC 2.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">gke</span><span class="ptag">fedramp</span><span class="ptag">cmmc l2</span><span class="ptag">nist 800-53</span></div><div class="pi-links"><a href="walkthrough-gke.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/labs/lab-05-gke-kyverno" target="_blank" rel="noopener">github →</a></div></div>
       </div>
       <div class="proj-item">
@@ -184,13 +184,13 @@
       </div>
       <div class="proj-item">
         <div class="pi-head"><div class="pi-title">Policy as Code Gate with Conftest — AWS</div><div class="pi-num">06</div></div>
-        <div class="pi-desc">Conftest policy gate that blocks Terraform applies on non-compliant AWS infrastructure by running three Rego policies against plan JSON — fail-closed, exit-code-driven, zero screenshots. AWS-specific variants of SC-28, AC-3, and CM-6 solve the cross-cloud coverage gap: a GCP policy against an AWS plan passes silently and proves nothing. A policy-gate.sh wrapper captures machine-readable JSON evidence and exits non-zero on any failure.</div>
+        <div class="pi-desc">Conftest policy gate that blocks Terraform applies on non-compliant AWS infrastructure by running three Rego policies against plan JSON. Fail-closed, exit-code-driven, zero screenshots. AWS-specific variants of SC-28, AC-3, and CM-6 solve the cross-cloud coverage gap: a GCP policy against an AWS plan passes silently and proves nothing. A policy-gate.sh wrapper captures machine-readable JSON evidence and exits non-zero on any failure.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">conftest</span><span class="ptag">opa</span><span class="ptag">rego</span><span class="ptag">aws</span><span class="ptag">terraform</span><span class="ptag">nist 800-53</span><span class="ptag">ci</span></div><div class="pi-links"><a href="walkthrough-conftest.html">▶ walkthrough</a><a href="#">github →</a></div></div>
       </div>
       <div class="proj-item">
         <div class="pi-head"><div class="pi-title">Evidence Management &amp; Chain of Custody — Cosign + Sigstore</div><div class="pi-num">07</div></div>
-        <div class="pi-desc">Extended the CI policy gate with keyless Cosign signing over GitHub OIDC so every evidence bundle is cryptographically tied to the exact CI run that produced it. Object Lock proves evidence can't be deleted — this proves who put it there and when. An auditor verifies the chain independently without trusting the AWS account.</div>
-        <div class="pi-footer"><div class="pi-tags"><span class="ptag">cosign</span><span class="ptag">sigstore</span><span class="ptag">github oidc</span><span class="ptag">aws s3</span><span class="ptag">object lock</span><span class="ptag">nist 800-53</span><span class="ptag">fedramp</span></div><div class="pi-links"><a href="walkthrough-cosign.html">▶ walkthrough</a><a href="#">github →</a></div></div>
+        <div class="pi-desc">Extended the CI policy gate with keyless Cosign signing over GitHub OIDC so every evidence bundle is cryptographically tied to the exact CI run that produced it. Object Lock proves evidence can't be deleted. This proves who put it there and when. An auditor verifies the chain independently without trusting the AWS account.</div>
+        <div class="pi-footer"><div class="pi-tags"><span class="ptag">cosign</span><span class="ptag">sigstore</span><span class="ptag">github oidc</span><span class="ptag">aws s3</span><span class="ptag">object lock</span><span class="ptag">nist 800-53</span><span class="ptag">fedramp</span></div><div class="pi-links"><a href="walkthrough-cosign.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/pull/4" target="_blank" rel="noopener">github →</a></div></div>
       </div>
     </div>
 
@@ -200,7 +200,7 @@
         <div class="sh-title">Experience</div>
         <div class="sh-count">5 roles</div>
       </div>
-      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2 current"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Florida Blue Cross Blue Shield</div><div class="exp-role">IT Systems Compliance Engineer · HITRUST · SOC 2 · CMS ARS</div></div></div>
+      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2 current"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Florida Blue Cross Blue Shield</div><div class="exp-role">IT Compliance Analyst · HITRUST · SOC 2 · CMS ARS</div></div></div>
       <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Booz Allen Hamilton</div><div class="exp-role">GRC Consultant · FedRAMP High · RMF · NIST 800-53</div></div></div>
       <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Lockheed Martin</div><div class="exp-role">Senior Cybersecurity Engineer · NIST 800-53 · NIST 800-171 · RMF</div></div></div>
       <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Future Technologies, Inc</div><div class="exp-role">GRC Specialist · NIST 800-53 · RMF</div></div></div>

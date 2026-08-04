@@ -171,17 +171,17 @@
   <!-- 01 PROBLEM -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
-    <p class="prose">Most organizations treat compliance as a checklist filled out after infrastructure is already built. Security settings get bolted on after the fact, documentation lags, and auditors end up reviewing a system that looks compliant on paper but was never engineered to be.</p>
-    <p class="prose">This module inverts that model. <strong>The controls are the infrastructure.</strong> Every Cloud Storage bucket provisioned by this module is compliant by construction — a consumer cannot misconfigure their way out of it, and the evidence is generated automatically at apply time.</p>
+    <p class="prose">The standard pattern is to build first and check later. Security settings get added after the fact, documentation lags, and by the time an auditor shows up the team is scrambling to prove the infrastructure was ever in the right state.</p>
+    <p class="prose"><strong>This module builds compliance into the resource definition.</strong> Every Cloud Storage bucket it provisions is compliant from the first apply. A consumer cannot misconfigure their way out of it, and the evidence is generated automatically at apply time.</p>
   </div>
 
   <!-- 02 ARCHITECTURE -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">Architecture Decision</div><div class="sh-num">02</div></div>
     <div class="decision-grid">
-      <div class="dc"><div class="dc-label">// hard-coded controls</div><div class="dc-title">No Optional Security Settings</div><div class="dc-body">Encryption, public access prevention, uniform IAM, versioning, and retention are non-negotiable. Consumers configure bucket names and retention floors — they cannot toggle off a control.</div></div>
-      <div class="dc"><div class="dc-label">// plan-time validation</div><div class="dc-title">Fail Before Any API Call</div><div class="dc-body">Terraform validation blocks catch misconfiguration at plan time. A prod bucket with less than 365 days retention fails with a human-readable error before anything reaches GCP.</div></div>
-      <div class="dc"><div class="dc-label">// attestation output</div><div class="dc-title">Machine-Readable Evidence</div><div class="dc-body">Post-apply, a structured output lists every enforced control with its value and mapped control ID. An auditor reads the Terraform state directly — no console login required.</div></div>
+      <div class="dc"><div class="dc-label">// hard-coded controls</div><div class="dc-title">No Optional Security Settings</div><div class="dc-body">Encryption, public access prevention, uniform IAM, versioning, and retention are fixed. Consumers pass in the bucket name and retention floor. That is the extent of their influence over the security configuration.</div></div>
+      <div class="dc"><div class="dc-label">// plan-time validation</div><div class="dc-title">Fail Before Any API Call</div><div class="dc-body">Terraform validation blocks reject misconfiguration before any API call goes out. A prod bucket with less than 365 days retention fails at plan time with a readable error and exits. No partial creates, no cloud spend.</div></div>
+      <div class="dc"><div class="dc-label">// attestation output</div><div class="dc-title">Machine-Readable Evidence</div><div class="dc-body">Post-apply, a structured output lists every enforced control with its value and mapped control ID. An auditor reads the Terraform state directly, without a console login.</div></div>
       <div class="dc"><div class="dc-label">// separate kms keyring</div><div class="dc-title">Customer-Managed Keys (SC-12)</div><div class="dc-body">Each bucket gets its own KMS keyring. GCP holds no root key material. Key lifecycle is fully under the customer's control with 90-day automatic rotation enforced at the module level.</div></div>
     </div>
   </div>
@@ -193,11 +193,11 @@
       <thead><tr><th>Control ID</th><th>Control Name</th><th>How It's Enforced</th></tr></thead>
       <tbody>
         <tr><td>SC-12</td><td>Cryptographic Key Management</td><td>Separate KMS keyring per bucket, customer-managed, 90-day auto-rotation</td></tr>
-        <tr><td>SC-13</td><td>Cryptographic Protection</td><td>CMEK encryption enforced at the API level — no bucket without it</td></tr>
+        <tr><td>SC-13</td><td>Cryptographic Protection</td><td>CMEK encryption enforced at the API level: no bucket without it</td></tr>
         <tr><td>SC-28</td><td>Protection of Information at Rest</td><td>AES-256 via CMEK, public access prevention block always enabled</td></tr>
-        <tr><td>AC-3</td><td>Access Enforcement</td><td>Uniform bucket-level IAM only — no legacy ACLs, no public access</td></tr>
+        <tr><td>AC-3</td><td>Access Enforcement</td><td>Uniform bucket-level IAM only: no legacy ACLs, no public access</td></tr>
         <tr><td>CM-6</td><td>Configuration Settings</td><td>Object versioning enabled, all settings non-parameterized</td></tr>
-        <tr><td>AU-11</td><td>Audit Record Retention</td><td>Configurable floor with plan-time validation — prod requires 365+ days</td></tr>
+        <tr><td>AU-11</td><td>Audit Record Retention</td><td>Configurable floor with plan-time validation: prod requires 365+ days</td></tr>
       </tbody>
     </table>
   </div>
@@ -205,10 +205,10 @@
   <!-- 04 HOW IT WORKS -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">How It Works</div><div class="sh-num">04</div></div>
-    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">hard-coded resources</div><div class="panel-title">Controls Are the Infrastructure</div></div><div class="panel-desc">Encryption, public access block, uniform IAM, and versioning are fixed resource attributes — not variables. A consumer calling the module cannot override them.</div></div></div>
-    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">validation blocks</div><div class="panel-title">Plan-Time Rejection</div></div><div class="panel-desc">Terraform validation blocks check the retention floor against the environment type before any API call. A prod deployment with less than 365 days retention fails at plan time with a clear error — not a runtime failure after resources are partially created.</div></div></div>
-    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">negative test consumer</div><div class="panel-title">Proof the Gate Fires</div></div><div class="panel-desc">consumers/negative-test/ contains a deliberately misconfigured consumer. The bucket is named should-never-exist because it never reaches GCP — the validation gate fires and Terraform exits before any resource is created.</div></div></div>
-    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">compliance_attestation</div><div class="panel-title">Automatic Evidence at Apply Time</div></div><div class="panel-desc">After a successful apply, the compliance_attestation output lists every enforced control as machine-readable structured data — control ID, value, and enforcement method.</div></div></div>
+    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">hard-coded resources</div><div class="panel-title">Controls Are the Infrastructure</div></div><div class="panel-desc">Encryption, public access block, uniform IAM, and versioning are fixed resource attributes. A consumer calling the module cannot override them.</div></div></div>
+    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">validation blocks</div><div class="panel-title">Plan-Time Rejection</div></div><div class="panel-desc">Terraform validation blocks check the retention floor against the environment type before any API call. A prod deployment with less than 365 days retention fails at plan time with a clear error, not a runtime failure after resources are partially created.</div></div></div>
+    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">negative test consumer</div><div class="panel-title">Proof the Gate Fires</div></div><div class="panel-desc">consumers/negative-test/ contains a deliberately misconfigured consumer. The bucket is named should-never-exist because it never reaches GCP. The validation gate fires and Terraform exits before any resource is created.</div></div></div>
+    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">compliance_attestation</div><div class="panel-title">Automatic Evidence at Apply Time</div></div><div class="panel-desc">After a successful apply, the compliance_attestation output lists every enforced control as machine-readable structured data: control ID, value, and enforcement method.</div></div></div>
   </div>
 
   <!-- 05 FILE STRUCTURE -->

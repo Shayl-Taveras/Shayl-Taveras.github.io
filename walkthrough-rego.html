@@ -172,19 +172,19 @@
   <!-- 01 PROBLEM -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
-    <p class="prose">Most compliance validation happens after infrastructure is deployed. A resource gets created, someone runs a check, a finding gets filed, and the team spends a sprint remediating something that should never have been deployed in the first place. The loop is slow, reactive, and produces GRC tickets as a side effect of normal engineering work.</p>
-    <p class="prose">This library moves the validation upstream. <strong>Policies run against the Terraform plan before apply</strong> — no cloud access required, no resources created, instant feedback. A developer who tries to deploy an unencrypted bucket or a resource missing compliance labels sees the denial, the resource address, and the NIST control ID in the same terminal window where they ran the plan.</p>
+    <p class="prose">The typical compliance feedback loop runs after infrastructure is deployed. A resource goes up, a scanner finds a problem, a ticket gets filed, and someone spends a sprint fixing something that should have been caught before the first API call. The GRC team ends up functioning as a post-deployment remediation queue.</p>
+    <p class="prose">These policies short-circuit that. They run against <code style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px;">terraform plan -json</code> before anything reaches GCP. A developer who tries to deploy an unencrypted bucket sees the denial, the resource address, and the NIST control ID in the same terminal window where they ran the plan. No ticket, no meeting, no sprint.</p>
   </div>
 
   <!-- 02 HOW IT WORKS -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">How It Works</div><div class="sh-num">02</div></div>
-    <p class="prose">OPA evaluates Rego policies against the JSON output of <code>terraform plan -json</code>. The plan contains every resource Terraform intends to create or modify, including all attribute values. Policies inspect those values and emit deny messages for any resource that fails a control check.</p>
+    <p class="prose">OPA reads the JSON output of <code>terraform plan -json</code> and evaluates each policy against it. The plan carries every resource Terraform intends to create or modify, including attribute values. If a resource fails a control check, the policy emits a deny message with enough context for the developer to fix it without asking anyone.</p>
     <div class="decision-grid">
-      <div class="dc"><div class="dc-label">// pre-apply gate</div><div class="dc-title">Shift Left, Not Post-Deploy</div><div class="dc-body">Validation runs at plan time — before any API call reaches GCP. A failing policy blocks the apply entirely, not after resources are half-created.</div></div>
+      <div class="dc"><div class="dc-label">// pre-apply gate</div><div class="dc-title">Shift Left, Not Post-Deploy</div><div class="dc-body">Validation runs at plan time, before any API call reaches GCP. A failing policy blocks the apply entirely, not after resources are half-created.</div></div>
       <div class="dc"><div class="dc-label">// rego v1 semantics</div><div class="dc-title">OPA import rego.v1</div><div class="dc-body">Strict Rego v1 syntax with explicit import rego.v1 for forward compatibility. Partial set rules with contains to recurse into child_modules for module-wrapped resources.</div></div>
       <div class="dc"><div class="dc-label">// actionable denials</div><div class="dc-title">Resource Address + Control ID</div><div class="dc-body">Every deny message returns the full resource address and the NIST control ID. Developers know exactly what to fix and why without a GRC ticket or Slack thread.</div></div>
-      <div class="dc"><div class="dc-label">// in-memory tests</div><div class="dc-title">No Cloud Access Needed</div><div class="dc-body">The test suite runs entirely against in-memory fixtures — no apply, no GCP credentials, instant CI feedback. Eight tests across three policies.</div></div>
+      <div class="dc"><div class="dc-label">// in-memory tests</div><div class="dc-title">No Cloud Access Needed</div><div class="dc-body">The test suite runs entirely against in-memory fixtures: no apply, no GCP credentials, instant CI feedback. Eight tests across three policies.</div></div>
     </div>
   </div>
 
@@ -196,7 +196,7 @@
     <div class="panel">
       <div class="panel-body">
         <div class="panel-head"><div class="panel-label">SC-28 · encryption.rego</div><div class="panel-title">Encryption at Rest via CMEK</div></div>
-        <div class="panel-desc">Validates that every google_storage_bucket resource has a customer-managed encryption key configured. A bucket using default Google-managed encryption fails the policy — SC-28 requires customer control of the key material. Deny message returns the bucket resource address and SC-28.</div>
+        <div class="panel-desc">Validates that every google_storage_bucket resource has a customer-managed encryption key configured. A bucket using default Google-managed encryption fails the policy. SC-28 requires customer control of the key material. Deny message returns the bucket resource address and SC-28.</div>
       </div>
     </div>
     <div class="panel">
@@ -208,7 +208,7 @@
     <div class="panel">
       <div class="panel-body">
         <div class="panel-head"><div class="panel-label">CM-6 · labels.rego</div><div class="panel-title">Required Compliance Labels</div></div>
-        <div class="panel-desc">Iterates all taggable resource types and validates that required compliance labels are present. Uses set subtraction — required_labels minus provided_labels — to identify exactly which labels are missing. Deny message returns the resource address, the missing label keys, and CM-6. No false positives on resources that do not support labels.</div>
+        <div class="panel-desc">Iterates all taggable resource types and validates that required compliance labels are present. Uses set subtraction (required_labels minus provided_labels) to identify exactly which labels are missing. Deny message returns the resource address, the missing label keys, and CM-6. No false positives on resources that do not support labels.</div>
       </div>
     </div>
   </div>
@@ -219,11 +219,11 @@
     <table class="ctable">
       <thead><tr><th>Decision</th><th>Reasoning</th></tr></thead>
       <tbody>
-        <tr><td>import rego.v1</td><td>Strict Rego v1 semantics for forward compatibility — avoids deprecated syntax that will break in future OPA releases</td></tr>
+        <tr><td>import rego.v1</td><td>Strict Rego v1 semantics for forward compatibility: avoids deprecated syntax that will break in future OPA releases</td></tr>
         <tr><td>Partial set rules + contains</td><td>Recurses into child_modules in the plan JSON so policies catch resources wrapped inside Terraform modules, not just root-level resources</td></tr>
-        <tr><td>Set subtraction for labels</td><td>required_labels - provided_labels surfaces exactly which labels are missing per resource — cleaner than a loop and easier to extend</td></tr>
+        <tr><td>Set subtraction for labels</td><td>required_labels - provided_labels surfaces exactly which labels are missing per resource: cleaner than a loop and easier to extend</td></tr>
         <tr><td>No METADATA blocks</td><td>Simple control coverage comments instead of YAML METADATA blocks avoids OPA parser issues and keeps policies readable without tooling</td></tr>
-        <tr><td>In-memory test fixtures</td><td>Tests run against hardcoded plan JSON fixtures — no cloud credentials, no apply, instant feedback in CI pipelines</td></tr>
+        <tr><td>In-memory test fixtures</td><td>Tests run against hardcoded plan JSON fixtures: no cloud credentials, no apply, instant feedback in CI pipelines</td></tr>
       </tbody>
     </table>
   </div>
