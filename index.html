@@ -155,7 +155,7 @@
     <div class="proj-section" id="projects">
       <div class="section-header">
         <div class="sh-title">Projects</div>
-        <div class="sh-count">7 active</div>
+        <div class="sh-count">8 active</div>
       </div>
       <div class="proj-item">
         <div class="pi-head"><div class="pi-title">Serverless IAM Access Review System</div><div class="pi-num">01</div></div>
@@ -191,6 +191,11 @@
         <div class="pi-head"><div class="pi-title">Evidence Management &amp; Chain of Custody — Cosign + Sigstore</div><div class="pi-num">07</div></div>
         <div class="pi-desc">Extended the CI policy gate with keyless Cosign signing over GitHub OIDC so every evidence bundle is cryptographically tied to the exact CI run that produced it. Object Lock proves evidence can't be deleted. This proves who put it there and when. An auditor verifies the chain independently without trusting the AWS account.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">cosign</span><span class="ptag">sigstore</span><span class="ptag">github oidc</span><span class="ptag">aws s3</span><span class="ptag">object lock</span><span class="ptag">nist 800-53</span><span class="ptag">fedramp</span></div><div class="pi-links"><a href="walkthrough-cosign.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/pull/4" target="_blank" rel="noopener">github →</a></div></div>
+      </div>
+      <div class="proj-item">
+        <div class="pi-head"><div class="pi-title">AWS Security Services Baseline — CloudTrail + Security Hub</div><div class="pi-num">08</div></div>
+        <div class="pi-desc">Terraform baseline standing up multi-region CloudTrail with log-file validation and Security Hub subscribed to NIST 800-53 and FSBP. First-wave findings signed with Cosign and uploaded to the evidence vault, then torn down to stop Security Hub's per-check billing. CM-2/CM-6/CM-8 inherited from the account's existing Config recorder.</div>
+        <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">aws cloudtrail</span><span class="ptag">security hub</span><span class="ptag">cosign</span><span class="ptag">nist 800-53</span><span class="ptag">fedramp</span></div><div class="pi-links"><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/pull/5" target="_blank" rel="noopener">github →</a></div></div>
       </div>
     </div>
 
