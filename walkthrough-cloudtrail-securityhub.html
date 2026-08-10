@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkthrough — AWS Security Services Baseline</title>
+<style>
+
+
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  :root{
+    --bg:#09090b;--bg2:#111113;--bg3:#18181b;--bg4:#1e1e21;
+    --accent:#f97316;--accent-dim:#7c2d12;--accent-muted:#150800;
+    --text:#c8c2bc;--text-bright:#fafaf9;--muted:#9c9590;
+    --border:#1c1917;--border2:#27241f;
+    --green:#22c55e;--red:#ef4444;--blue:#60a5fa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+  /* NAV */
+  .topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2rem;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+  .tn-left{display:flex;align-items:center;gap:2rem;}
+  .tn-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+  .tn-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .tn-breadcrumb span{color:var(--text);}
+  .tn-right a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+  .tn-right a:hover{color:var(--accent);}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 48px);}
+  .main-col{border-right:1px solid var(--border2);padding:2rem;}
+  .right-col{padding:2rem;display:flex;flex-direction:column;gap:1.5rem;}
+
+  /* HERO */
+  .hero-section{padding-bottom:2rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);}
+  .hero-overline{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:0.8rem;}
+  .hero-name{font-size:1.8rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.6rem;}
+  .hero-name span{color:var(--accent);}
+  .hero-desc{font-size:14px;color:var(--text-bright);line-height:1.75;max-width:600px;margin-bottom:1.2rem;}
+  .hero-badges{display:flex;gap:0.4rem;flex-wrap:wrap;}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 10px;border:1px solid var(--border2);color:var(--text);}
+  .badge.hot{border-color:var(--accent-dim);color:var(--accent);}
+
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border2);}
+  .sh-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;}
+  .sh-num{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border:1px solid var(--border2);color:var(--muted);}
+
+  /* CONTENT SECTION */
+  .content-section{margin-bottom:2rem;}
+
+  /* PROSE */
+  .prose{font-size:14px;line-height:1.8;color:var(--text-bright);margin-bottom:0.8rem;}
+  .prose strong{color:var(--accent);font-weight:500;}
+  .prose code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:var(--accent-muted);padding:1px 5px;}
+
+  /* PANELS */
+  .panel{background:var(--bg2);border:1px solid var(--border2);margin-bottom:0.8rem;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .panel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform 0.25s;}
+  .panel:hover{border-color:var(--accent-dim);}
+  .panel:hover::before{transform:scaleY(1);}
+  .panel-body{padding:1.2rem;}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.5rem;}
+  .panel-title{font-size:13px;font-weight:600;color:var(--text-bright);}
+  .panel-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.08em;}
+  .panel-desc{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+  /* DECISION CARDS */
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.2rem;}
+  .dc{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;transition:border-color 0.2s;position:relative;overflow:hidden;}
+  .dc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .dc:hover{border-color:var(--accent-dim);}
+  .dc:hover::after{transform:scaleX(1);}
+  .dc-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+  .dc-title{font-size:12.5px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .dc-body{font-size:12px;color:var(--text-bright);line-height:1.6;}
+
+  /* CONTROLS TABLE */
+  .ctable{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:12.5px;}
+  .ctable th{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;text-align:left;padding:0.6rem 0.8rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .ctable td{padding:0.75rem 0.8rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .ctable tr:hover td{background:var(--bg2);}
+  .ctable td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);white-space:nowrap;}
+
+  /* CODE BLOCK */
+  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;}
+  .code-label{font-size:9.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
+  .c-comment{color:var(--muted);}
+  .c-key{color:var(--accent);}
+  .c-val{color:var(--text-bright);}
+  .c-str{color:#fdba74;}
+
+  /* CALLOUT */
+  .callout{background:var(--accent-muted);border:1px solid var(--accent-dim);border-left:2px solid var(--accent);padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;gap:0.8rem;align-items:flex-start;}
+  .callout-icon{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);flex-shrink:0;padding-top:1px;}
+  .callout-body{font-size:13px;color:var(--text);line-height:1.7;}
+  .callout-body strong{color:var(--accent);}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1.2rem;}
+  .stat-card{background:var(--bg2);border:1px solid var(--border2);padding:1rem;text-align:center;transition:border-color 0.2s;}
+  .stat-card:hover{border-color:var(--accent-dim);}
+  .stat-n{font-size:1.8rem;font-weight:700;color:var(--text-bright);line-height:1;margin-bottom:0.3rem;}
+  .stat-l{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);letter-spacing:0.06em;}
+
+  /* FILE TREE */
+  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;}
+  .ft-dir{color:var(--accent);}
+  .ft-file{color:var(--text);}
+  .ft-comment{color:var(--muted);}
+
+  /* RIGHT PANEL CARDS */
+  .info-card{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;margin-bottom:0;}
+  .ic-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border2);}
+  .ic-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+  .ic-row:last-child{border-bottom:none;}
+  .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+  .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
+  .ic-val.green{color:var(--green);}
+  .ic-val.orange{color:var(--accent);}
+  .ic-val.red{color:var(--red);}
+
+  /* FOOTER */
+  .wt-footer{border-top:1px solid var(--border2);padding:1.2rem 2rem;background:var(--bg2);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+  .wt-footer span:first-child{color:var(--accent);}
+
+  @media(max-width:880px){.layout{grid-template-columns:1fr;}.main-col{border-right:none;}.right-col{border-top:1px solid var(--border2);}.decision-grid,.stats-row{grid-template-columns:1fr 1fr;}.tn-breadcrumb{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-left">
+    <div class="tn-brand">Shayl.Taveras</div>
+    <div class="tn-breadcrumb">portfolio / projects / <span>aws-security-baseline</span></div>
+  </div>
+  <div class="tn-right"><a href="index.html">← back to portfolio</a></div>
+</div>
+
+<div class="layout">
+<div class="main-col">
+
+  <div class="hero-section">
+    <div class="hero-overline">// Project Walkthrough · 08</div>
+    <div class="hero-name">AWS Security Services <span>Baseline</span></div>
+    <p class="hero-desc">A Terraform baseline that stands up AWS's account-level compliance backbone: multi-region CloudTrail with log-file validation, and Security Hub subscribed to NIST 800-53 Rev 5 and AWS Foundational Security Best Practices. Unlike the per-resource primitives elsewhere in the toolkit, these are singleton account services — applied by hand in a sandbox, evidence captured and signed, then torn down before Security Hub's per-check billing adds up.</p>
+    <div class="hero-badges">
+      <span class="badge hot">terraform</span>
+      <span class="badge hot">aws cloudtrail</span>
+      <span class="badge hot">security hub</span>
+      <span class="badge hot">cosign</span>
+      <span class="badge">nist 800-53 rev 5 · fedramp moderate</span>
+    </div>
+  </div>
+
+  <!-- 01 PROBLEM -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
+    <p class="prose">A Terraform primitive like <code>compliant-s3</code> proves a resource was compliant at the moment it was planned and applied. It doesn't keep proving anything once the PR merges. Auditors don't just want a snapshot at deploy time — they want continuous evidence that the account is still behaving the way it was configured to.</p>
+    <p class="prose">CloudTrail and Security Hub are the layer that keeps producing that evidence after nobody is pushing PRs anymore. CloudTrail records <strong>what happened</strong> — every management-plane API call, signed and tamper-evident. Security Hub aggregates <strong>what's currently wrong</strong> — findings from every subscribed standard, normalized into one view instead of five different consoles.</p>
+  </div>
+
+  <!-- 02 WHAT IT DEPLOYS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">What It Deploys</div><div class="sh-num">02</div></div>
+    <div class="decision-grid">
+      <div class="dc"><div class="dc-label">// AU-2 / AU-12</div><div class="dc-title">Multi-Region Management Trail</div><div class="dc-body"><code>is_multi_region_trail = true</code> and <code>include_global_service_events = true</code> mean an API call in any region, or a global-service event like an IAM change, lands in the same trail. No blind spots from a region-scoped default.</div></div>
+      <div class="dc"><div class="dc-label">// AU-10</div><div class="dc-title">Log-File Validation</div><div class="dc-body"><code>enable_log_file_validation = true</code> makes CloudTrail emit an hourly digest file signed with an AWS-managed key. Any tampering with a delivered log file breaks the digest chain — non-repudiation, not just delivery.</div></div>
+      <div class="dc"><div class="dc-label">// RA-5 / SI-4</div><div class="dc-title">Security Hub — NIST 800-53 + FSBP</div><div class="dc-body">Subscribes the account to two standards simultaneously. Security Hub's control evaluation runs continuously in the background — this isn't a one-time scan, it's ongoing monitoring that keeps generating findings as the account drifts.</div></div>
+      <div class="dc"><div class="dc-label">// CM-2 / CM-6 / CM-8</div><div class="dc-title">Config — Inherited, Not Deployed</div><div class="dc-body">This module's own Config resources are written but disabled — see the wrinkle below. The account's pre-existing recorder stands as the evidence instead.</div></div>
+    </div>
+  </div>
+
+  <!-- 03 REAL-WORLD WRINKLES -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Real-World Wrinkles</div><div class="sh-num">03</div></div>
+    <p class="prose">Three things came up mid-build that a clean lab writeup wouldn't mention. All three ended up being about telling a transient AWS/Terraform hiccup apart from a real problem before reaching for a destructive fix.</p>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">wrinkle 1 · config.tf</div><div class="panel-title">One Config Recorder Per Region, Account Already Had One</div></div>
+        <div class="panel-desc">The sandbox account already had an AWS-managed <code>default</code> Config recorder using the service-linked role <code>AWSServiceRoleForConfig</code> — predating this session, and AWS allows exactly one recorder per region. Deleting infrastructure with an unknown origin wasn't an option. Block-commented this module's own Config resources and let the account's existing recorder stand as the CM-2/CM-6/CM-8 evidence instead — same remedy the lab's own SCP-blocked scenario prescribes, different root cause.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">wrinkle 2 · cloudtrail.tf</div><div class="panel-title">False "+create" Diff Seconds After a Clean Apply</div></div>
+        <div class="panel-desc"><code>terraform plan</code> rendered the CloudTrail bucket as a brand-new <code>+ create</code> moments after it had already applied successfully, cascading false diffs onto every resource that referenced it. <code>terraform state show</code> against the on-disk state proved the entry was fully populated — nothing was lost. It was a refresh-only artifact of S3 eventual consistency in us-east-1 racing the plan. Re-ran the plan and it cleared. No state surgery needed for a problem that didn't exist.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">wrinkle 3 · security_hub.tf</div><div class="panel-title">"Tainted" Subscriptions That Were Actually Healthy</div></div>
+        <div class="panel-desc">Both Security Hub standards subscriptions hit Terraform's 3-minute waiter timeout during first-time activation and came back marked <code>tainted</code>. <code>aws securityhub get-enabled-standards</code> confirmed both were already <code>READY</code> in AWS — the waiter gave up before AWS finished, not because anything failed. <code>terraform untaint</code> cleared the flag without an unnecessary unsubscribe/resubscribe cycle, which for Security Hub means resetting the findings-population clock for no reason.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 FIRST-WAVE FINDINGS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">First-Wave Findings</div><div class="sh-num">04</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">50</div><div class="stat-l">findings captured</div></div>
+      <div class="stat-card"><div class="stat-n">2</div><div class="stat-l">critical</div></div>
+      <div class="stat-card"><div class="stat-n">6</div><div class="stat-l">high</div></div>
+      <div class="stat-card"><div class="stat-n">2</div><div class="stat-l">standards subscribed</div></div>
+    </div>
+    <p class="prose">The two CRITICAL findings: an SSM public-sharing setting and an active IAM root access key — real, actionable findings from a first pass, not synthetic examples. Security Hub also auto-subscribed the account to <code>cis-aws-foundations-benchmark</code> v1.2.0 by default, since <code>enable_default_standards</code> defaults to <code>true</code> on <code>aws_securityhub_account</code> — not something this config asked for, but real and reflected in the findings count.</p>
+    <div class="callout">
+      <div class="callout-icon">// evidence handling</div>
+      <div class="callout-body">The findings, CloudTrail status, and hub metadata were bundled, SHA-256 hashed, and signed with <code>cosign sign-blob</code> (keyless, Sigstore OIDC) — the same signing pattern <a href="walkthrough-cosign.html" style="color:var(--accent);">Lab 4.4</a> established — then uploaded to the evidence vault with a receipt. <strong>The account ID in the committed evidence JSON is redacted</strong> for public repo visibility; the unredacted signed original is the vault copy the receipt points to.</div>
+    </div>
+  </div>
+
+  <!-- 05 KEY DECISIONS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Key Technical Decisions</div><div class="sh-num">05</div></div>
+    <table class="ctable">
+      <thead><tr><th>Decision</th><th>Reasoning</th></tr></thead>
+      <tbody>
+        <tr><td>Config block-commented, not deleted or forced</td><td>The account's <code>default</code> recorder's service-linked role is a strong signal it predates this session. AWS's one-recorder-per-region limit means ours could never coexist with it anyway.</td></tr>
+        <tr><td><code>terraform untaint</code> over destroy/recreate</td><td><code>get-enabled-standards</code> confirmed both subscriptions were already <code>READY</code>. Untainting fixes Terraform's bookkeeping without resetting the findings-population clock.</td></tr>
+        <tr><td>Re-plan instead of <code>state rm</code>/<code>import</code></td><td><code>terraform state show</code> proved the on-disk state was fully intact. The false diff was a refresh-only artifact, not real state loss.</td></tr>
+        <tr><td>Manual sign-and-upload, not wired into <code>grc-gate.yml</code></td><td>These are account-level singleton services, not per-PR resources. Running this in CI would apply real Security Hub/Config spend on every pull request.</td></tr>
+        <tr><td>No Rego/Conftest policies added</td><td>Nothing re-evaluates this config on a recurring trigger the way <code>grc-gate.yml</code> does for <code>compliant-s3</code> — policy-as-code has no consumer here yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 06 FILE STRUCTURE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">File Structure</div><div class="sh-num">06</div></div>
+    <div class="file-tree">
+      <div><span class="ft-dir">tools/terraform/baselines/aws/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">main.tf</span> <span class="ft-comment"># provider, default tags, caller identity, random suffix</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">cloudtrail.tf</span> <span class="ft-comment"># multi-region trail, log bucket, bucket policy</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">security_hub.tf</span> <span class="ft-comment"># account subscription + NIST 800-53 / FSBP standards</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">config.tf</span> <span class="ft-comment"># disabled — account already has a Config recorder</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">variables.tf</span> <span class="ft-comment"># project_name, environment, aws_region</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">outputs.tf</span> <span class="ft-comment"># trail ARN, bucket name, hub ARN</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">README.md</span></div>
+      <div><span class="ft-dir">&nbsp;&nbsp;evidence/lab-5-2/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">cloudtrail-status.json</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">securityhub-hub.json</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">security-hub-findings.json</span> <span class="ft-comment"># first 50 findings, account ID redacted</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">receipt.json</span> <span class="ft-comment"># chain-of-custody pointer to the signed vault bundle</span></div>
+    </div>
+  </div>
+
+  <!-- 07 SUMMARY -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Summary</div><div class="sh-num">07</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">real-world wrinkles resolved</div></div>
+      <div class="stat-card"><div class="stat-n">50</div><div class="stat-l">findings, first wave</div></div>
+      <div class="stat-card"><div class="stat-n">6</div><div class="stat-l">controls covered</div></div>
+      <div class="stat-card"><div class="stat-n">0</div><div class="stat-l">console logins needed</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-col">
+  <div class="info-card">
+    <div class="ic-label">Controls</div>
+    <div class="ic-row"><div class="ic-key">AU-2</div><div class="ic-val">Event Logging</div></div>
+    <div class="ic-row"><div class="ic-key">AU-12</div><div class="ic-val">Audit Record Generation</div></div>
+    <div class="ic-row"><div class="ic-key">AU-10</div><div class="ic-val">Non-Repudiation</div></div>
+    <div class="ic-row"><div class="ic-key">RA-5</div><div class="ic-val">Vulnerability Monitoring</div></div>
+    <div class="ic-row"><div class="ic-key">SI-4</div><div class="ic-val">System Monitoring</div></div>
+    <div class="ic-row"><div class="ic-key">CM-2/6/8</div><div class="ic-val">Inherited, not deployed</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Stack</div>
+    <div class="ic-row"><div class="ic-key">IaC</div><div class="ic-val orange">Terraform</div></div>
+    <div class="ic-row"><div class="ic-key">logging</div><div class="ic-val">AWS CloudTrail</div></div>
+    <div class="ic-row"><div class="ic-key">findings</div><div class="ic-val">AWS Security Hub</div></div>
+    <div class="ic-row"><div class="ic-key">signing</div><div class="ic-val">Cosign + Sigstore</div></div>
+    <div class="ic-row"><div class="ic-key">evidence</div><div class="ic-val">S3 evidence vault</div></div>
+    <div class="ic-row"><div class="ic-key">billing model</div><div class="ic-val red">per-check — apply/destroy</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Frameworks</div>
+    <div class="ic-row"><div class="ic-key">NIST 800-53</div><div class="ic-val green">Rev 5</div></div>
+    <div class="ic-row"><div class="ic-key">FedRAMP</div><div class="ic-val green">Moderate</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Links</div>
+    <div class="ic-row"><div class="ic-key">pull request</div><div class="ic-val"><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/pull/5" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">#5 →</a></div></div>
+    <div class="ic-row"><div class="ic-key">github</div><div class="ic-val"><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/terraform/baselines/aws" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">view →</a></div></div>
+    <div class="ic-row"><div class="ic-key">portfolio</div><div class="ic-val"><a href="index.html" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">← back</a></div></div>
+  </div>
+</div>
+</div>
+
+<div class="wt-footer">
+  <span>Shayl.Taveras</span>
+  <span style="color:var(--muted);">© 2026</span>
+</div>
+
+</body>
+</html>
