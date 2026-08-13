@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkthrough: OSCAL Component Definition</title>
+<style>
+
+
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  :root{
+    --bg:#09090b;--bg2:#111113;--bg3:#18181b;--bg4:#1e1e21;
+    --accent:#f97316;--accent-dim:#7c2d12;--accent-muted:#150800;
+    --text:#c8c2bc;--text-bright:#fafaf9;--muted:#9c9590;
+    --border:#1c1917;--border2:#27241f;
+    --green:#22c55e;--red:#ef4444;--blue:#60a5fa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+  /* NAV */
+  .topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2rem;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+  .tn-left{display:flex;align-items:center;gap:2rem;}
+  .tn-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+  .tn-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .tn-breadcrumb span{color:var(--text);}
+  .tn-right a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+  .tn-right a:hover{color:var(--accent);}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 48px);}
+  .main-col{border-right:1px solid var(--border2);padding:2rem;}
+  .right-col{padding:2rem;display:flex;flex-direction:column;gap:1.5rem;}
+
+  /* HERO */
+  .hero-section{padding-bottom:2rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);}
+  .hero-overline{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:0.8rem;}
+  .hero-name{font-size:1.8rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.6rem;}
+  .hero-name span{color:var(--accent);}
+  .hero-desc{font-size:14px;color:var(--text-bright);line-height:1.75;max-width:600px;margin-bottom:1.2rem;}
+  .hero-badges{display:flex;gap:0.4rem;flex-wrap:wrap;}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 10px;border:1px solid var(--border2);color:var(--text);}
+  .badge.hot{border-color:var(--accent-dim);color:var(--accent);}
+
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border2);}
+  .sh-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;}
+  .sh-num{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border:1px solid var(--border2);color:var(--muted);}
+
+  /* CONTENT SECTION */
+  .content-section{margin-bottom:2rem;}
+
+  /* PROSE */
+  .prose{font-size:14px;line-height:1.8;color:var(--text-bright);margin-bottom:0.8rem;}
+  .prose strong{color:var(--accent);font-weight:500;}
+  .prose code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:var(--accent-muted);padding:1px 5px;}
+
+  /* PANELS */
+  .panel{background:var(--bg2);border:1px solid var(--border2);margin-bottom:0.8rem;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .panel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform 0.25s;}
+  .panel:hover{border-color:var(--accent-dim);}
+  .panel:hover::before{transform:scaleY(1);}
+  .panel-body{padding:1.2rem;}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.5rem;}
+  .panel-title{font-size:13px;font-weight:600;color:var(--text-bright);}
+  .panel-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.08em;}
+  .panel-desc{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+  /* DECISION CARDS */
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.2rem;}
+  .dc{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;transition:border-color 0.2s;position:relative;overflow:hidden;}
+  .dc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .dc:hover{border-color:var(--accent-dim);}
+  .dc:hover::after{transform:scaleX(1);}
+  .dc-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+  .dc-title{font-size:12.5px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .dc-body{font-size:12px;color:var(--text-bright);line-height:1.6;}
+
+  /* CONTROLS TABLE */
+  .ctable{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:12.5px;}
+  .ctable th{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;text-align:left;padding:0.6rem 0.8rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .ctable td{padding:0.75rem 0.8rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .ctable tr:hover td{background:var(--bg2);}
+  .ctable td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);white-space:nowrap;}
+
+  /* CODE BLOCK */
+  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;}
+  .code-label{font-size:9.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
+  .c-comment{color:var(--muted);}
+  .c-key{color:var(--accent);}
+  .c-val{color:var(--text-bright);}
+  .c-str{color:#fdba74;}
+
+  /* CALLOUT */
+  .callout{background:var(--accent-muted);border:1px solid var(--accent-dim);border-left:2px solid var(--accent);padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;gap:0.8rem;align-items:flex-start;}
+  .callout-icon{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);flex-shrink:0;padding-top:1px;}
+  .callout-body{font-size:13px;color:var(--text);line-height:1.7;}
+  .callout-body strong{color:var(--accent);}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1.2rem;}
+  .stat-card{background:var(--bg2);border:1px solid var(--border2);padding:1rem;text-align:center;transition:border-color 0.2s;}
+  .stat-card:hover{border-color:var(--accent-dim);}
+  .stat-n{font-size:1.8rem;font-weight:700;color:var(--text-bright);line-height:1;margin-bottom:0.3rem;}
+  .stat-l{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);letter-spacing:0.06em;}
+
+  /* FILE TREE */
+  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;}
+  .ft-dir{color:var(--accent);}
+  .ft-file{color:var(--text);}
+  .ft-comment{color:var(--muted);}
+
+  /* RIGHT PANEL CARDS */
+  .info-card{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;margin-bottom:0;}
+  .ic-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border2);}
+  .ic-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+  .ic-row:last-child{border-bottom:none;}
+  .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+  .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
+  .ic-val.green{color:var(--green);}
+  .ic-val.orange{color:var(--accent);}
+  .ic-val.red{color:var(--red);}
+
+  /* FOOTER */
+  .wt-footer{border-top:1px solid var(--border2);padding:1.2rem 2rem;background:var(--bg2);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+  .wt-footer span:first-child{color:var(--accent);}
+
+  @media(max-width:880px){.layout{grid-template-columns:1fr;}.main-col{border-right:none;}.right-col{border-top:1px solid var(--border2);}.decision-grid,.stats-row{grid-template-columns:1fr 1fr;}.tn-breadcrumb{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-left">
+    <div class="tn-brand">Shayl.Taveras</div>
+    <div class="tn-breadcrumb">portfolio / projects / <span>oscal-component-definition</span></div>
+  </div>
+  <div class="tn-right"><a href="index.html">← back to portfolio</a></div>
+</div>
+
+<div class="layout">
+<div class="main-col">
+
+  <div class="hero-section">
+    <div class="hero-overline">// Project Walkthrough · 10</div>
+    <div class="hero-name">OSCAL Component <span>Definition</span></div>
+    <p class="hero-desc">A NIST OSCAL Component Definition and Profile describing the <code>compliant-s3</code> Terraform module, validated with NIST's own <code>compliance-trestle</code> toolkit, with evidence links wired directly into signed, immutable objects already sitting in the evidence vault. Every other primitive in this toolkit proves compliance at plan time or after the fact. This is the layer that makes the whole chain machine traversable, so an assessor can follow control to component to evidence without a conversation.</p>
+    <div class="hero-badges">
+      <span class="badge hot">oscal 1.2.1</span>
+      <span class="badge hot">compliance-trestle</span>
+      <span class="badge hot">nist 800-53</span>
+      <span class="badge hot">terraform</span>
+      <span class="badge">nist 800-53 rev 5</span>
+    </div>
+  </div>
+
+  <!-- 01 PROBLEM -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
+    <p class="prose">The rest of this toolkit produces compliance proof at different points in time: a Terraform plan proves a resource was compliant when it was applied, a Conftest gate proves a plan was rejected or passed, a signed evidence bundle proves a specific CI run captured specific artifacts. None of that is expressed in a single, standard, machine-readable format that connects a control catalog to a profile to a component to its evidence, the way an assessor actually needs to traverse it.</p>
+    <p class="prose">OSCAL is NIST's answer: a standard format for control catalogs, profiles, components, and system security plans. This project writes the smallest real piece of that graph, one Component Definition for <code>compliant-s3</code>, validated end to end, with evidence links that point at real signed objects instead of placeholder URIs.</p>
+  </div>
+
+  <!-- 02 WHAT IT BUILDS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">What It Builds</div><div class="sh-num">02</div></div>
+    <div class="decision-grid">
+      <div class="dc"><div class="dc-label">// SC-28 / AC-3 / AU-3 / CM-6</div><div class="dc-title">Component Definition</div><div class="dc-body">Four implemented-requirements for <code>compliant-s3</code>, each citing the exact Terraform resource that satisfies it and a <code>links[rel=evidence]</code> href pointing at the vault.</div></div>
+      <div class="dc"><div class="dc-label">// profile</div><div class="dc-title">Minimal Control Selection</div><div class="dc-body">A Profile that selects the same four controls out of the live NIST 800-53 Rev 5 catalog fetched over the network at resolve time, not hand-copied into the document.</div></div>
+      <div class="dc"><div class="dc-label">// trestle validate</div><div class="dc-title">Schema and Semantic Validation</div><div class="dc-body">Both documents pass NIST's own OSCAL schema plus trestle's semantic checks: required fields, cross-references, and strict v4 UUID formatting on every identifier.</div></div>
+      <div class="dc"><div class="dc-label">// evidence</div><div class="dc-title">Links Wired to Real Signed Bundles</div><div class="dc-body">Each evidence href points at the exact signed bundle the <code>grc-gate</code> CI pipeline produced for <code>compliant-s3</code>, verifiable independently against the Sigstore transparency log.</div></div>
+    </div>
+  </div>
+
+  <!-- 03 REAL-WORLD WRINKLES -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Real-World Wrinkles</div><div class="sh-num">03</div></div>
+    <p class="prose">Two things surfaced that a clean writeup would not mention. Both were about the gap between a lab's own documented assumptions and what a downstream consumer actually needs from them.</p>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">wrinkle 1 · trestle CLI</div><div class="panel-title">profile-resolve Moved to a Subcommand Group</div></div>
+        <div class="panel-desc">The top-level <code>trestle profile-resolve</code> command from an older trestle release does not exist in the installed toolkit. Version 5.0.0 restructured the CLI, moving profile, catalog, component, and SSP resolution commands under a shared <code>trestle author</code> subcommand group. The equivalent command is <code>trestle author profile-resolve</code>, same flags.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">wrinkle 2 · evidence vault</div><div class="panel-title">Evidence Link Pointed at a Bundle Whose Retention Had Already Lapsed</div></div>
+        <div class="panel-desc"><code>verify-evidence.sh</code> passed integrity and authenticity but failed preservation: the linked bundle's Object Lock retention had expired two days after capture. The vault's <code>retention_days</code> default was 1, in <code>GOVERNANCE</code> mode, a lab-scale shortcut the module's own variable description already flagged as unfit for real evidence. Fixed by hardening the vault to 400-day <code>COMPLIANCE</code>-mode retention and minting a fresh signed bundle before wiring the final link.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 CHAIN VERIFICATION -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Chain Verification</div><div class="sh-num">04</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">4</div><div class="stat-l">controls linked to evidence</div></div>
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">checks verified</div></div>
+      <div class="stat-card"><div class="stat-n">400</div><div class="stat-l">days retention, compliance mode</div></div>
+      <div class="stat-card"><div class="stat-n">1</div><div class="stat-l">ci run re-signed after the fix</div></div>
+    </div>
+    <p class="prose"><code>verify-evidence.sh</code> runs three independent checks against the linked bundle: SHA-256 integrity, Cosign authenticity against the Sigstore Rekor transparency log, and Object Lock preservation. All three pass clean, and the script prints <code>CHAIN INTACT</code>: the OSCAL document, the catalog reference, the implementation statement, the evidence link, and the signed bundle in the vault are now provably connected.</p>
+    <div class="callout">
+      <div class="callout-icon">// evidence handling</div>
+      <div class="callout-body">Every evidence link points at the same run, the same signing pattern <a href="walkthrough-cosign.html" style="color:var(--accent);">Lab 4.4</a> established. An assessor can verify the bundle independently against Sigstore without ever trusting the AWS account that hosts it.</div>
+    </div>
+  </div>
+
+  <!-- 05 KEY DECISIONS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Key Technical Decisions</div><div class="sh-num">05</div></div>
+    <table class="ctable">
+      <thead><tr><th>Decision</th><th>Reasoning</th></tr></thead>
+      <tbody>
+        <tr><td><code>oscal-version 1.2.1</code>, not the tutorial's <code>1.1.3</code></td><td><code>trestle version</code> reported the installed toolkit speaks 1.2.1. Catalog, profile, and component all have to share one OSCAL version, so the installed version wins over any older example.</td></tr>
+        <tr><td>Catalog source pinned to <code>main</code>, not a version tag</td><td>Tested both. <code>main</code> resolved, a candidate tag path did not. Accepted the drift risk <code>main</code> carries rather than spend more effort guessing the right tag.</td></tr>
+        <tr><td>Fixed the vault's retention instead of shipping a broken evidence link</td><td>An evidence link that fails its own preservation check within days undercuts the entire premise that the audit becomes a graph traversal.</td></tr>
+        <tr><td><code>lock_mode COMPLIANCE</code>, <code>retention_days 400</code></td><td>Matches the module's own documented guidance for real evidence. Confirmed before applying, since COMPLIANCE mode cannot be reversed on anything uploaded under it.</td></tr>
+        <tr><td>AU-3 evidence cited from the bundle's <code>plan.json</code>, no dedicated policy gate yet</td><td>The CI pipeline gates SC-28, AC-3, and CM-6 today. AU-3 is not policy-enforced yet, documented as a known limitation rather than implying coverage that does not exist.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 06 FILE STRUCTURE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">File Structure</div><div class="sh-num">06</div></div>
+    <div class="file-tree">
+      <div><span class="ft-dir">tools/oscal/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">components/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">compliant-s3.json</span> <span class="ft-comment"># SC-28, AC-3, AU-3, CM-6</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">profiles/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">cge-p-minimum.json</span> <span class="ft-comment"># resolves against the live NIST catalog</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">README.md</span></div>
+      <div><span class="ft-dir">&nbsp;&nbsp;evidence/lab-6-1/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">trestle-validate.txt</span> <span class="ft-comment"># validate, profile-resolve, verify-evidence output</span></div>
+    </div>
+  </div>
+
+  <!-- 07 SUMMARY -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Summary</div><div class="sh-num">07</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">4</div><div class="stat-l">controls described</div></div>
+      <div class="stat-card"><div class="stat-n">2</div><div class="stat-l">documents validated</div></div>
+      <div class="stat-card"><div class="stat-n">1</div><div class="stat-l">evidence chain verified end to end</div></div>
+      <div class="stat-card"><div class="stat-n">0</div><div class="stat-l">conversations needed to trust it</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-col">
+  <div class="info-card">
+    <div class="ic-label">Controls</div>
+    <div class="ic-row"><div class="ic-key">SC-28</div><div class="ic-val">Protection of Information at Rest</div></div>
+    <div class="ic-row"><div class="ic-key">AC-3</div><div class="ic-val">Access Enforcement</div></div>
+    <div class="ic-row"><div class="ic-key">AU-3</div><div class="ic-val">Content of Audit Records</div></div>
+    <div class="ic-row"><div class="ic-key">CM-6</div><div class="ic-val">Configuration Settings</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Stack</div>
+    <div class="ic-row"><div class="ic-key">format</div><div class="ic-val orange">OSCAL 1.2.1</div></div>
+    <div class="ic-row"><div class="ic-key">toolkit</div><div class="ic-val">compliance-trestle v5.0.0</div></div>
+    <div class="ic-row"><div class="ic-key">describes</div><div class="ic-val">compliant-s3 (Terraform)</div></div>
+    <div class="ic-row"><div class="ic-key">signing</div><div class="ic-val">Cosign + Sigstore</div></div>
+    <div class="ic-row"><div class="ic-key">retention</div><div class="ic-val green">Object Lock, Compliance, 400d</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Frameworks</div>
+    <div class="ic-row"><div class="ic-key">NIST 800-53</div><div class="ic-val green">Rev 5</div></div>
+    <div class="ic-row"><div class="ic-key">NIST OSCAL</div><div class="ic-val green">1.2.1</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Links</div>
+    <div class="ic-row"><div class="ic-key">github</div><div class="ic-val"><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/oscal" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">view →</a></div></div>
+    <div class="ic-row"><div class="ic-key">portfolio</div><div class="ic-val"><a href="index.html" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">← back</a></div></div>
+  </div>
+</div>
+</div>
+
+<div class="wt-footer">
+  <span>Shayl.Taveras</span>
+  <span style="color:var(--muted);">© 2026</span>
+</div>
+
+</body>
+</html>

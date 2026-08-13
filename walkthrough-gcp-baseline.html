@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkthrough: GCP Security Services Baseline</title>
+<style>
+
+
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  :root{
+    --bg:#09090b;--bg2:#111113;--bg3:#18181b;--bg4:#1e1e21;
+    --accent:#f97316;--accent-dim:#7c2d12;--accent-muted:#150800;
+    --text:#c8c2bc;--text-bright:#fafaf9;--muted:#9c9590;
+    --border:#1c1917;--border2:#27241f;
+    --green:#22c55e;--red:#ef4444;--blue:#60a5fa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+  /* NAV */
+  .topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 2rem;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+  .tn-left{display:flex;align-items:center;gap:2rem;}
+  .tn-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+  .tn-breadcrumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .tn-breadcrumb span{color:var(--text);}
+  .tn-right a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+  .tn-right a:hover{color:var(--accent);}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 48px);}
+  .main-col{border-right:1px solid var(--border2);padding:2rem;}
+  .right-col{padding:2rem;display:flex;flex-direction:column;gap:1.5rem;}
+
+  /* HERO */
+  .hero-section{padding-bottom:2rem;margin-bottom:2rem;border-bottom:1px solid var(--border2);}
+  .hero-overline{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:0.8rem;}
+  .hero-name{font-size:1.8rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.6rem;}
+  .hero-name span{color:var(--accent);}
+  .hero-desc{font-size:14px;color:var(--text-bright);line-height:1.75;max-width:600px;margin-bottom:1.2rem;}
+  .hero-badges{display:flex;gap:0.4rem;flex-wrap:wrap;}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 10px;border:1px solid var(--border2);color:var(--text);}
+  .badge.hot{border-color:var(--accent-dim);color:var(--accent);}
+
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border2);}
+  .sh-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;}
+  .sh-num{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border:1px solid var(--border2);color:var(--muted);}
+
+  /* CONTENT SECTION */
+  .content-section{margin-bottom:2rem;}
+
+  /* PROSE */
+  .prose{font-size:14px;line-height:1.8;color:var(--text-bright);margin-bottom:0.8rem;}
+  .prose strong{color:var(--accent);font-weight:500;}
+  .prose code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:var(--accent-muted);padding:1px 5px;}
+
+  /* PANELS */
+  .panel{background:var(--bg2);border:1px solid var(--border2);margin-bottom:0.8rem;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .panel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform 0.25s;}
+  .panel:hover{border-color:var(--accent-dim);}
+  .panel:hover::before{transform:scaleY(1);}
+  .panel-body{padding:1.2rem;}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.5rem;}
+  .panel-title{font-size:13px;font-weight:600;color:var(--text-bright);}
+  .panel-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.08em;}
+  .panel-desc{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+  /* DECISION CARDS */
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.2rem;}
+  .dc{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;transition:border-color 0.2s;position:relative;overflow:hidden;}
+  .dc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .dc:hover{border-color:var(--accent-dim);}
+  .dc:hover::after{transform:scaleX(1);}
+  .dc-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+  .dc-title{font-size:12.5px;font-weight:600;color:var(--text-bright);margin-bottom:0.4rem;}
+  .dc-body{font-size:12px;color:var(--text-bright);line-height:1.6;}
+
+  /* CONTROLS TABLE */
+  .ctable{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:12.5px;}
+  .ctable th{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;text-align:left;padding:0.6rem 0.8rem;border-bottom:1px solid var(--border2);background:var(--bg2);}
+  .ctable td{padding:0.75rem 0.8rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .ctable tr:hover td{background:var(--bg2);}
+  .ctable td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);white-space:nowrap;}
+
+  /* CODE BLOCK */
+  .code-block{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;}
+  .code-label{font-size:9.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
+  .c-comment{color:var(--muted);}
+  .c-key{color:var(--accent);}
+  .c-val{color:var(--text-bright);}
+  .c-str{color:#fdba74;}
+
+  /* CALLOUT */
+  .callout{background:var(--accent-muted);border:1px solid var(--accent-dim);border-left:2px solid var(--accent);padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;gap:0.8rem;align-items:flex-start;}
+  .callout-icon{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);flex-shrink:0;padding-top:1px;}
+  .callout-body{font-size:13px;color:var(--text);line-height:1.7;}
+  .callout-body strong{color:var(--accent);}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1.2rem;}
+  .stat-card{background:var(--bg2);border:1px solid var(--border2);padding:1rem;text-align:center;transition:border-color 0.2s;}
+  .stat-card:hover{border-color:var(--accent-dim);}
+  .stat-n{font-size:1.8rem;font-weight:700;color:var(--text-bright);line-height:1;margin-bottom:0.3rem;}
+  .stat-l{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);letter-spacing:0.06em;}
+
+  /* FILE TREE */
+  .file-tree{background:var(--bg2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;}
+  .ft-dir{color:var(--accent);}
+  .ft-file{color:var(--text);}
+  .ft-comment{color:var(--muted);}
+
+  /* RIGHT PANEL CARDS */
+  .info-card{background:var(--bg2);border:1px solid var(--border2);padding:1.2rem;margin-bottom:0;}
+  .ic-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border2);}
+  .ic-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+  .ic-row:last-child{border-bottom:none;}
+  .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+  .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
+  .ic-val.green{color:var(--green);}
+  .ic-val.orange{color:var(--accent);}
+  .ic-val.red{color:var(--red);}
+
+  /* FOOTER */
+  .wt-footer{border-top:1px solid var(--border2);padding:1.2rem 2rem;background:var(--bg2);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+  .wt-footer span:first-child{color:var(--accent);}
+
+  @media(max-width:880px){.layout{grid-template-columns:1fr;}.main-col{border-right:none;}.right-col{border-top:1px solid var(--border2);}.decision-grid,.stats-row{grid-template-columns:1fr 1fr;}.tn-breadcrumb{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-left">
+    <div class="tn-brand">Shayl.Taveras</div>
+    <div class="tn-breadcrumb">portfolio / projects / <span>gcp-security-baseline</span></div>
+  </div>
+  <div class="tn-right"><a href="index.html">← back to portfolio</a></div>
+</div>
+
+<div class="layout">
+<div class="main-col">
+
+  <div class="hero-section">
+    <div class="hero-overline">// Project Walkthrough · 09</div>
+    <div class="hero-name">GCP Security Services <span>Baseline</span></div>
+    <p class="hero-desc">A Terraform baseline that stands up GCP's project-level compliance backbone: three Org Policy constraints enforced in REJECT mode at the API layer, a repo-scoped Workload Identity Federation pool for keyless CI authentication, and Data Access audit logging turned on for the services this toolkit actually touches. The GCP mirror of the AWS security baseline, applied by hand, evidence signed and vaulted into the same cross-cloud evidence vault.</p>
+    <div class="hero-badges">
+      <span class="badge hot">terraform</span>
+      <span class="badge hot">gcp org policy</span>
+      <span class="badge hot">workload identity federation</span>
+      <span class="badge hot">cloud audit logs</span>
+      <span class="badge">nist 800-53 rev 5 · fedramp moderate</span>
+    </div>
+  </div>
+
+  <!-- 01 PROBLEM -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
+    <p class="prose">The AWS baseline proved that account-level compliance backbone (CloudTrail, Security Hub) is a different altitude from per-resource Terraform primitives like <code>compliant-s3</code>. GCP needs the same backbone, but its controls live in different places entirely: Org Policy constraints instead of account settings, Workload Identity Federation instead of OIDC-to-role trust, and Cloud Audit Logs Data Access entries that are <strong>off by default</strong>, one of the most commonly cited GCP audit gaps.</p>
+    <p class="prose">This baseline enforces three of those constraints at the API layer, so a non-compliant change is rejected before it lands, not caught after the fact in a scheduled scan.</p>
+  </div>
+
+  <!-- 02 WHAT IT DEPLOYS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">What It Deploys</div><div class="sh-num">02</div></div>
+    <div class="decision-grid">
+      <div class="dc"><div class="dc-label">// CM-6 / AC-2 / AC-3</div><div class="dc-title">Org Policy REJECT Enforcement</div><div class="dc-body">Three constraints in <code>REJECT</code> mode: uniform bucket-level access, no new service account keys, mandatory OS Login. Enforced by the GCP API on every future action, not a convention someone has to remember.</div></div>
+      <div class="dc"><div class="dc-label">// IA-2(6) / IA-8</div><div class="dc-title">Repo-Scoped Workload Identity Federation</div><div class="dc-body">A WIF pool with <code>attribute_condition</code> locked to one exact GitHub repository string. CI authenticates keyless. No other public repo can mint a token that impersonates this identity.</div></div>
+      <div class="dc"><div class="dc-label">// AU-3 / AU-12</div><div class="dc-title">Data Access Audit Logs</div><div class="dc-body">Turned on for the three GCP services this toolkit actually touches. Off by default on GCP, which makes it the audit gap most likely to be missed in a real environment.</div></div>
+      <div class="dc"><div class="dc-label">// cross-cloud</div><div class="dc-title">Same Vault, Second Cloud</div><div class="dc-body">Signed with the same Cosign pattern and uploaded to the same evidence vault as the AWS baseline. One evidence chain, two cloud providers.</div></div>
+    </div>
+  </div>
+
+  <!-- 03 REAL-WORLD WRINKLES -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Real-World Wrinkles</div><div class="sh-num">03</div></div>
+    <p class="prose">Three stacked wrinkles surfaced during the apply, each one hiding behind a misleading error message from the layer above it.</p>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">wrinkle 1 · provider config</div><div class="panel-title">Misleading "API Disabled" 403 That Wasn't About a Disabled API</div></div>
+        <div class="panel-desc">Org Policy resources failed with a <code>SERVICE_DISABLED</code> 403 pointing at a consumer project number that did not match the real target project. The <code>google</code> Terraform provider does not automatically forward ADC's quota project to every API call. Fixed with <code>user_project_override = true</code> plus an explicit <code>billing_project</code>, which stopped requests from silently falling back to an unrelated Google-internal default project.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">wrinkle 2 · main.tf</div><div class="panel-title">Resource Manager API Never Enabled on This Project</div></div>
+        <div class="panel-desc">The Lab 2.4 GCS module never called <code>cloudresourcemanager.googleapis.com</code>, so this baseline was the first thing in the project's history to need it. A real, previously invisible gap, not a flake. Enabled once and it stayed fixed.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel-head"><div class="panel-label">wrinkle 3 · org_policy.tf</div><div class="panel-title">Project-Level Owner Did Not Include Permission to Create Org Policies</div></div>
+        <div class="panel-desc">Three <code>google_org_policy_policy</code> resources failed with <code>orgpolicy.policies.create</code> permission denied, despite the identity holding <code>roles/owner</code> on the project. <code>roles/orgpolicy.policyAdmin</code> is not grantable at the project level on this resource type. <code>gcloud projects describe --format="value(parent.type,parent.id)"</code> confirmed the project sits inside a real GCP Organization, which is what made an organization-level grant of <code>roles/orgpolicy.policyAdmin</code> both necessary and possible.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 EVIDENCE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Evidence Captured</div><div class="sh-num">04</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">org policy constraints enforced</div></div>
+      <div class="stat-card"><div class="stat-n">1</div><div class="stat-l">WIF pool, repo-scoped</div></div>
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">services audit logged</div></div>
+      <div class="stat-card"><div class="stat-n">5</div><div class="stat-l">signed evidence artifacts</div></div>
+    </div>
+    <p class="prose">Five artifacts captured and signed: the three Org Policy configs, the WIF pool and provider config, and the IAM audit config, plus a full <code>terraform show -json</code> state snapshot. All five bundled, hashed, and signed with the same <code>cosign sign-blob</code> pattern <a href="walkthrough-cosign.html" style="color:var(--accent);">Lab 4.4</a> established.</p>
+    <div class="callout">
+      <div class="callout-icon">// evidence handling</div>
+      <div class="callout-body">The committed IAM policy capture has the operator's personal Google account email <strong>redacted</strong> before it went into the public repo. The unredacted signed original is the vault copy the receipt points to, same pattern as the AWS baseline's account-ID redaction.</div>
+    </div>
+  </div>
+
+  <!-- 05 KEY DECISIONS -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Key Technical Decisions</div><div class="sh-num">05</div></div>
+    <table class="ctable">
+      <thead><tr><th>Decision</th><th>Reasoning</th></tr></thead>
+      <tbody>
+        <tr><td>Modern <code>google_org_policy_policy</code>, not the legacy resource</td><td>The legacy resource's <code>boolean_policy</code> block does not match how the constraint is actually expressed in current GCP APIs. The modern resource's <code>spec.rules.enforce</code> string is the real current shape.</td></tr>
+        <tr><td><code>user_project_override</code> plus explicit <code>billing_project</code></td><td>Without it, ADC's quota project is not applied to every API call, and the resulting 403 reads exactly like the target project's API is disabled when it never was.</td></tr>
+        <tr><td><code>attribute_condition</code> scoped to one exact GitHub repo string</td><td>Without it, any public GitHub repository could mint an OIDC token that impersonates the CI service account.</td></tr>
+        <tr><td>WIF service account holds only <code>roles/viewer</code>, no key ever created</td><td>This same baseline's own Org Policy blocks any service account key project-wide going forward. The design has to be keyless by construction, not by convention.</td></tr>
+        <tr><td>No <code>labels</code> block anywhere in this baseline</td><td>Org Policy, WIF, and audit config are IAM and policy control-plane objects. GCP does not support labels on any of them, a break from the tag-every-resource convention used elsewhere in the toolkit.</td></tr>
+        <tr><td>Org-level <code>orgpolicy.policyAdmin</code> grant, not a project-level workaround</td><td>Confirmed the project has a real parent Organization before granting anything at that altitude, since an org-level IAM change carries materially more blast radius than a project-level one.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 06 FILE STRUCTURE -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">File Structure</div><div class="sh-num">06</div></div>
+    <div class="file-tree">
+      <div><span class="ft-dir">tools/terraform/baselines/gcp/</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">main.tf</span> <span class="ft-comment"># provider, quota project override, default tags</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">org_policy.tf</span> <span class="ft-comment"># three REJECT-mode constraints, CM-6/AC-2/AC-3</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">workload_identity.tf</span> <span class="ft-comment"># repo-scoped WIF pool + CI service account</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">audit_logs.tf</span> <span class="ft-comment"># Data Access logging, AU-3/AU-12</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">variables.tf</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">outputs.tf</span> <span class="ft-comment"># CI wiring outputs</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">README.md</span></div>
+      <div><span class="ft-dir">&nbsp;&nbsp;evidence/lab-5-4/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">org-policies.json</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">wif-pool.json</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">wif-provider.json</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">iam-audit-config.json</span> <span class="ft-comment"># personal email redacted</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">terraform-state.json</span></div>
+    </div>
+  </div>
+
+  <!-- 07 SUMMARY -->
+  <div class="content-section">
+    <div class="section-header"><div class="sh-title">Summary</div><div class="sh-num">07</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">stacked wrinkles resolved</div></div>
+      <div class="stat-card"><div class="stat-n">7</div><div class="stat-l">controls covered</div></div>
+      <div class="stat-card"><div class="stat-n">2</div><div class="stat-l">clouds, one evidence vault</div></div>
+      <div class="stat-card"><div class="stat-n">0</div><div class="stat-l">service account keys created</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-col">
+  <div class="info-card">
+    <div class="ic-label">Controls</div>
+    <div class="ic-row"><div class="ic-key">CM-6</div><div class="ic-val">Configuration Settings</div></div>
+    <div class="ic-row"><div class="ic-key">AC-2</div><div class="ic-val">Account Management</div></div>
+    <div class="ic-row"><div class="ic-key">AC-3</div><div class="ic-val">Access Enforcement</div></div>
+    <div class="ic-row"><div class="ic-key">IA-2(6)</div><div class="ic-val">Non-Privileged Network Auth</div></div>
+    <div class="ic-row"><div class="ic-key">IA-8</div><div class="ic-val">Non-Organizational User Auth</div></div>
+    <div class="ic-row"><div class="ic-key">AU-3</div><div class="ic-val">Content of Audit Records</div></div>
+    <div class="ic-row"><div class="ic-key">AU-12</div><div class="ic-val">Audit Record Generation</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Stack</div>
+    <div class="ic-row"><div class="ic-key">IaC</div><div class="ic-val orange">Terraform</div></div>
+    <div class="ic-row"><div class="ic-key">identity</div><div class="ic-val">Workload Identity Federation</div></div>
+    <div class="ic-row"><div class="ic-key">policy</div><div class="ic-val">GCP Org Policy, REJECT mode</div></div>
+    <div class="ic-row"><div class="ic-key">audit</div><div class="ic-val">Cloud Audit Logs, Data Access</div></div>
+    <div class="ic-row"><div class="ic-key">signing</div><div class="ic-val">Cosign + Sigstore</div></div>
+    <div class="ic-row"><div class="ic-key">evidence</div><div class="ic-val green">cross-cloud, shared vault</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Frameworks</div>
+    <div class="ic-row"><div class="ic-key">NIST 800-53</div><div class="ic-val green">Rev 5</div></div>
+    <div class="ic-row"><div class="ic-key">FedRAMP</div><div class="ic-val green">Moderate</div></div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">Links</div>
+    <div class="ic-row"><div class="ic-key">github</div><div class="ic-val"><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/terraform/baselines/gcp" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">view →</a></div></div>
+    <div class="ic-row"><div class="ic-key">portfolio</div><div class="ic-val"><a href="index.html" style="color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;">← back</a></div></div>
+  </div>
+</div>
+</div>
+
+<div class="wt-footer">
+  <span>Shayl.Taveras</span>
+  <span style="color:var(--muted);">© 2026</span>
+</div>
+
+</body>
+</html>
