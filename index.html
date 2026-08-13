@@ -100,7 +100,9 @@
   .cert-card{background:var(--bg2);border:1px solid var(--border2);padding:1.4rem;}
   .cert-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1rem;}
   .cert-list2{display:grid;gap:0.4rem;}
-  .cert2{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.8rem;background:var(--bg3);}
+  .cert2{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.8rem;background:var(--bg3);text-decoration:none;transition:background 0.2s;}
+  .cert2:hover{background:var(--bg4);}
+  .cert2:hover .cert2-name{color:var(--accent);}
   .cert2-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-bright);}
   .cert2-body{font-size:11px;color:var(--text);}
   .cert2-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
@@ -239,7 +241,7 @@
       </div>
       <div class="pc-stat-grid">
         <div class="pc-stat"><div class="pc-stat-n">15+</div><div class="pc-stat-l">years exp</div></div>
-        <div class="pc-stat"><div class="pc-stat-n">5</div><div class="pc-stat-l">active certs</div></div>
+        <div class="pc-stat"><div class="pc-stat-n">6</div><div class="pc-stat-l">active certs</div></div>
         <div class="pc-stat"><div class="pc-stat-n">10</div><div class="pc-stat-l">projects</div></div>
         <div class="pc-stat"><div class="pc-stat-n">6+</div><div class="pc-stat-l">frameworks</div></div>
       </div>
@@ -250,12 +252,12 @@
     <div class="cert-card">
       <div class="cert-label">Certifications</div>
       <div class="cert-list2">
-        <div class="cert2"><div><div class="cert2-name">CISSP</div><div class="cert2-body">ISC²</div></div><div class="cert2-dot"></div></div>
-        <div class="cert2"><div><div class="cert2-name">CISA</div><div class="cert2-body">ISACA</div></div><div class="cert2-dot"></div></div>
-        <div class="cert2"><div><div class="cert2-name">CEH</div><div class="cert2-body">EC-Council</div></div><div class="cert2-dot"></div></div>
-        <div class="cert2"><div><div class="cert2-name">CySA+</div><div class="cert2-body">CompTIA</div></div><div class="cert2-dot"></div></div>
-        <div class="cert2"><div><div class="cert2-name">Linux+</div><div class="cert2-body">CompTIA</div></div><div class="cert2-dot"></div></div>
-        <div class="cert2"><div><div class="cert2-name">CCP</div><div class="cert2-body">CMMC AB</div></div><div class="cert2-dot"></div></div>
+        <a class="cert2" href="https://www.credly.com/badges/4a048ee3-995d-46b2-931a-e45c92d6ea7a/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">CISSP</div><div class="cert2-body">ISC²</div></div><div class="cert2-dot"></div></a>
+        <a class="cert2" href="https://www.credly.com/badges/7b478a9f-23f3-4994-adec-14220c872619/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">CISA</div><div class="cert2-body">ISACA</div></div><div class="cert2-dot"></div></a>
+        <a class="cert2" href="ECC-CEH-Certificate.pdf" target="_blank" rel="noopener"><div><div class="cert2-name">CEH</div><div class="cert2-body">EC-Council</div></div><div class="cert2-dot"></div></a>
+        <a class="cert2" href="https://www.credly.com/badges/516a3a08-1195-417c-9421-f010d65293c2/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">Artificial Intelligence Specialist Expert</div><div class="cert2-body">Booz Allen Hamilton</div></div><div class="cert2-dot"></div></a>
+        <a class="cert2" href="https://www.credly.com/badges/eb8c5675-8423-49d6-ab2d-0ab23459b1ad/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">Linux+</div><div class="cert2-body">CompTIA</div></div><div class="cert2-dot"></div></a>
+        <a class="cert2" href="https://www.credly.com/badges/b49d7b6d-0fbe-4bf2-969a-b6f47d1c496d/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">CCP</div><div class="cert2-body">CMMC AB</div></div><div class="cert2-dot"></div></a>
       </div>
     </div>
 
