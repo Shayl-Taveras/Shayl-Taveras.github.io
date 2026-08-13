@@ -146,7 +146,7 @@
   <div class="hero-section">
     <div class="hero-overline">// Project Walkthrough · 10</div>
     <div class="hero-name">OSCAL Component <span>Definition</span></div>
-    <p class="hero-desc">A NIST OSCAL Component Definition and Profile describing the <code>compliant-s3</code> Terraform module, validated with NIST's own <code>compliance-trestle</code> toolkit, with evidence links wired directly into signed, immutable objects already sitting in the evidence vault. Every other primitive in this toolkit proves compliance at plan time or after the fact. This is the layer that makes the whole chain machine traversable, so an assessor can follow control to component to evidence without a conversation.</p>
+    <p class="hero-desc">A NIST OSCAL Component Definition and Profile describing the <code>compliant-s3</code> Terraform module, validated with NIST's own <code>compliance-trestle</code> toolkit, with evidence links wired directly into signed, immutable objects already sitting in the evidence vault. Every other primitive in this project proves compliance at plan time or after the fact. This is the layer that makes the whole chain machine traversable, so an assessor can follow control to component to evidence without a conversation.</p>
     <div class="hero-badges">
       <span class="badge hot">oscal 1.2.1</span>
       <span class="badge hot">compliance-trestle</span>
@@ -159,7 +159,7 @@
   <!-- 01 PROBLEM -->
   <div class="content-section">
     <div class="section-header"><div class="sh-title">Problem Statement</div><div class="sh-num">01</div></div>
-    <p class="prose">The rest of this toolkit produces compliance proof at different points in time: a Terraform plan proves a resource was compliant when it was applied, a Conftest gate proves a plan was rejected or passed, a signed evidence bundle proves a specific CI run captured specific artifacts. None of that is expressed in a single, standard, machine-readable format that connects a control catalog to a profile to a component to its evidence, the way an assessor actually needs to traverse it.</p>
+    <p class="prose">The rest of this project produces compliance proof at different points in time: a Terraform plan proves a resource was compliant when it was applied, a Conftest gate proves a plan was rejected or passed, a signed evidence bundle proves a specific CI run captured specific artifacts. None of that is expressed in a single, standard, machine-readable format that connects a control catalog to a profile to a component to its evidence, the way an assessor actually needs to traverse it.</p>
     <p class="prose">OSCAL is NIST's answer: a standard format for control catalogs, profiles, components, and system security plans. This project writes the smallest real piece of that graph, one Component Definition for <code>compliant-s3</code>, validated end to end, with evidence links that point at real signed objects instead of placeholder URIs.</p>
   </div>
 
