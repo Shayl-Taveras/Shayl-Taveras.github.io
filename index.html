@@ -4,16 +4,16 @@
 <meta name="description" content="GRC Engineer specializing in FedRAMP, HITRUST, CMMC, and compliance automation. Building tools that produce verifiable audit evidence.">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shayl Taveras: GRC Engineer</title>
+<title>Shayl Taveras — GRC Engineer</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
   :root{
-    --bg:#09090b;--bg2:#111113;--bg3:#18181b;--bg4:#1e1e21;
-    --accent:#f97316;--accent-dim:#7c2d12;--accent-muted:#150800;
-    --text:#c8c2bc;--text-bright:#fafaf9;--muted:#9c9590;
-    --border:#1c1917;--border2:#27241f;
-    --green:#22c55e;--red:#ef4444;--blue:#60a5fa;
+    --bg:#080c10;--bg2:#101620;--bg3:#182030;--bg4:#101820;
+    --accent:#7dd3fc;--accent-dim:#0369a1;--accent-muted:#041018;
+    --text:#b8d0e8;--text-bright:#e0f2fe;--muted:#7898b8;
+    --border:#142030;--border2:#1e3040;
+    --green:#22c55e;--red:#ef4444;--blue:#38bdf8;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -65,7 +65,7 @@
   .pi-desc{font-size:12.5px;color:var(--text);line-height:1.6;margin-bottom:0.7rem;}
   .pi-footer{display:flex;justify-content:space-between;align-items:center;}
   .pi-tags{display:flex;gap:0.3rem;flex-wrap:wrap;}
-  .ptag{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent-dim);border:1px solid var(--border2);padding:2px 6px;}
+  .ptag{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);border:1px solid var(--accent-dim);padding:2px 6px;}
   .pi-links{display:flex;gap:0.8rem;}
   .pi-links a{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);text-decoration:none;transition:color 0.2s;}
   .pi-links a:hover{color:var(--text-bright);}
@@ -100,9 +100,7 @@
   .cert-card{background:var(--bg2);border:1px solid var(--border2);padding:1.4rem;}
   .cert-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1rem;}
   .cert-list2{display:grid;gap:0.4rem;}
-  .cert2{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.8rem;background:var(--bg3);text-decoration:none;transition:background 0.2s;}
-  .cert2:hover{background:var(--bg4);}
-  .cert2:hover .cert2-name{color:var(--accent);}
+  .cert2{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.8rem;background:var(--bg3);}
   .cert2-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-bright);}
   .cert2-body{font-size:11px;color:var(--text);}
   .cert2-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
@@ -147,7 +145,7 @@
     <div class="hero-section">
       <div class="hero-overline">// GRC Engineer · Compliance Automation · Barrington, NJ</div>
       <div class="hero-name">Shayl <span>Taveras_</span></div>
-      <p class="hero-desc">I came into compliance through operations, not audit. Data center work at Nasdaq, network operations at Verizon Wireless, then my first real dive into compliance at Syntax, working PCI DSS and SOC audits. None of it was planned as a GRC career path. But understanding how <strong>infrastructure actually runs before anyone starts auditing it</strong> turns out to be a real advantage. That's the lens I bring to this work.</p>
+      <p class="hero-desc">I came into compliance through the back door. eDiscovery at Merck and J&amp;J, data center ops at Nasdaq, network operations at Verizon Wireless. None of it was planned as a GRC career path. But understanding how <strong>infrastructure actually runs before anyone starts auditing it</strong> turns out to be a real advantage. That's the lens I bring to this work.</p>
       <div class="hero-chips">
         <span class="chip">FedRAMP</span><span class="chip">HITRUST</span><span class="chip">CMMC 2.0</span><span class="chip">RMF</span><span class="chip">SOC 2</span><span class="chip">PCI-DSS</span><span class="chip">NIST 800-53</span>
       </div>
@@ -157,7 +155,7 @@
     <div class="proj-section" id="projects">
       <div class="section-header">
         <div class="sh-title">Projects</div>
-        <div class="sh-count">10 active</div>
+        <div class="sh-count">7 active</div>
       </div>
       <div class="proj-item">
         <div class="pi-head"><div class="pi-title">Serverless IAM Access Review System</div><div class="pi-num">01</div></div>
@@ -165,49 +163,34 @@
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">python</span><span class="ptag">aws lambda</span><span class="ptag">eventbridge</span><span class="ptag">bedrock</span><span class="ptag">s3</span></div><div class="pi-links"><a href="walkthrough.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/access-review" target="_blank" rel="noopener">github →</a></div></div>
       </div>
       <div class="proj-item">
-        <div class="pi-head"><div class="pi-title">Compliant S3 Primitive: NIST 800-53</div><div class="pi-num">02</div></div>
+        <div class="pi-head"><div class="pi-title">Compliant S3 Primitive — NIST 800-53</div><div class="pi-num">02</div></div>
         <div class="pi-desc">Terraform module enforcing SC-28, AC-3, CM-6, AU-3, AU-6 into every S3 bucket. terraform show -json produces machine-readable evidence an auditor can traverse without a console login.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">aws s3</span><span class="ptag">nist 800-53</span><span class="ptag">kms</span></div><div class="pi-links"><a href="walkthrough-s3.html">▶ walkthrough</a><a href="#">github →</a></div></div>
       </div>
       <div class="proj-item">
-        <div class="pi-head"><div class="pi-title">Compliant GCS Bucket: NIST 800-171</div><div class="pi-num">03</div></div>
+        <div class="pi-head"><div class="pi-title">Compliant GCS Bucket — NIST 800-171</div><div class="pi-num">03</div></div>
         <div class="pi-desc">Reusable Terraform module for GCP Cloud Storage hard-coding six NIST 800-171 controls with plan-time validation gates that reject non-compliant config before any resource reaches GCP.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">gcp</span><span class="ptag">nist 800-171</span><span class="ptag">kms</span></div><div class="pi-links"><a href="walkthrough-gcs.html">▶ walkthrough</a><a href="#">github →</a></div></div>
       </div>
       <div class="proj-item">
-        <div class="pi-head"><div class="pi-title">GKE Cluster Compliant Primitive: Multi-Framework</div><div class="pi-num">04</div></div>
+        <div class="pi-head"><div class="pi-title">GKE Cluster Compliant Primitive — Multi-Framework</div><div class="pi-num">04</div></div>
         <div class="pi-desc">Ephemeral FedRAMP-realistic GKE cluster. SC-28, CM-6, AC-3, AU-3 hard-coded. Evidence lives in artifacts/terraform-state.json, auditor-traversable without console access. Maps to NIST 800-53, FedRAMP, CMMC L2, SOC 2.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">gke</span><span class="ptag">fedramp</span><span class="ptag">cmmc l2</span><span class="ptag">nist 800-53</span></div><div class="pi-links"><a href="walkthrough-gke.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/labs/lab-05-gke-kyverno" target="_blank" rel="noopener">github →</a></div></div>
       </div>
       <div class="proj-item">
-        <div class="pi-head"><div class="pi-title">Rego Compliance Policy Library: GCP</div><div class="pi-num">05</div></div>
+        <div class="pi-head"><div class="pi-title">Rego Compliance Policy Library — GCP</div><div class="pi-num">05</div></div>
         <div class="pi-desc">Three OPA Rego policies that validate a Terraform plan against NIST 800-53 SC-28, AC-3, and CM-6 before any resource is deployed. Runs as a pre-apply gate against terraform plan -json output. Each deny message returns the resource address and NIST control ID so developers know exactly what to fix without filing a GRC ticket. Eight tests, three controls, no cloud access needed.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">opa</span><span class="ptag">rego</span><span class="ptag">terraform</span><span class="ptag">gcp</span><span class="ptag">nist 800-53</span><span class="ptag">policy-as-code</span></div><div class="pi-links"><a href="walkthrough-rego.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/rego-policies" target="_blank" rel="noopener">github →</a></div></div>
       </div>
       <div class="proj-item">
-        <div class="pi-head"><div class="pi-title">Policy as Code Gate with Conftest: AWS</div><div class="pi-num">06</div></div>
+        <div class="pi-head"><div class="pi-title">Policy as Code Gate with Conftest — AWS</div><div class="pi-num">06</div></div>
         <div class="pi-desc">Conftest policy gate that blocks Terraform applies on non-compliant AWS infrastructure by running three Rego policies against plan JSON. Fail-closed, exit-code-driven, zero screenshots. AWS-specific variants of SC-28, AC-3, and CM-6 solve the cross-cloud coverage gap: a GCP policy against an AWS plan passes silently and proves nothing. A policy-gate.sh wrapper captures machine-readable JSON evidence and exits non-zero on any failure.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">conftest</span><span class="ptag">opa</span><span class="ptag">rego</span><span class="ptag">aws</span><span class="ptag">terraform</span><span class="ptag">nist 800-53</span><span class="ptag">ci</span></div><div class="pi-links"><a href="walkthrough-conftest.html">▶ walkthrough</a><a href="#">github →</a></div></div>
       </div>
       <div class="proj-item">
-        <div class="pi-head"><div class="pi-title">Evidence Management &amp; Chain of Custody: Cosign + Sigstore</div><div class="pi-num">07</div></div>
+        <div class="pi-head"><div class="pi-title">Evidence Management &amp; Chain of Custody — Cosign + Sigstore</div><div class="pi-num">07</div></div>
         <div class="pi-desc">Extended the CI policy gate with keyless Cosign signing over GitHub OIDC so every evidence bundle is cryptographically tied to the exact CI run that produced it. Object Lock proves evidence can't be deleted. This proves who put it there and when. An auditor verifies the chain independently without trusting the AWS account.</div>
         <div class="pi-footer"><div class="pi-tags"><span class="ptag">cosign</span><span class="ptag">sigstore</span><span class="ptag">github oidc</span><span class="ptag">aws s3</span><span class="ptag">object lock</span><span class="ptag">nist 800-53</span><span class="ptag">fedramp</span></div><div class="pi-links"><a href="walkthrough-cosign.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/pull/4" target="_blank" rel="noopener">github →</a></div></div>
-      </div>
-      <div class="proj-item">
-        <div class="pi-head"><div class="pi-title">AWS Security Services Baseline: CloudTrail + Security Hub</div><div class="pi-num">08</div></div>
-        <div class="pi-desc">Terraform baseline standing up multi-region CloudTrail with log-file validation and Security Hub subscribed to NIST 800-53 and FSBP. First-wave findings signed with Cosign and uploaded to the evidence vault, then torn down to stop Security Hub's per-check billing. CM-2/CM-6/CM-8 inherited from the account's existing Config recorder.</div>
-        <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">aws cloudtrail</span><span class="ptag">security hub</span><span class="ptag">cosign</span><span class="ptag">nist 800-53</span><span class="ptag">fedramp</span></div><div class="pi-links"><a href="walkthrough-cloudtrail-securityhub.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/pull/5" target="_blank" rel="noopener">github →</a></div></div>
-      </div>
-      <div class="proj-item">
-        <div class="pi-head"><div class="pi-title">GCP Security Services Baseline: Org Policy + WIF</div><div class="pi-num">09</div></div>
-        <div class="pi-desc">Terraform baseline enforcing three GCP Org Policy constraints in REJECT mode, a repo-scoped Workload Identity Federation pool for keyless CI auth, and Data Access audit logging. The GCP mirror of the AWS baseline, evidence signed into the same cross-cloud vault.</div>
-        <div class="pi-footer"><div class="pi-tags"><span class="ptag">terraform</span><span class="ptag">gcp org policy</span><span class="ptag">workload identity federation</span><span class="ptag">cosign</span><span class="ptag">nist 800-53</span><span class="ptag">fedramp</span></div><div class="pi-links"><a href="walkthrough-gcp-baseline.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/terraform/baselines/gcp" target="_blank" rel="noopener">github →</a></div></div>
-      </div>
-      <div class="proj-item">
-        <div class="pi-head"><div class="pi-title">OSCAL Component Definition: Machine-Readable Evidence</div><div class="pi-num">10</div></div>
-        <div class="pi-desc">NIST OSCAL Component Definition and Profile for compliant-s3, validated with compliance-trestle, evidence links wired to real signed objects in the vault. The audit becomes a graph traversal an assessor can follow without a conversation.</div>
-        <div class="pi-footer"><div class="pi-tags"><span class="ptag">oscal</span><span class="ptag">compliance-trestle</span><span class="ptag">nist 800-53</span><span class="ptag">terraform</span><span class="ptag">cosign</span></div><div class="pi-links"><a href="walkthrough-oscal.html">▶ walkthrough</a><a href="https://github.com/Shayl-Taveras/grc-automation-toolkit/tree/main/tools/oscal" target="_blank" rel="noopener">github →</a></div></div>
       </div>
     </div>
 
@@ -215,17 +198,13 @@
     <div class="exp-section" id="experience">
       <div class="section-header">
         <div class="sh-title">Experience</div>
-        <div class="sh-count">9 roles</div>
+        <div class="sh-count">5 roles</div>
       </div>
       <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2 current"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Florida Blue Cross Blue Shield</div><div class="exp-role">IT Compliance Analyst · HITRUST · SOC 2 · CMS ARS</div></div></div>
-      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Booz Allen Hamilton</div><div class="exp-role">Risk Management Analyst (Associate) · FedRAMP High · RMF · NIST 800-53</div></div></div>
+      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Booz Allen Hamilton</div><div class="exp-role">GRC Consultant · FedRAMP High · RMF · NIST 800-53</div></div></div>
       <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Lockheed Martin</div><div class="exp-role">Senior Cybersecurity Engineer · NIST 800-53 · NIST 800-171 · RMF</div></div></div>
       <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Future Technologies, Inc</div><div class="exp-role">GRC Specialist · NIST 800-53 · RMF</div></div></div>
-      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Syntax</div><div class="exp-role">GRC Analyst · PCI DSS · SOC I · SOC II</div></div></div>
-      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Verizon Wireless</div><div class="exp-role">NOC Engineer · Network Support</div></div></div>
-      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Nasdaq</div><div class="exp-role">Data Center Technician · Network Support</div></div></div>
-      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div><div class="exp-line"></div></div><div class="exp-body"><div class="exp-co">Johnson &amp; Johnson</div><div class="exp-role">eDiscovery Analyst · Forensics</div></div></div>
-      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div></div><div class="exp-body"><div class="exp-co">Merck</div><div class="exp-role">eDiscovery Analyst · Forensics</div></div></div>
+      <div class="exp-item"><div class="exp-indicator"><div class="exp-dot2"></div></div><div class="exp-body"><div class="exp-co">Syntax</div><div class="exp-role">GRC Analyst · PCI DSS · SOC I · SOC II</div></div></div>
     </div>
 
   </div>
@@ -241,8 +220,8 @@
       </div>
       <div class="pc-stat-grid">
         <div class="pc-stat"><div class="pc-stat-n">15+</div><div class="pc-stat-l">years exp</div></div>
-        <div class="pc-stat"><div class="pc-stat-n">6</div><div class="pc-stat-l">active certs</div></div>
-        <div class="pc-stat"><div class="pc-stat-n">10</div><div class="pc-stat-l">projects</div></div>
+        <div class="pc-stat"><div class="pc-stat-n">5</div><div class="pc-stat-l">active certs</div></div>
+        <div class="pc-stat"><div class="pc-stat-n">4</div><div class="pc-stat-l">projects</div></div>
         <div class="pc-stat"><div class="pc-stat-n">6+</div><div class="pc-stat-l">frameworks</div></div>
       </div>
       <p style="font-size:13px;color:var(--muted);line-height:1.7;">The work now is getting organizations off the cycle of treating audits like events they survive and onto compliance as a property the infrastructure has, not a state someone verifies once a year.</p>
@@ -252,12 +231,12 @@
     <div class="cert-card">
       <div class="cert-label">Certifications</div>
       <div class="cert-list2">
-        <a class="cert2" href="https://www.credly.com/badges/4a048ee3-995d-46b2-931a-e45c92d6ea7a/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">CISSP</div><div class="cert2-body">ISC²</div></div><div class="cert2-dot"></div></a>
-        <a class="cert2" href="https://www.credly.com/badges/7b478a9f-23f3-4994-adec-14220c872619/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">CISA</div><div class="cert2-body">ISACA</div></div><div class="cert2-dot"></div></a>
-        <a class="cert2" href="ECC-CEH-Certificate.pdf" target="_blank" rel="noopener"><div><div class="cert2-name">CEH</div><div class="cert2-body">EC-Council</div></div><div class="cert2-dot"></div></a>
-        <a class="cert2" href="https://www.credly.com/badges/516a3a08-1195-417c-9421-f010d65293c2/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">Artificial Intelligence Specialist Expert</div><div class="cert2-body">Booz Allen Hamilton</div></div><div class="cert2-dot"></div></a>
-        <a class="cert2" href="https://www.credly.com/badges/eb8c5675-8423-49d6-ab2d-0ab23459b1ad/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">Linux+</div><div class="cert2-body">CompTIA</div></div><div class="cert2-dot"></div></a>
-        <a class="cert2" href="https://www.credly.com/badges/b49d7b6d-0fbe-4bf2-969a-b6f47d1c496d/public_url" target="_blank" rel="noopener"><div><div class="cert2-name">CCP</div><div class="cert2-body">CMMC AB</div></div><div class="cert2-dot"></div></a>
+        <div class="cert2"><div><div class="cert2-name">CISSP</div><div class="cert2-body">ISC²</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2"><div><div class="cert2-name">CISA</div><div class="cert2-body">ISACA</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2"><div><div class="cert2-name">CEH</div><div class="cert2-body">EC-Council</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2"><div><div class="cert2-name">CySA+</div><div class="cert2-body">CompTIA</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2"><div><div class="cert2-name">Linux+</div><div class="cert2-body">CompTIA</div></div><div class="cert2-dot"></div></div>
+        <div class="cert2"><div><div class="cert2-name">CCP</div><div class="cert2-body">CMMC AB</div></div><div class="cert2-dot"></div></div>
       </div>
     </div>
 
