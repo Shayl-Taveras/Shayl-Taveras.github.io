@@ -128,7 +128,7 @@
   .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
   .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
   .ic-val.green{color:var(--green);}
-  .ic-val.orange{color:var(--accent);}
+  .ic-val.blue{color:var(--accent);}
 
   /* FRAMEWORK GRID */
   .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
@@ -284,7 +284,7 @@
     <p class="prose">Each finding source maps to a specific compliance risk. The system checks the controls auditors actually test for.</p>
     <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">iam_findings.py</div><div class="panel-title">IAM Identity Hygiene</div></div><div class="panel-desc">Flags stale accounts (90+ days inactive), admin users missing MFA, and IAM users without manager tags. Maps to SOC 2 CC6.1 · ISO 27001 A.9 · NIST 800-53 AC-2.</div></div></div>
     <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">access_analyzer.py</div><div class="panel-title">External Resource Exposure</div></div><div class="panel-desc">Surfaces cross-account trust relationships, publicly accessible S3 buckets, and resource policies granting access outside the account boundary. Maps to NIST 800-53 AC-3 · PCI-DSS 7.2 · CMMC AC.L2-3.1.3.</div></div></div>
-    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">security_hub.py</div><div class="panel-title">Active IAM Control Failures (IAM.1–IAM.9)</div></div><div class="panel-desc">Pulls all FAILED findings for nine AWS Security Hub IAM controls: root MFA, password policy, unused credentials, access key rotation. Pre-mapped to NIST 800-53 and PCI-DSS. Mapped to NIST 800-53 IA-2, IA-5, PCI-DSS 8.x, and CMMC IA.L2.</div></div></div>
+    <div class="panel"><div class="panel-body"><div class="panel-head"><div class="panel-label">security_hub.py</div><div class="panel-title">Active IAM Control Failures (IAM.1-IAM.9)</div></div><div class="panel-desc">Pulls all FAILED findings for nine AWS Security Hub IAM controls: root MFA, password policy, unused credentials, access key rotation. Pre-mapped to NIST 800-53 and PCI-DSS. Mapped to NIST 800-53 IA-2, IA-5, PCI-DSS 8.x, and CMMC IA.L2.</div></div></div>
   </div>
 
   <!-- 04 OUTPUT -->
@@ -293,7 +293,7 @@
     <p class="prose">The report module generates a <strong>self-contained HTML file</strong> with no external dependencies and no server required. An auditor opens it directly from S3 or downloads it offline. The narrative module generates an AI-written executive summary via Bedrock, translating raw findings into business-readable risk language.</p>
     <div class="screenshot-wrap">
       <img src="report-preview.png" alt="IAM Access Review Report Output">
-      <div class="screenshot-caption">// generated HTML report — auditor-ready, no console login required</div>
+      <div class="screenshot-caption">// generated HTML report: auditor-ready, no console login required</div>
     </div>
   </div>
 
@@ -345,13 +345,13 @@
     <div class="ic-row"><div class="ic-key">language</div><div class="ic-val">Python</div></div>
     <div class="ic-row"><div class="ic-key">iac</div><div class="ic-val">CloudFormation</div></div>
     <div class="ic-row"><div class="ic-key">cadence</div><div class="ic-val">weekly (EventBridge)</div></div>
-    <div class="ic-row"><div class="ic-key">output</div><div class="ic-val orange">HTML + S3</div></div>
+    <div class="ic-row"><div class="ic-key">output</div><div class="ic-val blue">HTML + S3</div></div>
     <div class="ic-row"><div class="ic-key">demo mode</div><div class="ic-val green">enabled</div></div>
     <div class="ic-row"><div class="ic-key">tests</div><div class="ic-val green">28 passing</div></div>
   </div>
   <div class="info-card">
     <div class="ic-label">Controls</div>
-    <div class="ic-row"><div class="ic-key">IAM.1–IAM.9</div><div class="ic-val orange">Security Hub</div></div>
+    <div class="ic-row"><div class="ic-key">IAM.1-IAM.9</div><div class="ic-val blue">Security Hub</div></div>
     <div class="ic-row"><div class="ic-key">AC-2</div><div class="ic-val">Account Mgmt</div></div>
     <div class="ic-row"><div class="ic-key">AC-3</div><div class="ic-val">Access Enforce</div></div>
     <div class="ic-row"><div class="ic-key">IA-2</div><div class="ic-val">Identification</div></div>

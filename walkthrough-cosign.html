@@ -131,7 +131,7 @@
   .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
   .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
   .ic-val.green{color:var(--green);}
-  .ic-val.orange{color:var(--accent);}
+  .ic-val.blue{color:var(--accent);}
 
   /* FRAMEWORK GRID */
   .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
@@ -234,17 +234,17 @@
     </div>
 
     <div class="code-block">
-      <div class="code-label">// verify-evidence.sh — three independent checks</div>
-      <div><span class="c-comment"># 1. Integrity — recompute and compare hash</span></div>
+      <div class="code-label">// verify-evidence.sh: three independent checks</div>
+      <div><span class="c-comment"># 1. Integrity: recompute and compare hash</span></div>
       <div><span class="c-key">sha256sum</span> <span class="c-str">evidence-bundle.zip</span> | <span class="c-key">diff</span> - <span class="c-str">evidence-bundle.zip.sha256</span></div>
       <br>
-      <div><span class="c-comment"># 2. Authenticity — verify signature against Rekor + GitHub OIDC</span></div>
+      <div><span class="c-comment"># 2. Authenticity: verify signature against Rekor + GitHub OIDC</span></div>
       <div><span class="c-key">cosign</span> <span class="c-val">verify-blob</span> <span class="c-str">evidence-bundle.zip</span> \</div>
       <div>&nbsp;&nbsp;<span class="c-str">--bundle evidence-bundle.zip.sig.bundle</span> \</div>
       <div>&nbsp;&nbsp;<span class="c-str">--certificate-identity-regexp "github.com/Shayl-Taveras"</span> \</div>
       <div>&nbsp;&nbsp;<span class="c-str">--certificate-oidc-issuer "https://token.actions.githubusercontent.com"</span></div>
       <br>
-      <div><span class="c-comment"># 3. Preservation — confirm Object Lock is still active</span></div>
+      <div><span class="c-comment"># 3. Preservation: confirm Object Lock is still active</span></div>
       <div><span class="c-key">aws s3api</span> <span class="c-val">get-object-retention</span> <span class="c-str">--bucket vault-bucket --key evidence-bundle.zip</span></div>
     </div>
   </div>
@@ -280,11 +280,11 @@
     <div class="section-header"><div class="sh-title">File Structure</div><div class="sh-num">06</div></div>
     <div class="file-tree">
       <div><span class="ft-dir">.github/workflows/</span></div>
-      <div>&nbsp;&nbsp;<span class="ft-file">policy-gate.yml</span> <span class="ft-comment"># CI gate — includes cosign sign + upload steps</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">policy-gate.yml</span> <span class="ft-comment"># CI gate: includes cosign sign + upload steps</span></div>
       <div><span class="ft-dir">scripts/</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">verify-evidence.sh</span> <span class="ft-comment"># three-check verification script</span></div>
       <div><span class="ft-dir">evidence/ (S3 vault)</span></div>
-      <div>&nbsp;&nbsp;<span class="ft-file">evidence-bundle.zip</span> <span class="ft-comment"># signed bundle — Object Lock protected</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">evidence-bundle.zip</span> <span class="ft-comment"># signed bundle: Object Lock protected</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">evidence-bundle.zip.sha256</span> <span class="ft-comment"># SHA-256 sidecar</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">evidence-bundle.zip.sig.bundle</span> <span class="ft-comment"># cosign bundle: sig + cert + rekor ref</span></div>
     </div>
@@ -314,7 +314,7 @@
   </div>
   <div class="info-card">
     <div class="ic-label">Stack</div>
-    <div class="ic-row"><div class="ic-key">signing</div><div class="ic-val orange">Cosign + Sigstore</div></div>
+    <div class="ic-row"><div class="ic-key">signing</div><div class="ic-val blue">Cosign + Sigstore</div></div>
     <div class="ic-row"><div class="ic-key">identity</div><div class="ic-val">GitHub OIDC</div></div>
     <div class="ic-row"><div class="ic-key">CA</div><div class="ic-val">Fulcio</div></div>
     <div class="ic-row"><div class="ic-key">log</div><div class="ic-val">Rekor</div></div>

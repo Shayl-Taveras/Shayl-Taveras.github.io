@@ -128,7 +128,7 @@
   .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
   .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
   .ic-val.green{color:var(--green);}
-  .ic-val.orange{color:var(--accent);}
+  .ic-val.blue{color:var(--accent);}
 
   /* FRAMEWORK GRID */
   .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
@@ -214,7 +214,7 @@
     <p class="prose">After apply, a single jq query against <code>artifacts/terraform-state.json</code> produces structured evidence for every enforced control. No console login, no manual evidence collection.</p>
     <div class="screenshot-wrap">
       <img src="gke-evidence.png" alt="jq query output showing private_nodes: true, encryption_state: ENCRYPTED, release_channel: STABLE, five logging components">
-      <div class="screenshot-caption">// jq output from artifacts/terraform-state.json — all four controls confirmed in a single query</div>
+      <div class="screenshot-caption">// jq output from artifacts/terraform-state.json: all four controls confirmed in a single query</div>
     </div>
     <table class="ctable">
       <thead><tr><th>Field in Output</th><th>Value</th><th>NIST 800-53</th><th>NIST 800-171</th><th>FedRAMP</th><th>CMMC L2</th><th>SOC 2</th></tr></thead>
@@ -261,7 +261,7 @@
       <div>&nbsp;&nbsp;<span class="ft-file">main.tf</span> <span class="ft-comment"># provider, KMS, VPC + NAT, GKE cluster, node pool, audit log config</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">outputs.tf</span> <span class="ft-comment"># cluster identifiers, kubeconfig command, artifact paths</span></div>
       <div>&nbsp;&nbsp;<span class="ft-file">Makefile</span> <span class="ft-comment"># init / plan / apply / kubeconfig / destroy / clean</span></div>
-      <div>&nbsp;&nbsp;<span class="ft-dir">artifacts/</span> <span class="ft-comment"># gitignored — generated evidence per session</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">artifacts/</span> <span class="ft-comment"># gitignored: generated evidence per session</span></div>
       <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">plan.json</span></div>
       <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">terraform-state.json</span></div>
     </div>
@@ -286,7 +286,7 @@
     <div class="ic-row"><div class="ic-key">resource</div><div class="ic-val">GKE + KMS + VPC</div></div>
     <div class="ic-row"><div class="ic-key">nodes</div><div class="ic-val">2x e2-small</div></div>
     <div class="ic-row"><div class="ic-key">cost</div><div class="ic-val">~$0.10/hr</div></div>
-    <div class="ic-row"><div class="ic-key">evidence</div><div class="ic-val orange">plan.json + state</div></div>
+    <div class="ic-row"><div class="ic-key">evidence</div><div class="ic-val blue">plan.json + state</div></div>
     <div class="ic-row"><div class="ic-key">phase 2</div><div class="ic-val green">kyverno</div></div>
   </div>
   <div class="info-card">

@@ -130,7 +130,7 @@
   .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
   .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
   .ic-val.green{color:var(--green);}
-  .ic-val.orange{color:var(--accent);}
+  .ic-val.blue{color:var(--accent);}
 
   /* FRAMEWORK GRID */
   .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
@@ -237,12 +237,12 @@
     <div class="section-header"><div class="sh-title">The policy-gate.sh Wrapper</div><div class="sh-num">05</div></div>
     <p class="prose">The wrapper script is the CI entrypoint. It runs all policy namespaces, captures machine-readable JSON evidence, and exits non-zero on any failure. The <code>|| true</code> pattern on each conftest call ensures all namespaces evaluate before the exit code is determined. A python3 one-liner parses the JSON output to set the exit code without depending on conftest's text format.</p>
     <div class="code-block">
-      <div class="code-label">// policy-gate.sh — simplified</div>
+      <div class="code-label">// policy-gate.sh: simplified</div>
       <div><span class="c-comment">#!/bin/bash</span></div>
       <div><span class="c-key">PLAN</span>=<span class="c-str">"terraform/plan.json"</span></div>
       <div><span class="c-key">EVIDENCE</span>=<span class="c-str">"evidence/policy-results.json"</span></div>
       <br>
-      <div><span class="c-comment"># Run all namespaces — || true so one failure doesn't abort the rest</span></div>
+      <div><span class="c-comment"># Run all namespaces: || true so one failure doesn't abort the rest</span></div>
       <div><span class="c-key">conftest</span> <span class="c-val">test</span> <span class="c-str">--namespace compliance.sc28 --output json</span> $PLAN >> $EVIDENCE || true</div>
       <div><span class="c-key">conftest</span> <span class="c-val">test</span> <span class="c-str">--namespace compliance.ac3  --output json</span> $PLAN >> $EVIDENCE || true</div>
       <div><span class="c-key">conftest</span> <span class="c-val">test</span> <span class="c-str">--namespace compliance.cm6  --output json</span> $PLAN >> $EVIDENCE || true</div>
@@ -261,12 +261,12 @@
     <div class="section-header"><div class="sh-title">Gate Output Evidence</div><div class="sh-num">06</div></div>
     <p class="prose">The broken-plan test confirms the gate fires with a deny message naming the resource, the control, and the exact remediation step. The wrapper exits non-zero, blocking the apply.</p>
     <div class="screenshot-wrap">
-      <img src="conftest-gate-pass.png" alt="Conftest gate passing — all three namespaces green on compliant plan">
-      <div class="screenshot-caption">// compliant plan — all three namespaces pass: sc28_aws, ac3_aws, cm6_aws · 1 test, 1 passed, 0 failures each</div>
+      <img src="conftest-gate-pass.png" alt="Conftest gate passing: all three namespaces green on compliant plan">
+      <div class="screenshot-caption">// compliant plan: all three namespaces pass: sc28_aws, ac3_aws, cm6_aws · 1 test, 1 passed, 0 failures each</div>
     </div>
     <div class="screenshot-wrap" style="margin-top:1rem;">
-      <img src="conftest-gate-fail.png" alt="Conftest gate firing — SC-28 FAIL with full deny message on broken plan">
-      <div class="screenshot-caption">// broken plan — SC-28 fires: aws_s3_bucket.primary has no matching server_side_encryption_configuration · resource address, control ID, and remediation returned</div>
+      <img src="conftest-gate-fail.png" alt="Conftest gate firing: SC-28 FAIL with full deny message on broken plan">
+      <div class="screenshot-caption">// broken plan: SC-28 fires: aws_s3_bucket.primary has no matching server_side_encryption_configuration · resource address, control ID, and remediation returned</div>
     </div>
   </div>
 
@@ -276,16 +276,16 @@
     <div class="file-tree">
       <div><span class="ft-dir">tools/rego-policies/</span></div>
       <div>&nbsp;&nbsp;<span class="ft-dir">policies/aws/</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_encryption.rego</span> <span class="ft-comment"># SC-28 — S3 KMS reference matching</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_public_access.rego</span> <span class="ft-comment"># AC-3 — all four block flags</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_tags.rego</span> <span class="ft-comment"># CM-6 — tags_all required key check</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_encryption.rego</span> <span class="ft-comment"># SC-28: S3 KMS reference matching</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_public_access.rego</span> <span class="ft-comment"># AC-3: all four block flags</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_tags.rego</span> <span class="ft-comment"># CM-6: tags_all required key check</span></div>
       <div>&nbsp;&nbsp;<span class="ft-dir">tests/aws/</span></div>
       <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_encryption_test.rego</span></div>
       <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_public_access_test.rego</span></div>
       <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">aws_tags_test.rego</span></div>
       <div>&nbsp;&nbsp;<span class="ft-dir">terraform/</span> <span class="ft-comment"># compliant + broken plan fixtures</span></div>
-      <div>&nbsp;&nbsp;<span class="ft-file">policy-gate.sh</span> <span class="ft-comment"># CI entrypoint — runs all namespaces, exits non-zero on failure</span></div>
-      <div>&nbsp;&nbsp;<span class="ft-dir">evidence/</span> <span class="ft-comment"># policy-results.json — machine-readable gate output</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-file">policy-gate.sh</span> <span class="ft-comment"># CI entrypoint: runs all namespaces, exits non-zero on failure</span></div>
+      <div>&nbsp;&nbsp;<span class="ft-dir">evidence/</span> <span class="ft-comment"># policy-results.json: machine-readable gate output</span></div>
     </div>
   </div>
 

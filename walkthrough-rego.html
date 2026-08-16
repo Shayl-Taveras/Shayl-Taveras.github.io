@@ -129,7 +129,7 @@
   .ic-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
   .ic-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);text-align:right;}
   .ic-val.green{color:var(--green);}
-  .ic-val.orange{color:var(--accent);}
+  .ic-val.blue{color:var(--accent);}
 
   /* FRAMEWORK GRID */
   .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1.2rem;}
@@ -250,8 +250,8 @@
       <div><span class="c-key">opa</span> <span class="c-val">test</span> <span class="c-str">policies/ tests/ -v</span></div>
       <br>
       <div><span class="c-comment"># Example deny output:</span></div>
-      <div><span class="c-comment"># "google_storage_bucket.data_lake does not have CMEK — SC-28"</span></div>
-      <div><span class="c-comment"># "google_storage_bucket.logs is missing labels: [env, owner] — CM-6"</span></div>
+      <div><span class="c-comment"># "google_storage_bucket.data_lake does not have CMEK: SC-28"</span></div>
+      <div><span class="c-comment"># "google_storage_bucket.logs is missing labels: [env, owner]: CM-6"</span></div>
     </div>
   </div>
 
@@ -261,9 +261,9 @@
     <div class="file-tree">
       <div><span class="ft-dir">tools/rego-policies/</span></div>
       <div>&nbsp;&nbsp;<span class="ft-dir">policies/</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">encryption.rego</span> <span class="ft-comment"># SC-28 — CMEK enforcement</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">public_access.rego</span> <span class="ft-comment"># AC-3 — public access lockdown</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">labels.rego</span> <span class="ft-comment"># CM-6 — required compliance labels</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">encryption.rego</span> <span class="ft-comment"># SC-28: CMEK enforcement</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">public_access.rego</span> <span class="ft-comment"># AC-3: public access lockdown</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">labels.rego</span> <span class="ft-comment"># CM-6: required compliance labels</span></div>
       <div>&nbsp;&nbsp;<span class="ft-dir">tests/</span></div>
       <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">encryption_test.rego</span></div>
       <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-file">public_access_test.rego</span></div>
@@ -293,7 +293,7 @@
     <div class="ic-row"><div class="ic-key">type</div><div class="ic-val">policy-as-code</div></div>
     <div class="ic-row"><div class="ic-key">engine</div><div class="ic-val">OPA + Rego v1</div></div>
     <div class="ic-row"><div class="ic-key">cloud</div><div class="ic-val">GCP</div></div>
-    <div class="ic-row"><div class="ic-key">input</div><div class="ic-val orange">terraform plan -json</div></div>
+    <div class="ic-row"><div class="ic-key">input</div><div class="ic-val blue">terraform plan -json</div></div>
     <div class="ic-row"><div class="ic-key">gate</div><div class="ic-val">pre-apply</div></div>
     <div class="ic-row"><div class="ic-key">tests</div><div class="ic-val green">8 passing</div></div>
     <div class="ic-row"><div class="ic-key">cloud access</div><div class="ic-val green">not required</div></div>
